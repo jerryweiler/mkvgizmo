@@ -8,10 +8,7 @@
 
 <div class="hidden md:block">
   <Resizable.PaneGroup direction="horizontal" class="h-full items-stretch">
-    <Resizable.Pane
-      defaultSize={defaultLayout[0]}
-      minSize={10}
-    >
+    <Resizable.Pane defaultSize={defaultLayout[0]} minSize={10}>
       <Nav items={TestData} />
     </Resizable.Pane>
     <Resizable.Handle withHandle />
