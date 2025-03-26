@@ -18,6 +18,8 @@ function createWindow(): void {
     },
   });
 
+  mainWindow.setMinimumSize(800, 400);
+
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
   });

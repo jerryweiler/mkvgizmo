@@ -32,3 +32,9 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+### Adding new shadcn components (button used as example):
+npx shadcn-svelte@latest add button
+
+### Notes:
+Uses the Lucide Svelte icon library. See https://lucide.dev/license

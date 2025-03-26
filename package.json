@@ -23,6 +23,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
+    "@lucide/svelte": "^0.483.0",
     "electron-reloader": "^1.2.3"
   },
   "devDependencies": {
@@ -33,12 +34,15 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.13.4",
     "autoprefixer": "^10.4.20",
+    "bits-ui": "^0.22.0",
     "clsx": "^2.1.1",
     "electron": "^34.2.0",
     "electron-builder": "^25.1.8",
     "electron-vite": "^3.0.0",
     "eslint": "^9.20.1",
     "eslint-plugin-svelte": "^2.46.1",
+    "lucide-svelte": "^0.483.0",
+    "paneforge": "^0.0.6",
     "prettier": "^3.5.1",
     "prettier-plugin-svelte": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.10",
