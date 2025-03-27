@@ -3,6 +3,7 @@ import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
+import { chooseDirectory } from "./fileApis";
 
 function createWindow(): void {
   // Create the browser window.
@@ -52,8 +53,8 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  // IPC test
-  ipcMain.on("ping", () => console.log("pong"));
+  // Set up IPC endpoints
+  ipcMain.handle("dialog:chooseDirectory", chooseDirectory);
 
   createWindow();
 
@@ -77,7 +78,9 @@ try {
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     electronReloader(module);
   }
-} catch (_) {}
+} catch (_) {
+  /* empty */
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { NavItem } from "./data";
   import { Button } from "./lib/components/ui/button";
+  import DirPicker from "./dirPicker.svelte";
 
   export let items: NavItem[];
 </script>
 
-<div
-  class="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
->
+<div class="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2">
   <nav
     class="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2"
   >
+    <DirPicker />
     {#each items as item}
       <Button
         href="#"
@@ -28,6 +28,5 @@
     {/each}
   </nav>
 </div>
-
 
 <!-- on:click={() => mailStore.setMail(item.id)} -->
