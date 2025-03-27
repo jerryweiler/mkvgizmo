@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { FolderOpen, FolderSearch } from "@lucide/svelte";
-  import { directory } from "./assets/data.svelte";
+  import {
+    getCurrentDirectory,
+    setCurrentDirectory,
+  } from "./assets/data.svelte";
 </script>
 
 <div class="w-full flex">
-  {#if directory.selected}
+  {#if getCurrentDirectory()}
     <Button
       href="#"
       variant="outline"
@@ -17,15 +20,15 @@
         class="mr-2 size-4"
         aria-hidden="true"
       />
-      {directory.selected}
+      {getCurrentDirectory()}
     </Button>
     <Button
       href="#"
       variant="default"
       size="sm"
       class="justify-start dark:bg-muted dark:hover:bg-muted dark:text-white dark:hover:text-white"
-      on:click={async () => {
-        directory.selected = await window.api.chooseDirectory();
+      on:click={async (): Promise<void> => {
+        setCurrentDirectory(await window.api.chooseDirectory());
       }}
     >
       <svelte:component
@@ -40,8 +43,8 @@
       variant="default"
       size="sm"
       class="justify-start dark:bg-muted dark:hover:bg-muted dark:text-white dark:hover:text-white w-full"
-      on:click={async () => {
-        directory.selected = await window.api.chooseDirectory();
+      on:click={async (): Promise<void> => {
+        setCurrentDirectory(await window.api.chooseDirectory());
       }}
     >
       <svelte:component
