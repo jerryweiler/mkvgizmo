@@ -1,9 +1,23 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 
+export type ScanDirectoryResult = {
+  directories: string[];
+  files: string[];
+};
+
+export interface API {
+  chooseDirectory(): Promise<string | undefined>;
+  scanDirectory(directory: string): Promise<ScanDirectoryResult>;
+  joinPaths(basePath: string, relativePath: string): Promise<string>;
+}
+
 // Custom APIs for renderer
 const api: API = {
   chooseDirectory: () => ipcRenderer.invoke("dialog:chooseDirectory"),
+  scanDirectory: (directory) => ipcRenderer.invoke("scanDirectory", directory),
+  joinPaths: (basePath, relativePath) =>
+    ipcRenderer.invoke("joinPaths", basePath, relativePath),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

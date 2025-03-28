@@ -3,7 +3,8 @@ import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
-import { chooseDirectory } from "./fileApis";
+import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
+import { ScanDirectoryResult } from "../preload";
 
 function createWindow(): void {
   // Create the browser window.
@@ -55,6 +56,16 @@ app.whenReady().then(() => {
 
   // Set up IPC endpoints
   ipcMain.handle("dialog:chooseDirectory", chooseDirectory);
+  ipcMain.handle(
+    "scanDirectory",
+    (_, directory: string): Promise<ScanDirectoryResult> =>
+      scanDirectory(directory),
+  );
+  ipcMain.handle(
+    "joinPaths",
+    (_, basePath: string, relativePath: string): string =>
+      joinPaths(basePath, relativePath),
+  );
 
   createWindow();
 
