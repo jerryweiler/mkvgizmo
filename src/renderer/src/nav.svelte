@@ -19,19 +19,25 @@
             href="#"
             variant="outline"
             size="sm"
-            class="justify-start truncate mr-1"
+            class="justify-start min-w-0 mr-1"
             on:click={async (): Promise<void> => {
               if (item.isDirectory) {
                 await changeCurrentDirectory(item.name);
               }
             }}
           >
-            <svelte:component
-              this={item.icon}
-              class="mr-2 size-4"
-              aria-hidden="true"
-            />
-            {item.name}
+            <div class="flex w-full">
+              <svelte:component
+                this={item.icon}
+                class="mr-2 size-4 shrink-0"
+                aria-hidden="true"
+              />
+              <!-- note: since there's an element between the span and the nearest flex-box
+             child ancestor, we need the parent of the span (the button) to have a min-width
+             attribute for width of the span to be calculated properly.
+             see https://css-tricks.com/flexbox-truncated-text/ -->
+              <span class="truncate" title={item.name}>{item.name}</span>
+            </div>
           </Button>
         {/each}
       </div>
