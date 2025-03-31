@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import DirPicker from "./dirPicker.svelte";
+  import CurrentDirectory from "./current-directory.svelte";
   import { changeCurrentDirectory, type NavItem } from "./assets/data.svelte";
   import ScrollArea from "./lib/components/ui/scroll-area/scroll-area.svelte";
 
@@ -9,7 +9,7 @@
 
 <div class="flex h-screen flex-col">
   <div class="px-2 py-2 mb-2 grow-0">
-    <DirPicker />
+    <CurrentDirectory />
   </div>
   <ScrollArea class="grow-1">
     <div class="flex flex-col gap-4 py-2">
