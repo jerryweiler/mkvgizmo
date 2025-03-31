@@ -9,7 +9,7 @@
     href="#"
     variant="secondary"
     size="sm"
-    class="justify-start dark:bg-muted dark:hover:bg-muted dark:text-white dark:hover:text-white grow mr-1"
+    class="justify-start grow mr-1"
   >
     {#if getCurrentDirectory()}
       <svelte:component

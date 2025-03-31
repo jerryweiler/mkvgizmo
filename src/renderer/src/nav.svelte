@@ -12,16 +12,14 @@
     <DirPicker />
   </div>
   <ScrollArea class="grow-1">
-    <div class="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2">
-      <div
-        class="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2"
-      >
+    <div class="flex flex-col gap-4 py-2">
+      <div class="grid gap-1 px-2">
         {#each navItems.items as item}
           <Button
             href="#"
             variant="outline"
             size="sm"
-            class="justify-start dark:bg-muted dark:hover:bg-muted dark:text-white dark:hover:text-white overflow-hidden mr-1"
+            class="justify-start truncate mr-1"
             on:click={async (): Promise<void> => {
               if (item.isDirectory) {
                 await changeCurrentDirectory(item.name);
