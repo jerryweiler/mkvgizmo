@@ -9,6 +9,8 @@ interface API {
   chooseDirectory(): Promise<string | undefined>;
   scanDirectory(directory: string): Promise<ScanDirectoryResult>;
   joinPaths(basePath: string, relativePath: string): Promise<string>;
+  loadFfmpegConfig(): Promise<string | undefined>;
+  saveFfmpegConfig(directory: string): Promise<boolean>;
 }
 
 declare global {

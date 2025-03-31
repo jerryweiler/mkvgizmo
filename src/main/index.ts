@@ -5,6 +5,7 @@ import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
 import { ScanDirectoryResult } from "../preload";
+import { loadFfmpegConfig, saveFfmpegConfig } from "./configApis";
 
 function createWindow(): void {
   // Create the browser window.
@@ -65,6 +66,10 @@ app.whenReady().then(() => {
     "joinPaths",
     (_, basePath: string, relativePath: string): string =>
       joinPaths(basePath, relativePath),
+  );
+  ipcMain.handle("config:loadFfmpegPath", loadFfmpegConfig);
+  ipcMain.handle("config:saveFfmpegPath", (_, directory: string) =>
+    saveFfmpegConfig(directory),
   );
 
   createWindow();
