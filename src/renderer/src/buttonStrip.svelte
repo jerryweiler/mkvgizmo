@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { FolderSearch, Settings } from "@lucide/svelte";
+  import { FolderSearch } from "@lucide/svelte";
   import { setCurrentDirectory } from "./assets/data.svelte";
+  import Config from "./config.svelte";
 </script>
 
 <div class="flex-none">
@@ -15,8 +16,6 @@
     </Button>
   </div>
   <div class="m-1">
-    <Button>
-      <svelte:component this={Settings} class="size-4" aria-hidden="true" />
-    </Button>
+    <Config />
   </div>
 </div>
