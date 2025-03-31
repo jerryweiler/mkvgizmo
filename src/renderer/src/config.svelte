@@ -4,7 +4,7 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { Label } from "$lib/components/ui/label";
   import { Settings } from "@lucide/svelte";
-  import { getFfmpegPath, setFfmpegPath } from "./assets/data.svelte";
+  import { getFfmpegPath, setFfmpegPath } from "./state/config.svelte";
 
   let pathvalue;
   let open = false;

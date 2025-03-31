@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { FolderSearch } from "@lucide/svelte";
-  import { setCurrentDirectory } from "./assets/data.svelte";
+  import { setCurrentDirectory } from "./state/current-directory.svelte";
   import Config from "./config.svelte";
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ScrollArea } from "$lib/components/ui/scroll-area";
-  import type { NavItem } from "./assets/data.svelte";
+  import type { NavItem } from "./state/navigation-items.svelte";
 
   export let activeFile: NavItem;
 </script>

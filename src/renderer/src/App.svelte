@@ -3,7 +3,7 @@
   import * as Resizable from "$lib/components/ui/resizable";
   import { ActiveFile } from "./assets/testdata";
   import Details from "./details.svelte";
-  import { navItems } from "./assets/data.svelte";
+  import { navItems } from "./state/navigation-items.svelte";
   import ButtonStrip from "./button-strip.svelte";
   export let defaultLayout = [200, 400];
 </script>

@@ -1,18 +1,5 @@
-import { FileVideo, Folder, type Icon as IconType } from "@lucide/svelte";
-
-export type NavItem = {
-  name: string;
-  isDirectory: boolean;
-  icon: typeof IconType;
-  details: FileDetail[];
-};
-
-export type FileDetail = {
-  type: string;
-  streamid: number;
-  language: string | null;
-  icon: typeof IconType;
-};
+import { FileVideo, Folder } from "@lucide/svelte";
+import { navItems, type NavItem } from "./navigation-items.svelte";
 
 const directory = $state({ selected: undefined });
 
@@ -52,25 +39,4 @@ export async function changeCurrentDirectory(
     relativeDirectory,
   );
   await setCurrentDirectory(newPath);
-}
-
-export const navItems: { items: NavItem[] } = $state({ items: [] });
-
-const config = $state({ ffmpegPath: undefined });
-
-config.ffmpegPath = await window.api.loadFfmpegConfig();
-
-export function getFfmpegPath(): Promise<string | undefined> {
-  return config.ffmpegPath;
-}
-
-export async function setFfmpegPath(ffmpegPath: string): Promise<boolean> {
-  if (!(await window.api.saveFfmpegConfig(ffmpegPath))) {
-    // todo: change IPC method to return more detailed error string
-    alert("Failure updating path");
-    return false;
-  }
-
-  config.ffmpegPath = ffmpegPath;
-  return true;
 }

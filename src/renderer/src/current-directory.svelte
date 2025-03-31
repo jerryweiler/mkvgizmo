@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { FolderOpen } from "@lucide/svelte";
-  import { getCurrentDirectory } from "./assets/data.svelte";
+  import { getCurrentDirectory } from "./state/current-directory.svelte";
 </script>
 
 <div class="w-full flex">
