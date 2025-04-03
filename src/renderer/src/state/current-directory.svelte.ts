@@ -1,5 +1,6 @@
 import { FileVideo, Folder } from "@lucide/svelte";
 import { navItems, type NavItem } from "./navigation-items.svelte";
+import { clearCurrentFile } from "./current-file.svelte";
 
 const directory = $state({ selected: undefined });
 
@@ -13,6 +14,7 @@ export async function setCurrentDirectory(cwd: string): Promise<void> {
   const scanResults = await window.api.scanDirectory(cwd);
 
   directory.selected = cwd;
+  clearCurrentFile();
   const newNavItems: NavItem[] = [
     ...scanResults.directories.map((dir) => ({
       name: dir,

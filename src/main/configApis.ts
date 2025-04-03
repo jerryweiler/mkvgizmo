@@ -54,7 +54,8 @@ export async function loadFfmpegConfig(): Promise<string | undefined> {
   try {
     const content = await readFile(getUserDataFileName(), { encoding: "utf8" });
     const config = JSON.parse(content);
-    return config.ffmpegPath;
+    ffmpegPath = config.ffmpegPath;
+    return ffmpegPath;
   } catch {
     return;
   }

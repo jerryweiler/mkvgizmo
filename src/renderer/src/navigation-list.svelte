@@ -4,17 +4,18 @@
   import { changeCurrentDirectory } from "./state/current-directory.svelte";
   import type { NavItem } from "./state/navigation-items.svelte";
   import ScrollArea from "./lib/components/ui/scroll-area/scroll-area.svelte";
+  import { setCurrentFile } from "./state/current-file.svelte";
 
   export let navItems: { items: NavItem[] };
 </script>
 
 <div class="flex h-screen flex-col">
-  <div class="px-2 py-2 mb-2 grow-0">
+  <div class="m-2 grow-0">
     <CurrentDirectory />
   </div>
-  <ScrollArea class="grow-1">
-    <div class="flex flex-col gap-4 py-2">
-      <div class="grid gap-1 px-2">
+  <ScrollArea class="p-2 grow-1">
+    <div class="flex flex-col gap-4">
+      <div class="grid gap-1">
         {#each navItems.items as item}
           <Button
             href="#"
@@ -24,6 +25,8 @@
             on:click={async (): Promise<void> => {
               if (item.isDirectory) {
                 await changeCurrentDirectory(item.name);
+              } else {
+                setCurrentFile(item.name);
               }
             }}
           >

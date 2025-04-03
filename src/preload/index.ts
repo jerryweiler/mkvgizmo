@@ -12,6 +12,7 @@ export interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadFfmpegConfig(): Promise<string | undefined>;
   saveFfmpegConfig(directory: string): Promise<boolean>;
+  getMkvDetails(directory: string, filename: string): Promise<string>;
 }
 
 // Custom APIs for renderer
@@ -23,6 +24,8 @@ const api: API = {
   loadFfmpegConfig: () => ipcRenderer.invoke("config:loadFfmpegPath"),
   saveFfmpegConfig: (directory) =>
     ipcRenderer.invoke("config:saveFfmpegPath", directory),
+  getMkvDetails: (directory, filename) =>
+    ipcRenderer.invoke("getMkvDetails", directory, filename),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

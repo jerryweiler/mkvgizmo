@@ -6,6 +6,7 @@ import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
 import { ScanDirectoryResult } from "../preload";
 import { loadFfmpegConfig, saveFfmpegConfig } from "./configApis";
+import { getMkvDetails } from "./mkvApis";
 
 function createWindow(): void {
   // Create the browser window.
@@ -67,9 +68,15 @@ app.whenReady().then(() => {
     (_, basePath: string, relativePath: string): string =>
       joinPaths(basePath, relativePath),
   );
+  ipcMain.handle(
+    "getMkvDetails",
+    (_, directory: string, filename: string): Promise<string> =>
+      getMkvDetails(directory, filename),
+  );
   ipcMain.handle("config:loadFfmpegPath", loadFfmpegConfig);
-  ipcMain.handle("config:saveFfmpegPath", (_, directory: string) =>
-    saveFfmpegConfig(directory),
+  ipcMain.handle(
+    "config:saveFfmpegPath",
+    (_, directory: string): Promise<boolean> => saveFfmpegConfig(directory),
   );
 
   createWindow();
@@ -94,7 +101,7 @@ try {
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     electronReloader(module);
   }
-} catch (_) {
+} catch {
   /* empty */
 }
 

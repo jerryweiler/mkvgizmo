@@ -11,6 +11,7 @@ interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadFfmpegConfig(): Promise<string | undefined>;
   saveFfmpegConfig(directory: string): Promise<boolean>;
+  getMkvDetails(directory: string, filename: string): Promise<string>;
 }
 
 declare global {
