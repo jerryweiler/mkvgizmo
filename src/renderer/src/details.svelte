@@ -27,11 +27,7 @@
               <div class="flex w-full flex-col gap-1">
                 <div class="flex items-center">
                   <div class="flex items-center gap-2 font-semibold">
-                    <svelte:component
-                      this={detail.icon}
-                      class="mr-2 size-4"
-                      aria-hidden="true"
-                    />
+                    <detail.icon class="mr-2 size-4" aria-hidden="true" />
                     {detail.type}
                   </div>
                   <div class="ml-auto text-xs">
@@ -45,7 +41,7 @@
         </div>
       </Tabs.Content>
       <Tabs.Content value="raw">
-        {getFileDetails()}
+        <textarea class="w-full" id="detail-text">{getFileDetails()}</textarea>
       </Tabs.Content>
     </ScrollArea>
   </div>

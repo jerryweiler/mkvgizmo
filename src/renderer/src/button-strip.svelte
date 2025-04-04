@@ -12,7 +12,7 @@
         setCurrentDirectory(await window.api.chooseDirectory());
       }}
     >
-      <svelte:component this={FolderSearch} class="size-4" aria-hidden="true" />
+      <FolderSearch class="size-4" aria-hidden="true" />
     </Button>
   </div>
   <div class="m-1">

@@ -31,11 +31,7 @@
             }}
           >
             <div class="flex w-full">
-              <svelte:component
-                this={item.icon}
-                class="mr-2 size-4 shrink-0"
-                aria-hidden="true"
-              />
+              <item.icon class="mr-2 size-4 shrink-0" aria-hidden="true" />
               <!-- note: since there's an element between the span and the nearest flex-box
              child ancestor, we need the parent of the span (the button) to have a min-width
              attribute for width of the span to be calculated properly.

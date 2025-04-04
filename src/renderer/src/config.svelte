@@ -24,7 +24,7 @@
 <Dialog.Root bind:open>
   <Dialog.Trigger>
     <Button on:click={(): void => openDialog()}>
-      <svelte:component this={Settings} class="size-4" aria-hidden="true" />
+      <Settings class="size-4" aria-hidden="true" />
     </Button>
   </Dialog.Trigger>
   <Dialog.Content>

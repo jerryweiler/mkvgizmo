@@ -12,11 +12,7 @@
     class="justify-start grow mr-1"
   >
     {#if getCurrentFile()}
-      <svelte:component
-        this={FileVideo}
-        class="mr-2 size-4"
-        aria-hidden="true"
-      />
+      <FileVideo class="mr-2 size-4" aria-hidden="true" />
       {getCurrentFile()}
     {:else}
       No File Selected
