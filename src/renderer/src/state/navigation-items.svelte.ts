@@ -4,12 +4,14 @@ export type NavItem = {
   name: string;
   isDirectory: boolean;
   icon: typeof IconType;
-  details: FileDetail[];
+  details: StreamDetails[];
 };
 
-export type FileDetail = {
+export type StreamDetails = {
+  id: number;
   type: string;
-  streamid: number;
+  codec: string;
+  size: number;
   language: string | null;
   icon: typeof IconType;
 };

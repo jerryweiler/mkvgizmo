@@ -1,5 +1,7 @@
 import { tick } from "svelte";
 import { getCurrentDirectory } from "./current-directory.svelte";
+import type { StreamDetails } from "./navigation-items.svelte";
+import { FileAudio, FileQuestion, FileText, FileVideo } from "@lucide/svelte";
 
 const currentFile = $state({
   name: undefined,
@@ -7,12 +9,43 @@ const currentFile = $state({
   streams: [],
 });
 
+function extractStreamDetails(raw: any): StreamDetails {
+  let icon = FileQuestion;
+  let language = "";
+  switch (raw.codec_type) {
+    case "audio":
+      icon = FileAudio;
+      language = raw?.tags?.language;
+      break;
+    case "video":
+      icon = FileVideo;
+      break;
+    case "subtitle":
+      icon = FileText;
+      language = raw?.tags?.language;
+      break;
+  }
+
+  return {
+    id: raw?.index,
+    type: raw?.codec_type,
+    codec: raw?.codec_name,
+    language,
+    size: raw?.tags["NUMBER_OF_BYTES-eng"],
+    icon,
+  };
+}
+
 export function getCurrentFile(): string | undefined {
   return currentFile.name;
 }
 
 export function getFileDetails(): string | undefined {
   return currentFile.details;
+}
+
+export function getFileStreams(): StreamDetails[] {
+  return currentFile.streams;
 }
 
 export async function setCurrentFile(filename: string): Promise<void> {
@@ -24,6 +57,7 @@ export async function setCurrentFile(filename: string): Promise<void> {
   );
 
   const streams = JSON.parse(details);
+  currentFile.streams = streams.streams.map(extractStreamDetails);
 
   // getMkvDetails returns JSON in a minimized, hard to read format.
   // re-generate a more readable version for the RAW display
