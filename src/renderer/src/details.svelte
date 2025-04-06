@@ -24,6 +24,11 @@
 
     return bytes.toFixed(2) + suffix;
   }
+
+  function resizeRaw(): void {
+    const element = document.getElementById("detail-text");
+    element.style.height = element.scrollHeight + "px";
+  }
 </script>
 
 <Tabs.Root>
@@ -33,7 +38,7 @@
     </div>
     <Tabs.List class="m-2 grid grid-cols-2 grow-0 shrink-0">
       <Tabs.Trigger value="details">Details</Tabs.Trigger>
-      <Tabs.Trigger value="raw">Raw</Tabs.Trigger>
+      <Tabs.Trigger value="raw" onclick={resizeRaw}>Raw</Tabs.Trigger>
     </Tabs.List>
     <ScrollArea class="m-2 grow-1 shrink-1">
       <Tabs.Content value="details">

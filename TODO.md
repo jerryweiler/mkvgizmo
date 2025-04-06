@@ -1,6 +1,3 @@
-* BUG: raw tab doesn't populate until after it's opened and a new file is selected. selecting a file then opening the raw tab should display data.
-* BUG: Currently selected file in file list should be highlighted.
-* BUG: tooltip is currently on the file/directory name text element. This makes the experience inconsistent, because the mouse needs to hover directly on the text, not anywhere in the associated item. Move the 'title' attribute that triggers the tooltip to the parent button element.
 * BUG: Add more validation of stream metadata. if stream metadata isn't in the correct format, the ui will partially disappear and give no indication of what's wrong. this can happen in several case: ffprobe is an old version that doesn't support json, some attributes are missing from streams, etc. This has only been tested with files created by recent versions of makemkv, but are all mkv files like that?
 
 * TESTS: WRITE SOME!
@@ -11,6 +8,7 @@
 * FEATURE: Add preview for subtitles (textarea, like the raw details).
 * FEATURE: Add playback where the user can select which streams to use
 * FEATURE: Cache file data on first load. This will improve multi-select. Once metadata modification is implemented, the ui might need a refresh button (same row as the details/raw tabs, like the proposed filter buttons?)
+* FEATURE: Add background, make the UI less generic
 
 * CLEANUP: the state management could use some cleanup. issues:
 1. this has been a learning project, and the various docs and tutorials have been used. most state is svelte 5, but some examples and libs from svelte 3/4 have been used (such as component 'export let' to define properties)

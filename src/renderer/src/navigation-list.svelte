@@ -4,7 +4,8 @@
   import { changeCurrentDirectory } from "./state/current-directory.svelte";
   import type { NavItem } from "./state/navigation-items.svelte";
   import ScrollArea from "./lib/components/ui/scroll-area/scroll-area.svelte";
-  import { setCurrentFile } from "./state/current-file.svelte";
+  import { getCurrentFile, setCurrentFile } from "./state/current-file.svelte";
+  import { cn } from "$lib/utils";
 
   export let navItems: { items: NavItem[] };
 </script>
@@ -21,7 +22,10 @@
             href="#"
             variant="outline"
             size="sm"
-            class="justify-start min-w-0 mr-1"
+            class={cn(
+              "justify-start min-w-0 mr-1",
+              item.name === getCurrentFile() && "bg-muted",
+            )}
             on:click={async (): Promise<void> => {
               if (item.isDirectory) {
                 await changeCurrentDirectory(item.name);
@@ -29,6 +33,7 @@
                 setCurrentFile(item.name);
               }
             }}
+            title={item.name}
           >
             <div class="flex w-full">
               {#key navItems.items}
@@ -38,7 +43,7 @@
              child ancestor, we need the parent of the span (the button) to have a min-width
              attribute for width of the span to be calculated properly.
              see https://css-tricks.com/flexbox-truncated-text/ -->
-              <span class="truncate" title={item.name}>{item.name}</span>
+              <span class="truncate">{item.name}</span>
             </div>
           </Button>
         {/each}
