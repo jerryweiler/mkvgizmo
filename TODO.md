@@ -14,9 +14,8 @@
 * FEATURE: Add filter for languages. Should be dynamically generated based on languages of all displayed streams
 * FEATURE (suggestion): Add a 'preview' button. This can be embedded in each file's stream data group header in multi-select.
 * FEATURE: Add information panel at buttom, similar to VS output pane
+* FEATURE: Implement dark mode
 
 * CLEANUP: the state management could use some cleanup. issues:
 1. this has been a learning project, and the various docs and tutorials have been used. most state is svelte 5, but some examples and libs from svelte 3/4 have been used (such as component 'export let' to define properties)
 2. application state is mostly encapsulated in the renderer/src/state directory, but component initialization is inconsistent. some components grab state directly from app state, while others are given state by their parent. components probably should not grab state directly. I should learn more about the proper model (need to go through advanced svelte tutorial).
-
-* CLEANUP: The raw file details component currently has a hack where the 'setCurrentFile' state API directly updates the textarea height. This was done because textarea is not very friendly and is unable to size itself to its contents. After trying several alternatives, I added this (hopefully temporary) hack to make things work, but this should be fixed. The component should handle its own layout and not rely on state management to do it. The state should be exposed so that a $effect can be used to update the layout.
