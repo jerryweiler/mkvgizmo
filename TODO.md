@@ -1,5 +1,4 @@
-* BUG: Loading of size attribute from stream metadata needs to be dynamic and select the tag that starts with 'NUMBER_OF_BYTES' instead of hardcoding 'NUMBER_OF_BYTES-eng'. A rip from a japanese import BluRay was found that doesn't have the '-eng' suffix.
-* BUG: Add metadata propeties derived from tags should be optional
+* BUG: Metadata propeties derived from tags should be optional
 * BUG: Add more validation of stream metadata. if stream metadata isn't in the correct format, the ui will partially disappear and give no indication of what's wrong. this can happen in several case: ffprobe is an old version that doesn't support json, some attributes are missing from streams, etc. This has only been tested with files created by recent versions of makemkv, but are all mkv files like that?
 
 * TESTS: WRITE SOME!
@@ -13,8 +12,6 @@
 * FEATURE: Add background, make the UI less generic
 * FEATURE: Remember last window position?
 * FEATURE: Add filter for languages. Should be dynamically generated based on languages of all displayed streams
-* FEATURE: Add number of channels to audio stream metadata that's displayed
-* FEATURE: Add 'forced' attribute to displayed metadata
 * FEATURE (suggestion): Add a 'preview' button. This can be embedded in each file's stream data group header in multi-select.
 * FEATURE: Add information panel at buttom, similar to VS output pane
 

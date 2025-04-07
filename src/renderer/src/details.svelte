@@ -25,6 +25,19 @@
     return bytes.toFixed(2) + suffix;
   }
 
+  function streamType(stream: StreamDetails): string {
+    let result: string = stream.type;
+    if (stream.language) {
+      result += ` (${stream.language})`;
+    }
+
+    if (stream.forced) {
+      result += " FORCED";
+    }
+
+    return result;
+  }
+
   function resizeRaw(): void {
     const element = document.getElementById("detail-text");
     element.style.height = element.scrollHeight + "px";
@@ -53,11 +66,7 @@
                     {#key currentFileStreams}
                       <stream.icon class="mr-2 size-4" aria-hidden="true" />
                     {/key}
-                    {#if stream.language}
-                      {stream.type} ({stream.language})
-                    {:else}
-                      {stream.type}
-                    {/if}
+                    {streamType(stream)}
                   </div>
                   <div class="ml-auto text-xs">
                     {`id ${stream.id}`}
@@ -69,6 +78,20 @@
                     size: {formatSize(stream.size)}
                   </div>
                 </div>
+                {#if stream.channels}
+                  <div class="flex items-center">
+                    <div class="text-xs font-medium">
+                      channels: {stream.channels}
+                    </div>
+                  </div>
+                {/if}
+                {#if stream.dimensions}
+                  <div class="flex items-center">
+                    <div class="text-xs font-medium">
+                      dimensions: {stream.dimensions}
+                    </div>
+                  </div>
+                {/if}
               </div>
             </button>
           {/each}

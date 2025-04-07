@@ -26,12 +26,36 @@ function extractStreamDetails(raw: any): StreamDetails {
       break;
   }
 
+  // The name of the property holding the stream size varies.
+  // Sometimes it's 'NUMBER_OF_BYTES-eng', sometimes it's 'NUMBER_OF_BYTES',
+  // and it could possibly have other language suffixes or even be absent.
+  let size = 0;
+  for (const prop in raw?.tags) {
+    if (prop.startsWith("NUMBER_OF_BYTES")) {
+      size = raw.tags[prop];
+      break;
+    }
+  }
+
+  let dimensions = "";
+  if (raw?.codec_type === "video" && raw?.width && raw?.height) {
+    dimensions = `${raw.width}x${raw.height}`;
+  }
+
+  let channels = 0;
+  if (raw?.channels) {
+    channels = raw.channels;
+  }
+
   return {
     id: raw?.index,
     type: raw?.codec_type,
     codec: raw?.codec_name,
     language,
-    size: raw?.tags["NUMBER_OF_BYTES-eng"],
+    size,
+    dimensions,
+    channels,
+    forced: raw.disposition.forced !== 0,
     icon,
   };
 }

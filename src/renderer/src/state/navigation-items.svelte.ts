@@ -13,6 +13,9 @@ export type StreamDetails = {
   codec: string;
   size: number;
   language: string | null;
+  forced?: boolean;
+  dimensions?: string;
+  channels?: number;
   icon: typeof IconType;
 };
 
