@@ -1,19 +1,19 @@
 import path from "path";
-import { ffmpegPath } from "./configApis";
 import { spawn } from "child_process";
+import { config } from "./configApis";
 
 export async function getMkvDetails(
   directory: string,
   filename: string,
 ): Promise<string> {
-  if (!ffmpegPath) {
+  if (!config.ffmpegPath) {
     return "";
   }
 
   // Generate the pathnames for the executable and target file.
   // Escape secial characters.
   const filepath = path.join(directory, filename);
-  const ffprobepath = path.join(ffmpegPath, "ffprobe.exe");
+  const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
   const process = spawn(ffprobepath, [
     "-show_streams",

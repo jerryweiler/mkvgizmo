@@ -1,12 +1,13 @@
 import { app } from "electron";
 import { readFile, stat, writeFile } from "fs/promises";
 import path from "path";
+import { GizmoConfig } from "../preload";
 
-// cache of ffmpeg path for runtime use
-export let ffmpegPath: string | undefined = undefined;
+// cache of config data for runtime use
+export let config: GizmoConfig = {};
 
-// load the ffmpeg path at startup if it's been previously saved.
-loadFfmpegConfig();
+// load the config at startup if it's been previously saved.
+loadConfig();
 
 function getUserDataFileName(): string {
   const userDataPath = app.getPath("userData");
@@ -14,21 +15,37 @@ function getUserDataFileName(): string {
 }
 
 /**
- * Update the config with the path to the ffmpeg binaries.
- * This will verify that the directory exists and contains the required binaries.
- * @param {string} directory - the directory containing ffmpeg binaries
- * @returns {Promise<boolean>} - true if save was successful, flase if there was a failure
+ * Update stored config with new values.
+ * This will verify that the ffmpeg directory exists and contains the required binaries.
+ * NOTE: this will currently NOT preserve values that might be saved on disk that are
+ * not present in the update parameter. This can cause loss of values if an old version
+ * updates over a newer version, or a client sends a config with only some values filled in.
+ * @param {GizmoConfig} update - config object containing the directory with ffmpeg binaries, starting directory, etc.
+ * @returns {Promise<boolean>} - true if save was successful, false if there was a failure
  */
-export async function saveFfmpegConfig(directory: string): Promise<boolean> {
+export async function saveConfig(update: GizmoConfig): Promise<boolean> {
   // verify the proposed directory
   // check for ffmpeg.exe and ffprobe.exe
   async function checkFile(filename: string): Promise<boolean> {
     try {
-      const filestats = await stat(path.join(directory, filename));
+      if (!update?.ffmpegPath) {
+        return false;
+      }
+      const filestats = await stat(path.join(update.ffmpegPath, filename));
       return filestats.isFile();
     } catch {
       return false;
     }
+  }
+
+  if (!update.ffmpegPath) {
+    return false;
+  }
+
+  // If the caller passed an ffmpeg path with the executable name included,
+  // truncate it
+  if (path.basename(update.ffmpegPath).toLowerCase() === "ffmpeg.exe") {
+    update.ffmpegPath = path.dirname(update.ffmpegPath);
   }
 
   if (!(await checkFile("ffmpeg.exe")) || !(await checkFile("ffprobe.exe"))) {
@@ -37,9 +54,9 @@ export async function saveFfmpegConfig(directory: string): Promise<boolean> {
 
   // write file
   try {
-    const userData = JSON.stringify({ ffmpegPath: directory });
+    const userData = JSON.stringify(update);
     await writeFile(getUserDataFileName(), userData, { encoding: "utf8" });
-    ffmpegPath = directory;
+    config = update;
     return true;
   } catch {
     return false;
@@ -47,16 +64,16 @@ export async function saveFfmpegConfig(directory: string): Promise<boolean> {
 }
 
 /**
- * Load and return the config for the path to the ffmpeg binaries.
+ * Load and return the config from disk.
  * @returns - either the previously-saved path or undefined
  */
-export async function loadFfmpegConfig(): Promise<string | undefined> {
+export async function loadConfig(): Promise<GizmoConfig> {
   try {
     const content = await readFile(getUserDataFileName(), { encoding: "utf8" });
-    const config = JSON.parse(content);
-    ffmpegPath = config.ffmpegPath;
-    return ffmpegPath;
+    config = JSON.parse(content);
   } catch {
-    return;
+    /* empty */
   }
+
+  return config;
 }

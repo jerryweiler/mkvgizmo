@@ -6,12 +6,17 @@ export type ScanDirectoryResult = {
   files: string[];
 };
 
+export type GizmoConfig = {
+  ffmpegPath?: string;
+  startingDirectory?: string;
+};
+
 export interface API {
   chooseDirectory(): Promise<string | undefined>;
   scanDirectory(directory: string): Promise<ScanDirectoryResult>;
   joinPaths(basePath: string, relativePath: string): Promise<string>;
-  loadFfmpegConfig(): Promise<string | undefined>;
-  saveFfmpegConfig(directory: string): Promise<boolean>;
+  loadConfig(): Promise<GizmoConfig>;
+  saveConfig(update: GizmoConfig): Promise<boolean>;
   getMkvDetails(directory: string, filename: string): Promise<string>;
 }
 
@@ -21,9 +26,8 @@ const api: API = {
   scanDirectory: (directory) => ipcRenderer.invoke("scanDirectory", directory),
   joinPaths: (basePath, relativePath) =>
     ipcRenderer.invoke("joinPaths", basePath, relativePath),
-  loadFfmpegConfig: () => ipcRenderer.invoke("config:loadFfmpegPath"),
-  saveFfmpegConfig: (directory) =>
-    ipcRenderer.invoke("config:saveFfmpegPath", directory),
+  loadConfig: () => ipcRenderer.invoke("config:load"),
+  saveConfig: (update) => ipcRenderer.invoke("config:save", update),
   getMkvDetails: (directory, filename) =>
     ipcRenderer.invoke("getMkvDetails", directory, filename),
 };

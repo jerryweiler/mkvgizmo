@@ -4,8 +4,8 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
-import { ScanDirectoryResult } from "../preload";
-import { loadFfmpegConfig, saveFfmpegConfig } from "./configApis";
+import { GizmoConfig, ScanDirectoryResult } from "../preload";
+import { loadConfig, saveConfig } from "./configApis";
 import { getMkvDetails } from "./mkvApis";
 
 function createWindow(): void {
@@ -73,10 +73,10 @@ app.whenReady().then(() => {
     (_, directory: string, filename: string): Promise<string> =>
       getMkvDetails(directory, filename),
   );
-  ipcMain.handle("config:loadFfmpegPath", loadFfmpegConfig);
+  ipcMain.handle("config:load", loadConfig);
   ipcMain.handle(
-    "config:saveFfmpegPath",
-    (_, directory: string): Promise<boolean> => saveFfmpegConfig(directory),
+    "config:save",
+    (_, update: GizmoConfig): Promise<boolean> => saveConfig(update),
   );
 
   createWindow();

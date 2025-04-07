@@ -1,18 +1,25 @@
-const config = $state({ ffmpegPath: undefined });
+import { setCurrentDirectory } from "./current-directory.svelte";
 
-config.ffmpegPath = await window.api.loadFfmpegConfig();
+const config = $state({ current: undefined });
 
-export function getFfmpegPath(): Promise<string | undefined> {
-  return config.ffmpegPath;
+config.current = await window.api.loadConfig();
+setCurrentDirectory(config.current.startingPath);
+
+export function getFfmpegPath(): string | undefined {
+  return config.current.ffmpegPath;
 }
 
-export async function setFfmpegPath(ffmpegPath: string): Promise<boolean> {
-  if (!(await window.api.saveFfmpegConfig(ffmpegPath))) {
+export function getStartingPath(): string | undefined {
+  return config.current.startingPath;
+}
+
+export async function saveConfig(update: GizmoConfig): Promise<boolean> {
+  if (!(await window.api.saveConfig(update))) {
     // todo: change IPC method to return more detailed error string
     alert("Failure updating path");
     return false;
   }
 
-  config.ffmpegPath = ffmpegPath;
+  config.current = update;
   return true;
 }
