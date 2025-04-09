@@ -1,9 +1,16 @@
 * BUG: Metadata propeties derived from tags should be optional
 * BUG: Add more validation of stream metadata. if stream metadata isn't in the correct format, the ui will partially disappear and give no indication of what's wrong. this can happen in several case: ffprobe is an old version that doesn't support json, some attributes are missing from streams, etc. This has only been tested with files created by recent versions of makemkv, but are all mkv files like that?
+* BUG: current-directory and current-file components can overflow the width of their parent. If the current-file component overflows, it causes the whole page to create a scrollbar. They should truncate if too big. Add a span and 'truncate' class to the text, just like name items.
 
 * TESTS: WRITE SOME!
+some ideas for validation of things I've had to fix over various versions:
+* TEST: Test overflow and scrollbars for each component type. Make sure they have them when needed and don't when they shouldn't have them.
+* TEST: Test text truncate behavior for nav items and current directory/file items
+* TEST: Validate scroll size for nav item list, detail list, and raw details. Make sure bottom of pane is vibile when scrolled to bottom and is not hidden by element below the pane
+* TEST: Validate alignment of various elements that should line up (left side of current-directory and navigation items, etc)
+* TEST: Verify that panes that get scrollbars have proper margins and that borders of items don't overlap the scrollbar. Eg: nav items should have a small gap between the right side of the buttons and scrollbar.
+* TEST: Verify IPC calls
 
-* FEATURE: Add tooltips for button strip.
 * FEATURE: Add filter buttons for video/audio/subtitles. Maybe use some of the space in the line with the 'details/raw' tabs.
 * FEATURE: Add multi-select for files. If multiple files can be selected, should the stream details include the stream detail cards? or should there be a group header with each group?
 * FEATURE: Add preview for subtitles (textarea, like the raw details).

@@ -11,6 +11,7 @@
       on:click={async (): Promise<void> => {
         setCurrentDirectory(await window.api.chooseDirectory());
       }}
+      title="Choose Directory"
     >
       <FolderSearch class="size-4" aria-hidden="true" />
     </Button>

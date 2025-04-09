@@ -29,7 +29,7 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
-    <Button on:click={(): void => openDialog()}>
+    <Button on:click={(): void => openDialog()} title="Edit Config">
       <Settings class="size-4" aria-hidden="true" />
     </Button>
   </Dialog.Trigger>
