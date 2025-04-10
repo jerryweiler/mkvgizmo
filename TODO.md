@@ -28,3 +28,4 @@ some ideas for validation of things I've had to fix over various versions:
 * CLEANUP: the state management could use some cleanup. issues:
 1. this has been a learning project, and the various docs and tutorials have been used. most state is svelte 5, but some examples and libs from svelte 3/4 have been used (such as component 'export let' to define properties)
 2. application state is mostly encapsulated in the renderer/src/state directory, but component initialization is inconsistent. some components grab state directly from app state, while others are given state by their parent. components probably should not grab state directly. I should learn more about the proper model (need to go through advanced svelte tutorial).
+* CLEANUP: Implement a snippet for buttons. they each repeat about 10 lines (plus more for wrapped lines). needs parameters for text, icon, and onclick handler. nav-item button needs customization for variant.

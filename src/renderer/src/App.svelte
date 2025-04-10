@@ -10,13 +10,24 @@
 
 <div class="flex">
   <ButtonStrip />
-  <div class="hidden md:block flex-grow">
-    <Resizable.PaneGroup direction="horizontal" class="h-full items-stretch">
-      <Resizable.Pane defaultSize={defaultLayout[0]} minSize={10}>
+  <div class="flex-grow">
+    <Resizable.PaneGroup
+      direction="horizontal"
+      class="h-full w-full items-stretch"
+    >
+      <Resizable.Pane
+        defaultSize={defaultLayout[0]}
+        minSize={10}
+        class="w-full"
+      >
         <NavigationList {navItems} />
       </Resizable.Pane>
       <Resizable.Handle withHandle />
-      <Resizable.Pane defaultSize={defaultLayout[1]} minSize={30}>
+      <Resizable.Pane
+        defaultSize={defaultLayout[1]}
+        minSize={30}
+        class="w-full"
+      >
         <Details currentFileStreams={getFileStreams()} />
       </Resizable.Pane>
     </Resizable.PaneGroup>

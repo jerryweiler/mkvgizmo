@@ -3,7 +3,7 @@
   import CurrentDirectory from "./current-directory.svelte";
   import { changeCurrentDirectory } from "./state/current-directory.svelte";
   import type { NavItem } from "./state/navigation-items.svelte";
-  import ScrollArea from "./lib/components/ui/scroll-area/scroll-area.svelte";
+  import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import { getCurrentFile, setCurrentFile } from "./state/current-file.svelte";
   import { cn } from "$lib/utils";
 

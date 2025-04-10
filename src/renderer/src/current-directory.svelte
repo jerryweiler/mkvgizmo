@@ -11,12 +11,14 @@
     href="#"
     variant="secondary"
     size="sm"
-    class="justify-start grow mr-1"
+    class="justify-start min-w-0 mr-1 grow"
     title={getCurrentDirectory() ?? defaultText}
   >
-    {#if getCurrentDirectory()}
-      <FolderOpen class="mr-2 size-4" aria-hidden="true" />
-    {/if}
-    {getCurrentDirectory() ?? defaultText}
+    <div class="flex w-full">
+      {#if getCurrentDirectory()}
+        <FolderOpen class="mr-2 size-4 shrink-0" aria-hidden="true" />
+      {/if}
+      <span class="truncate">{getCurrentDirectory() ?? defaultText}</span>
+    </div>
   </Button>
 </div>
