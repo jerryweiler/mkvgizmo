@@ -1,6 +1,5 @@
 * BUG: Metadata propeties derived from tags should be optional
 * BUG: Add more validation of stream metadata. if stream metadata isn't in the correct format, the ui will partially disappear and give no indication of what's wrong. this can happen in several case: ffprobe is an old version that doesn't support json, some attributes are missing from streams, etc. This has only been tested with files created by recent versions of makemkv, but are all mkv files like that?
-* BUG: current-directory and current-file components can overflow the width of their parent. If the current-file component overflows, it causes the whole page to create a scrollbar. They should truncate if too big. Add a span and 'truncate' class to the text, just like name items.
 
 * TESTS: WRITE SOME!
 some ideas for validation of things I've had to fix over various versions:
@@ -9,6 +8,7 @@ some ideas for validation of things I've had to fix over various versions:
 * TEST LAYOUT: Validate scroll size for nav item list, detail list, and raw details. Make sure bottom of pane is vibile when scrolled to bottom and is not hidden by element below the pane
 * TEST LAYOUT: Validate alignment of various elements that should line up (left side of current-directory and navigation items, etc)
 * TEST LAYOUT: Verify that panes that get scrollbars have proper margins and that borders of items don't overlap the scrollbar. Eg: nav items should have a small gap between the right side of the buttons and scrollbar.
+* TEST LAYOUT: Verify that whole-page scrollbars don't show up with long item lists or long directory/file names
 * TEST IPC: Verify IPC call success paths
 * TEST IPC: Verify that errors from 'save config' are returned properly. eg: directory doesn't contain ffmpeg or doesn't exist
 * TEST IPC: Verify that errors from getMkvDetails are returned properly. eg: file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
