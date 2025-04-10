@@ -4,12 +4,14 @@
 
 * TESTS: WRITE SOME!
 some ideas for validation of things I've had to fix over various versions:
-* TEST: Test overflow and scrollbars for each component type. Make sure they have them when needed and don't when they shouldn't have them.
-* TEST: Test text truncate behavior for nav items and current directory/file items
-* TEST: Validate scroll size for nav item list, detail list, and raw details. Make sure bottom of pane is vibile when scrolled to bottom and is not hidden by element below the pane
-* TEST: Validate alignment of various elements that should line up (left side of current-directory and navigation items, etc)
-* TEST: Verify that panes that get scrollbars have proper margins and that borders of items don't overlap the scrollbar. Eg: nav items should have a small gap between the right side of the buttons and scrollbar.
-* TEST: Verify IPC calls
+* TEST LAYOUT: Test overflow and scrollbars for each component type. Make sure they have them when needed and don't when they shouldn't have them.
+* TEST LAYOUT: Test text truncate behavior for nav items and current directory/file items
+* TEST LAYOUT: Validate scroll size for nav item list, detail list, and raw details. Make sure bottom of pane is vibile when scrolled to bottom and is not hidden by element below the pane
+* TEST LAYOUT: Validate alignment of various elements that should line up (left side of current-directory and navigation items, etc)
+* TEST LAYOUT: Verify that panes that get scrollbars have proper margins and that borders of items don't overlap the scrollbar. Eg: nav items should have a small gap between the right side of the buttons and scrollbar.
+* TEST IPC: Verify IPC call success paths
+* TEST IPC: Verify that errors from 'save config' are returned properly. eg: directory doesn't contain ffmpeg or doesn't exist
+* TEST IPC: Verify that errors from getMkvDetails are returned properly. eg: file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
 
 * FEATURE: Add filter buttons for video/audio/subtitles. Maybe use some of the space in the line with the 'details/raw' tabs.
 * FEATURE: Add multi-select for files. If multiple files can be selected, should the stream details include the stream detail cards? or should there be a group header with each group?
