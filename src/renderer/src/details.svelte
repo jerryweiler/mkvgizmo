@@ -8,16 +8,16 @@
   export let currentFileStreams: StreamDetails[];
 </script>
 
-<Tabs.Root>
-  <div class="flex h-screen flex-col">
-    <div class="m-2 grow-0 shrink-0">
+<Tabs.Root class="h-full">
+  <div class="grid grid-rows-[auto_auto_minmax(0,1fr)] w-full h-full">
+    <div class="m-2">
       <CurrentFile />
     </div>
-    <Tabs.List class="m-2 grid grid-cols-2 grow-0 shrink-0">
+    <Tabs.List class="m-2 grid grid-cols-2">
       <Tabs.Trigger value="details">Details</Tabs.Trigger>
       <Tabs.Trigger value="raw">Raw</Tabs.Trigger>
     </Tabs.List>
-    <ScrollArea class="m-2 grow-1 shrink-1">
+    <ScrollArea class="m-2">
       <Tabs.Content value="details">
         <div class="flex flex-col gap-2 pt-0">
           {#each currentFileStreams as stream}

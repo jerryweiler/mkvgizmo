@@ -7,18 +7,28 @@
   import { getFileStreams } from "./state/current-file.svelte";
 </script>
 
-<div class="grid grid-cols-[auto_minmax(0,1fr)] w-screen h-screen">
-  <ButtonStrip />
-  <Resizable.PaneGroup
-    direction="horizontal"
-    class="h-full w-full items-stretch"
-  >
-    <Resizable.Pane defaultSize={1} minSize={20}>
-      <NavigationList {navItems} />
+<div class="w-screen h-screen">
+  <Resizable.PaneGroup direction="vertical" class="h-full w-full items-stretch">
+    <Resizable.Pane defaultSize={4} minSize={50}>
+      <div class="grid grid-cols-[auto_minmax(0,1fr)] w-full h-full">
+        <ButtonStrip />
+        <Resizable.PaneGroup
+          direction="horizontal"
+          class="h-full w-full items-stretch"
+        >
+          <Resizable.Pane defaultSize={1} minSize={20} class="h-full">
+            <NavigationList {navItems} />
+          </Resizable.Pane>
+          <Resizable.Handle withHandle />
+          <Resizable.Pane defaultSize={2} minSize={30}>
+            <Details currentFileStreams={getFileStreams()} />
+          </Resizable.Pane>
+        </Resizable.PaneGroup>
+      </div>
     </Resizable.Pane>
     <Resizable.Handle withHandle />
-    <Resizable.Pane defaultSize={2} minSize={30}>
-      <Details currentFileStreams={getFileStreams()} />
+    <Resizable.Pane defaultSize={1} minSize={10}>
+      <div class="w-full whitespace-pre-wrap font-mono"></div>
     </Resizable.Pane>
   </Resizable.PaneGroup>
 </div>

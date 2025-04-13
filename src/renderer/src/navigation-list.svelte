@@ -10,7 +10,7 @@
   export let navItems: { items: NavItem[] };
 </script>
 
-<div class="flex h-screen flex-col">
+<div class="flex h-full flex-col">
   <div class="m-2 grow-0">
     <CurrentDirectory />
   </div>
