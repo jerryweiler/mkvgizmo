@@ -17,21 +17,30 @@ export async function chooseDirectory(): Promise<string | undefined> {
 export async function scanDirectory(
   directory: string,
 ): Promise<ScanDirectoryResult> {
-  const atRoot = path.join(directory, "..") === directory;
-  const files = await readdir(directory, { withFileTypes: true });
-  const result: ScanDirectoryResult = {
-    directories: files.filter((f) => f.isDirectory()).map((f) => f.name),
-    files: files
-      .filter((f) => !f.isDirectory())
-      .filter((f) => path.extname(f.name) === ".mkv")
-      .map((f) => f.name),
-  };
+  try {
+    const atRoot = path.join(directory, "..") === directory;
+    const files = await readdir(directory, { withFileTypes: true });
+    const result: ScanDirectoryResult = {
+      directories: files.filter((f) => f.isDirectory()).map((f) => f.name),
+      files: files
+        .filter((f) => !f.isDirectory())
+        .filter((f) => path.extname(f.name) === ".mkv")
+        .map((f) => f.name),
+    };
 
-  if (!atRoot) {
-    result.directories.unshift("..");
+    if (!atRoot) {
+      result.directories.unshift("..");
+    }
+
+    return result;
+  } catch (_e) {
+    const e = _e as Error;
+    return {
+      errorMessage: `Error '${e.name}' setting directory: ${e.message}`,
+      directories: [],
+      files: [],
+    };
   }
-
-  return result;
 }
 
 export function joinPaths(basePath: string, relativePath: string): string {

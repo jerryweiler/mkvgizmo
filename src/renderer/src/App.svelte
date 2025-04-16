@@ -5,6 +5,8 @@
   import { navItems } from "./state/navigation-items.svelte";
   import ButtonStrip from "./button-strip.svelte";
   import { getFileStreams } from "./state/current-file.svelte";
+  import MessagePane from "./message-pane.svelte";
+  import { logger } from "./state/logger.svelte";
 </script>
 
 <div class="w-screen h-screen">
@@ -28,7 +30,7 @@
     </Resizable.Pane>
     <Resizable.Handle withHandle />
     <Resizable.Pane defaultSize={1} minSize={10}>
-      <div class="w-full whitespace-pre-wrap font-mono"></div>
+      <MessagePane {logger} />
     </Resizable.Pane>
   </Resizable.PaneGroup>
 </div>

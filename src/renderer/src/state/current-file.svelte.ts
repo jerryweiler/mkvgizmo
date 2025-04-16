@@ -1,4 +1,5 @@
 import { getCurrentDirectory } from "./current-directory.svelte";
+import { logger } from "./logger.svelte";
 import type { StreamDetails } from "./navigation-items.svelte";
 import { FileAudio, FileQuestion, FileText, FileVideo } from "@lucide/svelte";
 
@@ -79,12 +80,26 @@ export async function setCurrentFile(filename: string): Promise<void> {
     getCurrentFile(),
   );
 
-  const streams = JSON.parse(details);
-  currentFile.streams = streams.streams.map(extractStreamDetails);
+  if (details.errorMessage) {
+    logger.messages.push(`Error loading details for file ${filename}:`);
+    for (const line of details.errorMessage.split("\r\n")) {
+      if (line) {
+        logger.messages.push(line);
+      }
+    }
+  }
 
-  // getMkvDetails returns JSON in a minimized, hard to read format.
-  // re-generate a more readable version for the RAW display
-  currentFile.details = JSON.stringify(streams, null, 2);
+  if (details.rawDetails) {
+    const streams = JSON.parse(details.rawDetails);
+    currentFile.streams = streams.streams.map(extractStreamDetails);
+
+    // getMkvDetails returns JSON in a minimized, hard to read format.
+    // re-generate a more readable version for the RAW display
+    currentFile.details = JSON.stringify(streams, null, 2);
+  } else {
+    currentFile.streams = [];
+    currentFile.details = [];
+  }
 }
 
 export function clearCurrentFile(): void {

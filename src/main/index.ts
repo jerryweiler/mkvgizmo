@@ -4,7 +4,11 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
-import { GizmoConfig, ScanDirectoryResult } from "../preload";
+import {
+  GetMkvDetailsResult,
+  GizmoConfig,
+  ScanDirectoryResult,
+} from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
 import { getMkvDetails } from "./mkvApis";
 
@@ -70,13 +74,13 @@ app.whenReady().then(() => {
   );
   ipcMain.handle(
     "getMkvDetails",
-    (_, directory: string, filename: string): Promise<string> =>
+    (_, directory: string, filename: string): Promise<GetMkvDetailsResult> =>
       getMkvDetails(directory, filename),
   );
   ipcMain.handle("config:load", loadConfig);
   ipcMain.handle(
     "config:save",
-    (_, update: GizmoConfig): Promise<boolean> => saveConfig(update),
+    (_, update: GizmoConfig): Promise<SaveConfigResult> => saveConfig(update),
   );
 
   createWindow();

@@ -1,7 +1,7 @@
 import { app } from "electron";
 import { readFile, stat, writeFile } from "fs/promises";
 import path from "path";
-import { GizmoConfig } from "../preload";
+import { GizmoConfig, SaveConfigResult } from "../preload";
 
 // cache of config data for runtime use
 export let config: GizmoConfig = {};
@@ -21,9 +21,11 @@ function getUserDataFileName(): string {
  * not present in the update parameter. This can cause loss of values if an old version
  * updates over a newer version, or a client sends a config with only some values filled in.
  * @param {GizmoConfig} update - config object containing the directory with ffmpeg binaries, starting directory, etc.
- * @returns {Promise<boolean>} - true if save was successful, false if there was a failure
+ * @returns {Promise<SaveConfigResult>} - true if save was successful, false if there was a failure
  */
-export async function saveConfig(update: GizmoConfig): Promise<boolean> {
+export async function saveConfig(
+  update: GizmoConfig,
+): Promise<SaveConfigResult> {
   // verify the proposed directory
   // check for ffmpeg.exe and ffprobe.exe
   async function checkFile(filename: string): Promise<boolean> {
@@ -39,7 +41,10 @@ export async function saveConfig(update: GizmoConfig): Promise<boolean> {
   }
 
   if (!update.ffmpegPath) {
-    return false;
+    return {
+      success: false,
+      errorMessage: "Path for ffmpeg.exe/ffprobe.exe missing",
+    };
   }
 
   // If the caller passed an ffmpeg path with the executable name included,
@@ -48,8 +53,17 @@ export async function saveConfig(update: GizmoConfig): Promise<boolean> {
     update.ffmpegPath = path.dirname(update.ffmpegPath);
   }
 
-  if (!(await checkFile("ffmpeg.exe")) || !(await checkFile("ffprobe.exe"))) {
-    return false;
+  if (!(await checkFile("ffmpeg.exe"))) {
+    return {
+      success: false,
+      errorMessage: "ffmpeg.exe was not found at the specified path",
+    };
+  }
+  if (!(await checkFile("ffprobe.exe"))) {
+    return {
+      success: false,
+      errorMessage: "ffprobe.exe was not found at the specified path",
+    };
   }
 
   // write file
@@ -57,9 +71,14 @@ export async function saveConfig(update: GizmoConfig): Promise<boolean> {
     const userData = JSON.stringify(update);
     await writeFile(getUserDataFileName(), userData, { encoding: "utf8" });
     config = update;
-    return true;
+    return {
+      success: true,
+    };
   } catch {
-    return false;
+    return {
+      success: false,
+      errorMessage: `Failed to write config to destination file ${getUserDataFileName()}`,
+    };
   }
 }
 

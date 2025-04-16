@@ -1,6 +1,8 @@
 import { FileVideo, Folder } from "@lucide/svelte";
 import { navItems, type NavItem } from "./navigation-items.svelte";
 import { clearCurrentFile } from "./current-file.svelte";
+import { getFfmpegPath } from "./config.svelte";
+import { logger } from "./logger.svelte";
 
 const directory = $state({ selected: undefined });
 
@@ -9,6 +11,14 @@ export function getCurrentDirectory(): string {
 }
 
 export async function setCurrentDirectory(cwd: string): Promise<void> {
+  logger.messages = [];
+  if (!getFfmpegPath()) {
+    logger.messages.push("No ffmpeg/ffprobe path configured.");
+  }
+  if (!cwd) {
+    logger.messages.push("No directory configured.");
+  }
+
   if (!cwd) return;
 
   const scanResults = await window.api.scanDirectory(cwd);

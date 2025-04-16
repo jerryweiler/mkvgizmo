@@ -2,6 +2,7 @@ import { ElectronAPI } from "@electron-toolkit/preload";
 
 declare global {
   type ScanDirectoryResult = {
+    errorMessage?: string;
     directories: string[];
     files: string[];
   };
@@ -10,6 +11,16 @@ declare global {
     ffmpegPath?: string;
     startingPath?: string;
   };
+
+  type SaveConfigResult = {
+    success: boolean;
+    errorMessage?: string;
+  };
+
+  type GetMkvDetailsResult = {
+    errorMessage?: string;
+    rawDetails: string;
+  };
 }
 
 interface API {
@@ -17,8 +28,11 @@ interface API {
   scanDirectory(directory: string): Promise<ScanDirectoryResult>;
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
-  saveConfig(update: GizmoConfig): Promise<boolean>;
-  getMkvDetails(directory: string, filename: string): Promise<string>;
+  saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
+  getMkvDetails(
+    directory: string,
+    filename: string,
+  ): Promise<GetMkvDetailsResult>;
 }
 
 declare global {
