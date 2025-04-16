@@ -1,6 +1,3 @@
-/*
-TODO: for some reason this doesn't work. figure out why
-
 export class Logger {
   add(message: string): void {
     this.messages.push(message);
@@ -10,10 +7,7 @@ export class Logger {
     this.messages = [];
   }
 
-  messages: string[] = [];
+  messages: string[] = $state([]);
 }
 
-export const logger: Logger = $state(new Logger());
-*/
-
-export const logger: { messages: string[] } = $state({ messages: [] });
+export const logger = new Logger();

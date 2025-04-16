@@ -1,7 +1,8 @@
 <script lang="ts">
   import { ScrollArea } from "$lib/components/ui/scroll-area";
+  import type { Logger } from "./state/logger.svelte";
 
-  export let logger: { messages: string[] };
+  export let logger: Logger;
 </script>
 
 <div class=" flex w-full h-full font-mono">

@@ -1,5 +1,4 @@
 * BUG: Metadata propeties derived from tags should be optional
-* BUG: logger doesn't work when implemented as a class (not reactive). figure out why?
 
 * TESTS: WRITE SOME!
 some ideas for validation of things I've had to fix over various versions:

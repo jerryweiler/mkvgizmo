@@ -81,10 +81,10 @@ export async function setCurrentFile(filename: string): Promise<void> {
   );
 
   if (details.errorMessage) {
-    logger.messages.push(`Error loading details for file ${filename}:`);
+    logger.add(`Error loading details for file ${filename}:`);
     for (const line of details.errorMessage.split("\r\n")) {
       if (line) {
-        logger.messages.push(line);
+        logger.add(line);
       }
     }
   }

@@ -11,12 +11,12 @@ export function getCurrentDirectory(): string {
 }
 
 export async function setCurrentDirectory(cwd: string): Promise<void> {
-  logger.messages = [];
+  logger.clear();
   if (!getFfmpegPath()) {
-    logger.messages.push("No ffmpeg/ffprobe path configured.");
+    logger.add("No ffmpeg/ffprobe path configured.");
   }
   if (!cwd) {
-    logger.messages.push("No directory configured.");
+    logger.add("No directory configured.");
   }
 
   if (!cwd) return;
