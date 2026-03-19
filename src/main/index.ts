@@ -11,7 +11,7 @@ import {
   ScanDirectoryResult,
 } from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
-import { getStreamList } from "./mkvApis";
+import { getStreamList } from "./metadataApis";
 
 function createWindow(): void {
   // Create the browser window.
