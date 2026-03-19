@@ -1,12 +1,12 @@
 import path from "path";
 import { spawn } from "child_process";
 import { config } from "./configApis";
-import { GetMkvDetailsResult } from "../preload";
+import { GetStreamListResult } from "../preload";
 
-export async function getMkvDetails(
+export async function getStreamList(
   directory: string,
   filename: string,
-): Promise<GetMkvDetailsResult> {
+): Promise<GetStreamListResult> {
   if (!config.ffmpegPath) {
     return { rawDetails: "", errorMessage: "No path configured for ffprobe" };
   }
@@ -19,6 +19,10 @@ export async function getMkvDetails(
   const process = spawn(ffprobepath, [
     "-loglevel",
     "warning",
+    "-analyzeduration",
+    "10000000",
+    "-probesize",
+    "10000000",
     "-show_streams",
     "-output_format",
     "json",

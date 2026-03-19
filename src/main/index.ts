@@ -5,12 +5,13 @@ import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
 import {
-  GetMkvDetailsResult,
+  GetStreamListResult,
   GizmoConfig,
+  SaveConfigResult,
   ScanDirectoryResult,
 } from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
-import { getMkvDetails } from "./mkvApis";
+import { getStreamList } from "./mkvApis";
 
 function createWindow(): void {
   // Create the browser window.
@@ -73,9 +74,9 @@ app.whenReady().then(() => {
       joinPaths(basePath, relativePath),
   );
   ipcMain.handle(
-    "getMkvDetails",
-    (_, directory: string, filename: string): Promise<GetMkvDetailsResult> =>
-      getMkvDetails(directory, filename),
+    "getStreamList",
+    (_, directory: string, filename: string): Promise<GetStreamListResult> =>
+      getStreamList(directory, filename),
   );
   ipcMain.handle("config:load", loadConfig);
   ipcMain.handle(

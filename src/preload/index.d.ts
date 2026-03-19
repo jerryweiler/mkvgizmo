@@ -17,7 +17,7 @@ declare global {
     errorMessage?: string;
   };
 
-  type GetMkvDetailsResult = {
+  type GetStreamListResult = {
     errorMessage?: string;
     rawDetails: string;
   };
@@ -29,10 +29,10 @@ interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
-  getMkvDetails(
+  getStreamList(
     directory: string,
     filename: string,
-  ): Promise<GetMkvDetailsResult>;
+  ): Promise<GetStreamListResult>;
 }
 
 declare global {

@@ -17,7 +17,7 @@ export type SaveConfigResult = {
   errorMessage?: string;
 };
 
-export type GetMkvDetailsResult = {
+export type GetStreamListResult = {
   errorMessage?: string;
   rawDetails: string;
 };
@@ -28,10 +28,10 @@ export interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
-  getMkvDetails(
+  getStreamList(
     directory: string,
     filename: string,
-  ): Promise<GetMkvDetailsResult>;
+  ): Promise<GetStreamListResult>;
 }
 
 // Custom APIs for renderer
@@ -42,8 +42,8 @@ const api: API = {
     ipcRenderer.invoke("joinPaths", basePath, relativePath),
   loadConfig: () => ipcRenderer.invoke("config:load"),
   saveConfig: (update) => ipcRenderer.invoke("config:save", update),
-  getMkvDetails: (directory, filename) =>
-    ipcRenderer.invoke("getMkvDetails", directory, filename),
+  getStreamList: (directory, filename) =>
+    ipcRenderer.invoke("getStreamList", directory, filename),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

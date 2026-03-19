@@ -75,7 +75,7 @@ export function getFileStreams(): StreamDetails[] {
 export async function setCurrentFile(filename: string): Promise<void> {
   currentFile.name = filename;
 
-  const details = await window.api.getMkvDetails(
+  const details = await window.api.getStreamList(
     getCurrentDirectory(),
     getCurrentFile(),
   );
@@ -93,7 +93,7 @@ export async function setCurrentFile(filename: string): Promise<void> {
     const streams = JSON.parse(details.rawDetails);
     currentFile.streams = streams.streams.map(extractStreamDetails);
 
-    // getMkvDetails returns JSON in a minimized, hard to read format.
+    // getStreamList returns JSON in a minimized, hard to read format.
     // re-generate a more readable version for the RAW display
     currentFile.details = JSON.stringify(streams, null, 2);
   } else {
