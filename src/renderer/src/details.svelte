@@ -3,7 +3,7 @@
   import CurrentFile from "./current-file.svelte";
   import type { StreamDetails } from "./state/navigation-items.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
-  import { getFileDetails } from "./state/current-file.svelte";
+  import { getFileDetails, getKeyFrames } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
   import { FileAudio, FileText, FileVideo } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
@@ -33,9 +33,16 @@
       <CurrentFile />
     </div>
     <div class="flex w-full">
-      <Tabs.List class="m-2 grid grid-cols-2 w-full grow-1">
+      <Tabs.List class="m-2 grid auto-cols-fr grid-flow-col w-full grow-1">
         <Tabs.Trigger value="details">Details</Tabs.Trigger>
         <Tabs.Trigger value="raw">Raw</Tabs.Trigger>
+        {#each currentFileStreams as stream}
+          {#if displayVideo && stream.type === "video"}
+            <Tabs.Trigger value={stream.id.toString()}>
+              {`Video ${stream.id}`}
+            </Tabs.Trigger>
+          {/if}
+        {/each}
       </Tabs.List>
       <Toggle
         variant="outline"
@@ -78,6 +85,15 @@
           {getFileDetails()}
         </div>
       </Tabs.Content>
+      {#each currentFileStreams as stream}
+        {#if displayVideo && stream.type === "video"}
+          <Tabs.Content value={stream.id.toString()}>
+            <div class="w-full whitespace-pre-wrap font-mono">
+              {getKeyFrames(stream.id)}
+            </div>
+          </Tabs.Content>
+        {/if}
+      {/each}
     </ScrollArea>
   </div>
 </Tabs.Root>

@@ -22,6 +22,12 @@ export type GetStreamListResult = {
   rawDetails: string;
 };
 
+export type GetKeyFrameListResult = {
+  errorMessage?: string;
+  rawDetails: string;
+  timestamps: number[];
+};
+
 export interface API {
   chooseDirectory(): Promise<string | undefined>;
   scanDirectory(directory: string): Promise<ScanDirectoryResult>;
@@ -32,6 +38,11 @@ export interface API {
     directory: string,
     filename: string,
   ): Promise<GetStreamListResult>;
+  getKeyFrameList(
+    directory: string,
+    filename: string,
+    streamId: number,
+  ): Promise<GetKeyFrameListResult>;
 }
 
 // Custom APIs for renderer
@@ -44,6 +55,8 @@ const api: API = {
   saveConfig: (update) => ipcRenderer.invoke("config:save", update),
   getStreamList: (directory, filename) =>
     ipcRenderer.invoke("getStreamList", directory, filename),
+  getKeyFrameList: (directory, filename, streamId) =>
+    ipcRenderer.invoke("getKeyFrameList", directory, filename, streamId),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

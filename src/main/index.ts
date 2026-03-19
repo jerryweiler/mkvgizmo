@@ -6,12 +6,13 @@ import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
 import {
   GetStreamListResult,
+  GetKeyFrameListResult,
   GizmoConfig,
   SaveConfigResult,
   ScanDirectoryResult,
 } from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
-import { getStreamList } from "./metadataApis";
+import { getStreamList, getKeyFrameList } from "./metadataApis";
 
 function createWindow(): void {
   // Create the browser window.
@@ -77,6 +78,11 @@ app.whenReady().then(() => {
     "getStreamList",
     (_, directory: string, filename: string): Promise<GetStreamListResult> =>
       getStreamList(directory, filename),
+  );
+  ipcMain.handle(
+    "getKeyFrameList",
+    (_, directory: string, filename: string, streamId: number): Promise<GetKeyFrameListResult> =>
+      getKeyFrameList(directory, filename, streamId),
   );
   ipcMain.handle("config:load", loadConfig);
   ipcMain.handle(

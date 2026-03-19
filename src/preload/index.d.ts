@@ -21,6 +21,12 @@ declare global {
     errorMessage?: string;
     rawDetails: string;
   };
+
+  type GetKeyFrameListResult = {
+    errorMessage?: string;
+    rawDetails: string;
+    timestamps: number[];
+  };
 }
 
 interface API {
@@ -33,6 +39,11 @@ interface API {
     directory: string,
     filename: string,
   ): Promise<GetStreamListResult>;
+  getKeyFrameList(
+    directory: string,
+    filename: string,
+    streamId: number,
+  ): Promise<GetKeyFrameListResult>;
 }
 
 declare global {

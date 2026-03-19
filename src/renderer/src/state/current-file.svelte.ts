@@ -72,6 +72,10 @@ export function getFileStreams(): StreamDetails[] {
   return currentFile.streams;
 }
 
+export function getKeyFrames(streamId: number): string | undefined {
+  return currentFile.streams.find(e => e.id === streamId)?.rawKeyFrames;
+}
+
 export async function setCurrentFile(filename: string): Promise<void> {
   currentFile.name = filename;
 
@@ -99,6 +103,27 @@ export async function setCurrentFile(filename: string): Promise<void> {
   } else {
     currentFile.streams = [];
     currentFile.details = [];
+  }
+
+  for (const stream of currentFile.streams) {
+    if (stream.type !== "video") continue;
+
+    const keyFrameDetails = await window.api.getKeyFrameList(
+      getCurrentDirectory(),
+      getCurrentFile(),
+      stream.id
+    );
+
+    if (keyFrameDetails.errorMessage) {
+      logger.add(`Error loading keyframe details for file ${filename} stream ${stream.id}:`);
+      for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
+        if (line) {
+          logger.add(line);
+        }
+      }
+    }
+
+    stream.rawKeyFrames = keyFrameDetails.rawDetails;
   }
 }
 

@@ -1,7 +1,7 @@
 import path from "path";
-import { spawn } from "child_process";
 import { config } from "./configApis";
-import { GetStreamListResult } from "../preload";
+import { GetStreamListResult, GetKeyFrameListResult } from "../preload";
+import { runTextProcess } from "./processUtils";
 
 export async function getStreamList(
   directory: string,
@@ -12,11 +12,11 @@ export async function getStreamList(
   }
 
   // Generate the pathnames for the executable and target file.
-  // Escape secial characters.
+  // Escape special characters.
   const filepath = path.join(directory, filename);
   const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
-  const process = spawn(ffprobepath, [
+  const result = await runTextProcess(ffprobepath, [
     "-loglevel",
     "warning",
     "-analyzeduration",
@@ -29,15 +29,40 @@ export async function getStreamList(
     filepath,
   ]);
 
-  let error = "";
-  for await (const chunk of process.stderr) {
-    error += chunk;
+  return { rawDetails: result.output, errorMessage: result.errorMessage };
+}
+
+export async function getKeyFrameList(
+  directory: string,
+  filename: string,
+  streamId: number,
+): Promise<GetKeyFrameListResult> {
+  if (!config.ffmpegPath) {
+    return { rawDetails: "", timestamps: [], errorMessage: "No path configured for ffprobe" };
   }
 
-  let output = "";
-  for await (const chunk of process.stdout) {
-    output += chunk;
-  }
+  // Generate the pathnames for the executable and target file.
+  // Escape special characters.
+  const filepath = path.join(directory, filename);
+  const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
-  return { rawDetails: output, errorMessage: error };
+  const result = await runTextProcess(ffprobepath, [
+    "-loglevel",
+    "warning",
+    "-analyzeduration",
+    "10000000",
+    "-probesize",
+    "10000000",
+    "-select_streams",
+    `v:${streamId}`,
+    "-show_entries",
+    "packet=pts_time,flags",
+    "-fflags",
+    "+genpts",
+    "-output_format",
+    "json",
+    filepath,
+  ]);
+
+  return { rawDetails: result.output, timestamps: [], errorMessage: result.errorMessage };
 }

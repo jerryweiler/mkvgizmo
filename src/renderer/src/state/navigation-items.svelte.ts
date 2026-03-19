@@ -17,6 +17,8 @@ export type StreamDetails = {
   dimensions?: string;
   channels?: number;
   icon: typeof IconType;
+  rawKeyFrames?: string;
+  keyFrames?: number[];
 };
 
 export const navItems: { items: NavItem[] } = $state({ items: [] });
