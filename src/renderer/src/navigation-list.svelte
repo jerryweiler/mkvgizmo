@@ -30,7 +30,7 @@
               if (item.isDirectory) {
                 await changeCurrentDirectory(item.name);
               } else {
-                setCurrentFile(item.name);
+                setCurrentFile(item.name, item.handle);
               }
             }}
             title={item.name}

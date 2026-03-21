@@ -1,14 +1,15 @@
-import { getCurrentDirectory } from "./current-directory.svelte";
 import { logger } from "./logger.svelte";
 import type { StreamDetails } from "./navigation-items.svelte";
 import { FileAudio, FileQuestion, FileText, FileVideo } from "@lucide/svelte";
 
 const currentFile: {
   name?: string;
+  handle?: number;
   details?: string;
   streams: StreamDetails[]
 } = $state({
   name: undefined,
+  handle: undefined,
   details: undefined,
   streams: [],
 });
@@ -76,13 +77,15 @@ export function getFileStreams(): StreamDetails[] {
   return currentFile.streams;
 }
 
-export async function setCurrentFile(filename: string): Promise<void> {
-  currentFile.name = filename;
+export function getCurrentHandle(): number | undefined {
+  return currentFile.handle;
+}
 
-  const details = await window.api.getStreamList(
-    getCurrentDirectory(),
-    getCurrentFile(),
-  );
+export async function setCurrentFile(filename: string, handle: number): Promise<void> {
+  currentFile.name = filename;
+  currentFile.handle = handle;
+
+  const details = await window.api.getStreamList(handle);
 
   if (details.errorMessage) {
     logger.add(`Error loading details for file ${filename}:`);
@@ -109,8 +112,7 @@ export async function setCurrentFile(filename: string): Promise<void> {
     if (stream.type !== "video") continue;
 
     const keyFrameDetails = await window.api.getKeyFrameList(
-      getCurrentDirectory(),
-      getCurrentFile(),
+      handle,
       stream.id
     );
 
@@ -130,6 +132,7 @@ export async function setCurrentFile(filename: string): Promise<void> {
 
 export function clearCurrentFile(): void {
   currentFile.name = undefined;
+  currentFile.handle = undefined;
   currentFile.details = undefined;
   currentFile.streams = [];
 }

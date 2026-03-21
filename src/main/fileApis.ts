@@ -2,6 +2,7 @@ import { dialog } from "electron";
 import { readdir } from "fs/promises";
 import path from "path";
 import type { ScanDirectoryResult } from "../preload";
+import { getFileHandle } from "./fileCache";
 
 export async function chooseDirectory(): Promise<string | undefined> {
   const result = await dialog.showOpenDialog({
@@ -25,7 +26,7 @@ export async function scanDirectory(
       files: files
         .filter((f) => !f.isDirectory())
         .filter((f) => path.extname(f.name) === ".mkv")
-        .map((f) => f.name),
+        .map((f) => { return { handle: getFileHandle(directory, f.name), name: f.name }}),
     };
 
     if (!atRoot) {

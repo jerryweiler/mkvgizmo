@@ -76,13 +76,13 @@ app.whenReady().then(() => {
   );
   ipcMain.handle(
     "getStreamList",
-    (_, directory: string, filename: string): Promise<GetStreamListResult> =>
-      getStreamList(directory, filename),
+    (_, handle: number): Promise<GetStreamListResult> =>
+      getStreamList(handle),
   );
   ipcMain.handle(
     "getKeyFrameList",
-    (_, directory: string, filename: string, streamId: number): Promise<GetKeyFrameListResult> =>
-      getKeyFrameList(directory, filename, streamId),
+    (_, handle: number, streamId: number): Promise<GetKeyFrameListResult> =>
+      getKeyFrameList(handle, streamId),
   );
   ipcMain.handle("config:load", loadConfig);
   ipcMain.handle(

@@ -4,7 +4,7 @@ import { electronAPI } from "@electron-toolkit/preload";
 export type ScanDirectoryResult = {
   errorMessage?: string;
   directories: string[];
-  files: string[];
+  files: { handle: number, name: string }[];
 };
 
 export type GizmoConfig = {
@@ -34,15 +34,8 @@ export interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
-  getStreamList(
-    directory: string,
-    filename: string,
-  ): Promise<GetStreamListResult>;
-  getKeyFrameList(
-    directory: string,
-    filename: string,
-    streamId: number,
-  ): Promise<GetKeyFrameListResult>;
+  getStreamList(handle: number): Promise<GetStreamListResult>;
+  getKeyFrameList(handle: number, streamId: number): Promise<GetKeyFrameListResult>;
 }
 
 // Custom APIs for renderer
@@ -53,10 +46,9 @@ const api: API = {
     ipcRenderer.invoke("joinPaths", basePath, relativePath),
   loadConfig: () => ipcRenderer.invoke("config:load"),
   saveConfig: (update) => ipcRenderer.invoke("config:save", update),
-  getStreamList: (directory, filename) =>
-    ipcRenderer.invoke("getStreamList", directory, filename),
-  getKeyFrameList: (directory, filename, streamId) =>
-    ipcRenderer.invoke("getKeyFrameList", directory, filename, streamId),
+  getStreamList: (handle) => ipcRenderer.invoke("getStreamList", handle),
+  getKeyFrameList: (handle, streamId) =>
+    ipcRenderer.invoke("getKeyFrameList", handle, streamId),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

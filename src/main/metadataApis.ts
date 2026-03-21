@@ -2,6 +2,7 @@ import path from "path";
 import { config } from "./configApis";
 import { GetStreamListResult, GetKeyFrameListResult } from "../preload";
 import { runTextProcess } from "./processUtils";
+import { getFileDetails } from "./fileCache";
 
 type packet = {
   pts_time: string;
@@ -12,17 +13,14 @@ type ffprobeFrameResult = {
   packets: packet[];
 };
 
-export async function getStreamList(
-  directory: string,
-  filename: string,
-): Promise<GetStreamListResult> {
+export async function getStreamList(handle: number): Promise<GetStreamListResult> {
   if (!config.ffmpegPath) {
     return { rawDetails: "", errorMessage: "No path configured for ffprobe" };
   }
 
   // Generate the pathnames for the executable and target file.
   // Escape special characters.
-  const filepath = path.join(directory, filename);
+  const filepath = getFileDetails(handle).path;
   const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
   const result = await runTextProcess(ffprobepath, [
@@ -42,8 +40,7 @@ export async function getStreamList(
 }
 
 export async function getKeyFrameList(
-  directory: string,
-  filename: string,
+  handle: number,
   streamId: number,
 ): Promise<GetKeyFrameListResult> {
   if (!config.ffmpegPath) {
@@ -52,7 +49,7 @@ export async function getKeyFrameList(
 
   // Generate the pathnames for the executable and target file.
   // Escape special characters.
-  const filepath = path.join(directory, filename);
+  const filepath = getFileDetails(handle).path;
   const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
   const result = await runTextProcess(ffprobepath, [

@@ -32,8 +32,9 @@ export async function setCurrentDirectory(cwd: string): Promise<void> {
       icon: Folder,
       details: [],
     })),
-    ...scanResults.files.map((dir) => ({
-      name: dir,
+    ...scanResults.files.map((file) => ({
+      name: file.name,
+      handle: file.handle,
       isDirectory: false,
       icon: FileVideo,
       details: [],

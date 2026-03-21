@@ -2,6 +2,7 @@ import { type Icon as IconType } from "@lucide/svelte";
 
 export type NavItem = {
   name: string;
+  handle?: number;
   isDirectory: boolean;
   icon: typeof IconType;
   details: StreamDetails[];

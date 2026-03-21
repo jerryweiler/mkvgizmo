@@ -4,7 +4,7 @@ declare global {
   type ScanDirectoryResult = {
     errorMessage?: string;
     directories: string[];
-    files: string[];
+    files: { handle: number, name: string }[];
   };
 
   type GizmoConfig = {
@@ -35,15 +35,8 @@ interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
-  getStreamList(
-    directory: string,
-    filename: string,
-  ): Promise<GetStreamListResult>;
-  getKeyFrameList(
-    directory: string,
-    filename: string,
-    streamId: number,
-  ): Promise<GetKeyFrameListResult>;
+  getStreamList(handle: number): Promise<GetStreamListResult>;
+  getKeyFrameList(handle: number, streamId: number): Promise<GetKeyFrameListResult>;
 }
 
 declare global {
