@@ -3,7 +3,11 @@ import { logger } from "./logger.svelte";
 import type { StreamDetails } from "./navigation-items.svelte";
 import { FileAudio, FileQuestion, FileText, FileVideo } from "@lucide/svelte";
 
-const currentFile = $state({
+const currentFile: {
+  name?: string;
+  details?: string;
+  streams: StreamDetails[]
+} = $state({
   name: undefined,
   details: undefined,
   streams: [],
@@ -72,10 +76,6 @@ export function getFileStreams(): StreamDetails[] {
   return currentFile.streams;
 }
 
-export function getKeyFrames(streamId: number): string | undefined {
-  return currentFile.streams.find(e => e.id === streamId)?.rawKeyFrames;
-}
-
 export async function setCurrentFile(filename: string): Promise<void> {
   currentFile.name = filename;
 
@@ -102,7 +102,7 @@ export async function setCurrentFile(filename: string): Promise<void> {
     currentFile.details = JSON.stringify(streams, null, 2);
   } else {
     currentFile.streams = [];
-    currentFile.details = [];
+    currentFile.details = "";
   }
 
   for (const stream of currentFile.streams) {
@@ -124,6 +124,7 @@ export async function setCurrentFile(filename: string): Promise<void> {
     }
 
     stream.rawKeyFrames = keyFrameDetails.rawDetails;
+    stream.keyFrames = keyFrameDetails.timestamps;
   }
 }
 

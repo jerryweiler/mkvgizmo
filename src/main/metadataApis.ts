@@ -3,6 +3,15 @@ import { config } from "./configApis";
 import { GetStreamListResult, GetKeyFrameListResult } from "../preload";
 import { runTextProcess } from "./processUtils";
 
+type packet = {
+  pts_time: string;
+  flags: string;
+};
+
+type ffprobeFrameResult = {
+  packets: packet[];
+};
+
 export async function getStreamList(
   directory: string,
   filename: string,
@@ -64,5 +73,14 @@ export async function getKeyFrameList(
     filepath,
   ]);
 
-  return { rawDetails: result.output, timestamps: [], errorMessage: result.errorMessage };
+  let timestamps: number[] = [];
+  if (result.output) {
+    const details = JSON.parse(result.output) as ffprobeFrameResult;
+    timestamps = details.packets
+      .filter(p => p.flags.includes("K"))
+      .map(p => Number(p.pts_time))
+      .sort((a, b) => a - b);
+  }
+
+  return { rawDetails: result.output, timestamps, errorMessage: result.errorMessage };
 }

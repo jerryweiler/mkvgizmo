@@ -3,15 +3,20 @@
   import CurrentFile from "./current-file.svelte";
   import type { StreamDetails } from "./state/navigation-items.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
-  import { getFileDetails, getKeyFrames } from "./state/current-file.svelte";
+  import { getFileDetails } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
   import { FileAudio, FileText, FileVideo } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
+  import StreamKeyFrame from "./stream-key-frame.svelte";
 
   export let currentFileStreams: StreamDetails[];
   export let displayVideo: boolean = true;
   export let displayAudio: boolean = true;
   export let displaySubtitles: boolean = true;
+
+  function multipleVideoStreams(): boolean {
+    return currentFileStreams.filter((s) => s.type === "video").length > 1;
+  }
 
   function shouldDisplayStream(stream: StreamDetails): boolean {
     switch (stream.type) {
@@ -39,7 +44,7 @@
         {#each currentFileStreams as stream}
           {#if displayVideo && stream.type === "video"}
             <Tabs.Trigger value={stream.id.toString()}>
-              {`Video ${stream.id}`}
+              {`KeyFrames ${multipleVideoStreams() ? stream.id.toString() : ""}`}
             </Tabs.Trigger>
           {/if}
         {/each}
@@ -88,8 +93,10 @@
       {#each currentFileStreams as stream}
         {#if displayVideo && stream.type === "video"}
           <Tabs.Content value={stream.id.toString()}>
-            <div class="w-full whitespace-pre-wrap font-mono">
-              {getKeyFrames(stream.id)}
+            <div class="flex flex-col gap-2 pt-0">
+              {#each stream.keyFrames as pts_time}
+                <StreamKeyFrame {pts_time} />
+              {/each}
             </div>
           </Tabs.Content>
         {/if}
