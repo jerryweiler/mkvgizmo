@@ -1,8 +1,8 @@
 import path from "path";
 import { config } from "./configApis";
 import { GetStreamListResult, GetKeyFrameListResult } from "../preload";
-import { runTextProcess } from "./processUtils";
 import { getFileDetails } from "./fileCache";
+import { runProcess } from "./processUtils";
 
 type packet = {
   pts_time: string;
@@ -23,7 +23,7 @@ export async function getStreamList(handle: number): Promise<GetStreamListResult
   const filepath = getFileDetails(handle).path;
   const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
-  const result = await runTextProcess(ffprobepath, [
+  const result = await runProcess(ffprobepath, [
     "-loglevel",
     "warning",
     "-analyzeduration",
@@ -36,7 +36,7 @@ export async function getStreamList(handle: number): Promise<GetStreamListResult
     filepath,
   ]);
 
-  return { rawDetails: result.output, errorMessage: result.errorMessage };
+  return { rawDetails: result.output.toString(), errorMessage: result.errorMessage };
 }
 
 export async function getKeyFrameList(
@@ -52,7 +52,7 @@ export async function getKeyFrameList(
   const filepath = getFileDetails(handle).path;
   const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
-  const result = await runTextProcess(ffprobepath, [
+  const result = await runProcess(ffprobepath, [
     "-loglevel",
     "warning",
     "-analyzeduration",
@@ -72,12 +72,12 @@ export async function getKeyFrameList(
 
   let timestamps: number[] = [];
   if (result.output) {
-    const details = JSON.parse(result.output) as ffprobeFrameResult;
+    const details = JSON.parse(result.output.toString()) as ffprobeFrameResult;
     timestamps = details.packets
       .filter(p => p.flags.includes("K"))
       .map(p => Number(p.pts_time))
       .sort((a, b) => a - b);
   }
 
-  return { rawDetails: result.output, timestamps, errorMessage: result.errorMessage };
+  return { rawDetails: result.output.toString(), timestamps, errorMessage: result.errorMessage };
 }

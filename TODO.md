@@ -12,6 +12,7 @@ some ideas for validation of things I've had to fix over various versions:
 * TEST IPC: Verify that errors from 'save config' are returned properly. eg: directory doesn't contain ffmpeg or doesn't exist
 * TEST IPC: Verify that errors from getStreamList are returned properly. eg: file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
 
+* FEATURE: throttle loading of key frame screenshots
 * FEATURE: Add multi-select for files. If multiple files can be selected, should the stream details include the stream detail cards? or should there be a group header with each group?
 * FEATURE: Add preview for subtitles (textarea, like the raw details).
 * FEATURE: Add playback where the user can select which streams to use

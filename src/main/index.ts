@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
+import { app, shell, BrowserWindow, ipcMain, protocol } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
@@ -13,6 +13,7 @@ import {
 } from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
 import { getStreamList, getKeyFrameList } from "./metadataApis";
+import { captureFrame } from "./frame";
 
 function createWindow(): void {
   // Create the browser window.
@@ -52,6 +53,8 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  protocol.handle("frame", captureFrame);
+
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");
 
