@@ -2,7 +2,7 @@
   import { Film } from "@lucide/svelte";
   import { getContext, onMount } from "svelte";
 
-  let img;
+  let img: HTMLImageElement;
 
   export let handle: number;
   export let streamid: number;
@@ -15,6 +15,8 @@
 
       if (entry.isIntersecting) {
         observer.unobserve(img);
+        img.width = 160;
+        img.height = 120;
         img.src = img.dataset.src;
       }
     });
@@ -34,6 +36,8 @@
       <div class="flex items-center gap-2 font-semibold">
         <Film class="mr-2 size-4" aria-hidden="true" />
         {`${pts_time} seconds`}
+      </div>
+      <div class="ml-auto">
         <img
           bind:this={img}
           data-src={`frame://${handle}/${streamid}/${pts_time}`}
