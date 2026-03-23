@@ -11,6 +11,25 @@
   import { FileAudio, FileText, FileVideo } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
   import StreamKeyFrame from "./stream-key-frame.svelte";
+  import { setContext } from "svelte";
+
+  function observerCallback(
+    entries: IntersectionObserverEntry[],
+    observer: IntersectionObserver,
+  ): void {
+    for (let entry of entries) {
+      let event = new CustomEvent("visibility", {
+        detail: {
+          entry: entry,
+          observer: observer,
+        },
+      });
+      entry.target.dispatchEvent(event);
+    }
+  }
+
+  let observer = new IntersectionObserver(observerCallback);
+  setContext("visibility-observer", observer);
 
   export let currentFileStreams: StreamDetails[];
   export let displayVideo: boolean = true;

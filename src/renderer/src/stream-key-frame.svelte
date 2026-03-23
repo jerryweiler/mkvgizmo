@@ -1,9 +1,29 @@
 <script lang="ts">
   import { Film } from "@lucide/svelte";
+  import { getContext, onMount } from "svelte";
+
+  let img;
 
   export let handle: number;
   export let streamid: number;
   export let pts_time: number;
+
+  onMount(() => {
+    img.addEventListener("visibility", (e: CustomEvent) => {
+      let observer: IntersectionObserver = e.detail.observer;
+      let entry: IntersectionObserverEntry = e.detail.entry;
+
+      if (entry.isIntersecting) {
+        observer.unobserve(img);
+        img.src = img.dataset.src;
+      }
+    });
+
+    let observer = getContext("visibility-observer") as IntersectionObserver;
+    observer.observe(img);
+
+    return (): void => observer.unobserve(img);
+  });
 </script>
 
 <button
@@ -14,7 +34,11 @@
       <div class="flex items-center gap-2 font-semibold">
         <Film class="mr-2 size-4" aria-hidden="true" />
         {`${pts_time} seconds`}
-        <img src={`frame://${handle}/${streamid}/${pts_time}`} alt="keyframe" />
+        <img
+          bind:this={img}
+          data-src={`frame://${handle}/${streamid}/${pts_time}`}
+          alt="keyframe"
+        />
       </div>
     </div>
   </div>
