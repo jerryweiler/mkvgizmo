@@ -54,13 +54,13 @@
   }
 </script>
 
-<Tabs.Root class="h-full">
+<Tabs.Root class="h-full" value="details">
   <div class="grid grid-rows-[auto_auto_minmax(0,1fr)] w-full h-full">
     <div class="m-2">
       <CurrentFile />
     </div>
     <div class="flex w-full">
-      <Tabs.List class="m-2 grid auto-cols-fr grid-flow-col w-full grow-1">
+      <Tabs.List class="m-2 grid auto-cols-fr grid-flow-col w-full grow">
         <Tabs.Trigger value="details">Details</Tabs.Trigger>
         <Tabs.Trigger value="raw">Raw</Tabs.Trigger>
         {#each currentFileStreams as stream}
@@ -97,19 +97,23 @@
       </Toggle>
       <div class="mr-2"></div>
     </div>
-    <ScrollArea class="m-2">
+    <ScrollArea class="m-2 overflow-hidden">
       <Tabs.Content value="details">
         <div class="flex flex-col gap-2 pt-0">
-          {#each currentFileStreams as stream}
-            {#if shouldDisplayStream(stream)}
-              <StreamDetail {stream} />
-            {/if}
-          {/each}
+          {#key displayAudio && displaySubtitles && displayVideo}
+            {#each currentFileStreams as stream}
+              {#if shouldDisplayStream(stream)}
+                <StreamDetail {stream} />
+              {/if}
+            {/each}
+          {/key}
         </div>
       </Tabs.Content>
       <Tabs.Content value="raw">
         <div class="w-full whitespace-pre-wrap font-mono">
-          {getFileDetails()}
+          {#key currentFileStreams}
+            {getFileDetails()}
+          {/key}
         </div>
       </Tabs.Content>
       {#each currentFileStreams as stream}

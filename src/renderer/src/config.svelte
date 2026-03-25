@@ -29,7 +29,7 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
-    <Button on:click={(): void => openDialog()} title="Edit Config">
+    <Button onclick={(): void => openDialog()} title="Edit Config">
       <Settings class="size-4" aria-hidden="true" />
     </Button>
   </Dialog.Trigger>
@@ -49,7 +49,7 @@
         <Input id="ffmpeg" class="col-span-5" bind:value={ffmpegPath} />
         <Button
           variant="secondary"
-          on:click={async (): Promise<void> => {
+          onclick={async (): Promise<void> => {
             ffmpegPath = await window.api.chooseDirectory();
           }}
         >
@@ -60,7 +60,7 @@
         <Input id="startup" class="col-span-5" bind:value={startingPath} />
         <Button
           variant="secondary"
-          on:click={async (): Promise<void> => {
+          onclick={async (): Promise<void> => {
             startingPath = await window.api.chooseDirectory();
           }}
         >
@@ -69,7 +69,7 @@
       </div>
     </div>
     <Dialog.Footer>
-      <Button type="submit" on:click={(): Promise<void> => save()}>Save</Button>
+      <Button type="submit" onclick={(): Promise<void> => save()}>Save</Button>
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

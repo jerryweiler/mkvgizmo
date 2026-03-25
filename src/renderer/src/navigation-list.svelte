@@ -14,7 +14,7 @@
   <div class="m-2 grow-0">
     <CurrentDirectory />
   </div>
-  <ScrollArea class="p-2 grow-1">
+  <ScrollArea class="p-2 grow overflow-hidden">
     <div class="flex flex-col gap-4">
       <div class="grid gap-1">
         {#each navItems.items as item}
@@ -26,7 +26,7 @@
               "justify-start min-w-0 mr-1",
               item.name === getCurrentFile() && "bg-muted",
             )}
-            on:click={async (): Promise<void> => {
+            onclick={async (): Promise<void> => {
               if (item.isDirectory) {
                 await changeCurrentDirectory(item.name);
               } else {

@@ -8,7 +8,7 @@
 <div class="flex-none">
   <div class="m-1 py-1">
     <Button
-      on:click={async (): Promise<void> => {
+      onclick={async (): Promise<void> => {
         setCurrentDirectory(await window.api.chooseDirectory());
       }}
       title="Choose Directory"

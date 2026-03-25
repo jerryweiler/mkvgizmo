@@ -6,7 +6,7 @@
 </script>
 
 <div class=" flex w-full h-full font-mono">
-  <ScrollArea class="p-2 w-full grow-1">
+  <ScrollArea class="p-2 w-full grow overflow-hidden">
     {#each logger.messages as message}
       <span>{message}<br /></span>
     {/each}
