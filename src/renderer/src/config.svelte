@@ -10,9 +10,9 @@
     saveConfig,
   } from "./state/config.svelte";
 
-  let ffmpegPath;
-  let startingPath;
-  let open = false;
+  let ffmpegPath: string;
+  let startingPath: string;
+  let open: boolean = false;
 
   function openDialog(): void {
     ffmpegPath = getFfmpegPath();

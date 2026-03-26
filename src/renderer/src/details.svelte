@@ -8,7 +8,7 @@
     getFileDetails,
   } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
-  import { FileAudio, FileText, FileVideo } from "@lucide/svelte";
+  import { FileHeadphone, FileText, FilePlay } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
   import StreamKeyFrame from "./stream-key-frame.svelte";
   import { setContext } from "svelte";
@@ -77,7 +77,7 @@
         class="mx-1 my-2 grow-0"
         bind:pressed={displayVideo}
       >
-        <FileVideo class="size-4" aria-hidden="true" />
+        <FilePlay class="size-4" aria-hidden="true" />
       </Toggle>
       <Toggle
         variant="outline"
@@ -85,7 +85,7 @@
         class="mx-1 my-2 grow-0"
         bind:pressed={displayAudio}
       >
-        <FileAudio class="size-4" aria-hidden="true" />
+        <FileHeadphone class="size-4" aria-hidden="true" />
       </Toggle>
       <Toggle
         variant="outline"
