@@ -4,24 +4,20 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { Label } from "$lib/components/ui/label";
   import { FolderSearch, Settings } from "@lucide/svelte";
-  import {
-    getFfmpegPath,
-    getStartingPath,
-    saveConfig,
-  } from "./state/config.svelte";
+  import { config } from "./state/config.svelte";
 
   let ffmpegPath: string;
   let startingPath: string;
   let open: boolean = false;
 
   function openDialog(): void {
-    ffmpegPath = getFfmpegPath();
-    startingPath = getStartingPath();
+    ffmpegPath = config.ffmpegPath;
+    startingPath = config.startingPath;
     open = true;
   }
 
   async function save(): Promise<void> {
-    if (await saveConfig({ ffmpegPath, startingPath })) {
+    if (await config.update({ ffmpegPath, startingPath })) {
       open = false;
     }
   }

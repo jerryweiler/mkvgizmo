@@ -1,26 +1,29 @@
-import { setCurrentDirectory } from "./current-directory.svelte";
+export class Config {
+  #ffmpegPath: string = $state("");
+  #startingPath: string = $state("");
 
-const config = $state({ current: undefined });
-
-// load initial state
-config.current = await window.api.loadConfig();
-setCurrentDirectory(config.current.startingPath);
-
-export function getFfmpegPath(): string | undefined {
-  return config.current.ffmpegPath;
-}
-
-export function getStartingPath(): string | undefined {
-  return config.current.startingPath;
-}
-
-export async function saveConfig(update: GizmoConfig): Promise<boolean> {
-  const result = await window.api.saveConfig(update);
-  if (!result.success) {
-    alert(result.errorMessage);
-    return false;
+  constructor(config: GizmoConfig) {
+    this.#ffmpegPath = config.ffmpegPath;
+    this.#startingPath = config.startingPath;
   }
 
-  config.current = update;
-  return true;
+  get ffmpegPath() { return this.#ffmpegPath; }
+  get startingPath() { return this.#startingPath; }
+
+  async update(update: GizmoConfig): Promise<boolean> {
+    const result = await window.api.saveConfig(update);
+    if (!result.success) {
+      alert(result.errorMessage);
+      return false;
+    }
+
+    this.#ffmpegPath = update.ffmpegPath;
+    this.#startingPath = update.startingPath;
+
+    return true;
+  }
 }
+
+// load initial state
+const starting = await window.api.loadConfig();
+export const config = new Config(starting);

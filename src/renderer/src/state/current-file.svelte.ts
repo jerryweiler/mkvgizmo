@@ -1,6 +1,6 @@
 import { logger } from "./logger.svelte";
 import type { StreamDetails } from "./navigation-items.svelte";
-import { FileAudio, FileQuestion, FileText, FileVideo } from "@lucide/svelte";
+import { FileHeadphone, FileQuestionMark, FileText, FileVideoCamera } from "@lucide/svelte";
 
 const currentFile: {
   name?: string;
@@ -15,15 +15,15 @@ const currentFile: {
 });
 
 function extractStreamDetails(raw): StreamDetails {
-  let icon = FileQuestion;
+  let icon = FileQuestionMark;
   let language = "";
   switch (raw.codec_type) {
     case "audio":
-      icon = FileAudio;
+      icon = FileHeadphone;
       language = raw?.tags?.language;
       break;
     case "video":
-      icon = FileVideo;
+      icon = FileVideoCamera;
       break;
     case "subtitle":
       icon = FileText;

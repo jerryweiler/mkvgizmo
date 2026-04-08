@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { FolderSearch } from "@lucide/svelte";
-  import { setCurrentDirectory } from "./state/current-directory.svelte";
+  import { workingDir } from "./state/current-directory.svelte";
   import Config from "./config.svelte";
 </script>
 
@@ -9,7 +9,7 @@
   <div class="m-1 py-1">
     <Button
       onclick={async (): Promise<void> => {
-        setCurrentDirectory(await window.api.chooseDirectory());
+        workingDir.set(await window.api.chooseDirectory());
       }}
       title="Choose Directory"
     >

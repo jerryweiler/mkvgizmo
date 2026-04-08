@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import CurrentDirectory from "./current-directory.svelte";
-  import { changeCurrentDirectory } from "./state/current-directory.svelte";
+  import { workingDir } from "./state/current-directory.svelte";
   import type { NavItem } from "./state/navigation-items.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import { getCurrentFile, setCurrentFile } from "./state/current-file.svelte";
@@ -28,7 +28,7 @@
             )}
             onclick={async (): Promise<void> => {
               if (item.isDirectory) {
-                await changeCurrentDirectory(item.name);
+                await workingDir.navigate(item.name);
               } else {
                 setCurrentFile(item.name, item.handle);
               }
