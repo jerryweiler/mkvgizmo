@@ -3,7 +3,7 @@
   import * as Resizable from "$lib/components/ui/resizable";
   import Details from "./details.svelte";
   import ButtonStrip from "./button-strip.svelte";
-  import { getFileStreams } from "./state/current-file.svelte";
+  import { selectedFile } from "./state/current-file.svelte";
   import MessagePane from "./message-pane.svelte";
   import { logger } from "./state/logger.svelte";
 </script>
@@ -22,7 +22,7 @@
           </Resizable.Pane>
           <Resizable.Handle withHandle />
           <Resizable.Pane defaultSize={2} minSize={30}>
-            <Details currentFileStreams={getFileStreams()} />
+            <Details currentFileStreams={selectedFile.streams} />
           </Resizable.Pane>
         </Resizable.PaneGroup>
       </div>

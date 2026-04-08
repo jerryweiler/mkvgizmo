@@ -3,7 +3,7 @@
   import CurrentDirectory from "./current-directory.svelte";
   import { workingDir } from "./state/current-directory.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
-  import { getCurrentFile, setCurrentFile } from "./state/current-file.svelte";
+  import { selectedFile } from "./state/current-file.svelte";
   import { cn } from "$lib/utils";
 </script>
 
@@ -21,13 +21,13 @@
             size="sm"
             class={cn(
               "justify-start min-w-0 mr-1",
-              item.name === getCurrentFile() && "bg-muted",
+              item.name === selectedFile.name && "bg-muted",
             )}
             onclick={async (): Promise<void> => {
               if (item.isDirectory) {
                 await workingDir.navigate(item.name);
               } else {
-                setCurrentFile(item.name, item.handle);
+                selectedFile.set(item.name, item.handle);
               }
             }}
             title={item.name}

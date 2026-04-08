@@ -3,10 +3,7 @@
   import CurrentFile from "./current-file.svelte";
   import type { StreamDetails } from "./state/navigation-items.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
-  import {
-    getCurrentHandle,
-    getFileDetails,
-  } from "./state/current-file.svelte";
+  import { selectedFile } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
   import { FileHeadphone, FileText, FilePlay } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
@@ -121,7 +118,7 @@
       <Tabs.Content value="raw">
         <div class="w-full whitespace-pre-wrap font-mono">
           {#key currentFileStreams}
-            {getFileDetails()}
+            {selectedFile.details}
           {/key}
         </div>
       </Tabs.Content>
@@ -131,7 +128,7 @@
             <div class="flex flex-col gap-2 pt-0">
               {#each stream.keyFrames as pts_time}
                 <StreamKeyFrame
-                  handle={getCurrentHandle()}
+                  handle={selectedFile.handle}
                   streamid={stream.id}
                   {pts_time}
                 />

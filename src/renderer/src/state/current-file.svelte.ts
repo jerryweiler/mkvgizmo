@@ -2,17 +2,75 @@ import { logger } from "./logger.svelte";
 import type { StreamDetails } from "./navigation-items.svelte";
 import { FileHeadphone, FileQuestionMark, FileText, FileVideoCamera } from "@lucide/svelte";
 
-const currentFile: {
-  name?: string;
-  handle?: number;
-  details?: string;
-  streams: StreamDetails[]
-} = $state({
-  name: undefined,
-  handle: undefined,
-  details: undefined,
-  streams: [],
-});
+export class FileDetails {
+  #handle: number = $state(0);
+  #name: string = $state("");
+  #details: string = $state("");
+  #streams: StreamDetails[] = $state([]);
+
+  get handle(): number { return this.#handle; }
+  get name(): string { return this.#name; }
+  get details(): string { return this.#details; }
+  get streams(): StreamDetails[] { return this.#streams; }
+
+  clear(): void {
+    this.#handle = 0;
+    this.#name = "";
+    this.#details = "";
+    this.#streams = [];
+  }
+
+  async set(filename: string, handle: number): Promise<void> {
+    this.#name = filename;
+    this.#handle = handle;
+
+    const details = await window.api.getStreamList(handle);
+
+    if (details.errorMessage) {
+      logger.add(`Error loading details for file ${filename}:`);
+      for (const line of details.errorMessage.split("\r\n")) {
+        if (line) {
+          logger.add(line);
+        }
+      }
+    }
+
+    if (details.rawDetails) {
+      const streams = JSON.parse(details.rawDetails);
+      this.#streams = streams.streams.map(extractStreamDetails);
+
+      // getStreamList returns JSON in a minimized, hard to read format.
+      // re-generate a more readable version for the RAW display
+      this.#details = JSON.stringify(streams, null, 2);
+    } else {
+      this.#streams = [];
+      this.#details = "";
+    }
+
+    for (const stream of this.streams) {
+      if (stream.type !== "video") continue;
+
+      const keyFrameDetails = await window.api.getKeyFrameList(
+        handle,
+        stream.id
+      );
+
+      if (keyFrameDetails.errorMessage) {
+        logger.add(`Error loading keyframe details for file ${filename} stream ${stream.id}:`);
+        for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
+          if (line) {
+            logger.add(line);
+          }
+        }
+      }
+
+      stream.rawKeyFrames = keyFrameDetails.rawDetails;
+      stream.keyFrames = keyFrameDetails.timestamps;
+    }
+  }
+}
+
+export let selectedFile: FileDetails = new FileDetails();
 
 function extractStreamDetails(raw): StreamDetails {
   let icon = FileQuestionMark;
@@ -63,76 +121,4 @@ function extractStreamDetails(raw): StreamDetails {
     forced: raw.disposition.forced !== 0,
     icon,
   };
-}
-
-export function getCurrentFile(): string | undefined {
-  return currentFile.name;
-}
-
-export function getFileDetails(): string | undefined {
-  return currentFile.details;
-}
-
-export function getFileStreams(): StreamDetails[] {
-  return currentFile.streams;
-}
-
-export function getCurrentHandle(): number | undefined {
-  return currentFile.handle;
-}
-
-export async function setCurrentFile(filename: string, handle: number): Promise<void> {
-  currentFile.name = filename;
-  currentFile.handle = handle;
-
-  const details = await window.api.getStreamList(handle);
-
-  if (details.errorMessage) {
-    logger.add(`Error loading details for file ${filename}:`);
-    for (const line of details.errorMessage.split("\r\n")) {
-      if (line) {
-        logger.add(line);
-      }
-    }
-  }
-
-  if (details.rawDetails) {
-    const streams = JSON.parse(details.rawDetails);
-    currentFile.streams = streams.streams.map(extractStreamDetails);
-
-    // getStreamList returns JSON in a minimized, hard to read format.
-    // re-generate a more readable version for the RAW display
-    currentFile.details = JSON.stringify(streams, null, 2);
-  } else {
-    currentFile.streams = [];
-    currentFile.details = "";
-  }
-
-  for (const stream of currentFile.streams) {
-    if (stream.type !== "video") continue;
-
-    const keyFrameDetails = await window.api.getKeyFrameList(
-      handle,
-      stream.id
-    );
-
-    if (keyFrameDetails.errorMessage) {
-      logger.add(`Error loading keyframe details for file ${filename} stream ${stream.id}:`);
-      for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
-        if (line) {
-          logger.add(line);
-        }
-      }
-    }
-
-    stream.rawKeyFrames = keyFrameDetails.rawDetails;
-    stream.keyFrames = keyFrameDetails.timestamps;
-  }
-}
-
-export function clearCurrentFile(): void {
-  currentFile.name = undefined;
-  currentFile.handle = undefined;
-  currentFile.details = undefined;
-  currentFile.streams = [];
 }

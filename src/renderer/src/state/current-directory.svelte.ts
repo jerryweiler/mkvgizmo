@@ -1,5 +1,5 @@
 import { FileVideoCamera, Folder } from "@lucide/svelte";
-import { clearCurrentFile } from "./current-file.svelte";
+import { selectedFile } from "./current-file.svelte";
 import { config } from "./config.svelte";
 import { logger } from "./logger.svelte";
 import { type Icon as IconType } from "@lucide/svelte";
@@ -32,7 +32,7 @@ export class WorkingDir {
 
     const scanResults = await window.api.scanDirectory(cwd);
 
-    clearCurrentFile();
+    selectedFile.clear();
 
     this.#current = cwd;
     this.#children = [
