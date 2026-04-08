@@ -4,7 +4,7 @@ declare global {
   type ScanDirectoryResult = {
     errorMessage?: string;
     directories: string[];
-    files: { handle: number, name: string }[];
+    files: { handle: number, name: string, size: number }[];
   };
 
   type GizmoConfig = {

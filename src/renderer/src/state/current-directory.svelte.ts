@@ -9,6 +9,7 @@ export type ChildItem = {
   handle?: number;
   isDirectory: boolean;
   icon: typeof IconType;
+  size?: number;
 };
 
 export class WorkingDir {
@@ -45,7 +46,8 @@ export class WorkingDir {
         name: file.name,
         handle: file.handle,
         isDirectory: false,
-        icon: FileVideoCamera
+        icon: FileVideoCamera,
+        size: file.size
       })),
     ];
   }

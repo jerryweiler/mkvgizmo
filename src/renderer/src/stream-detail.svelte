@@ -1,25 +1,8 @@
 <script lang="ts">
   import type { StreamDetails } from "./state/navigation-items.svelte";
+  import { formatSize } from "./state/utils.mjs";
 
   let { stream }: { stream: StreamDetails } = $props();
-
-  function formatSize(bytes: number): string {
-    let suffix: string = "";
-    if (bytes > 1024) {
-      suffix = " KB";
-      bytes /= 1024;
-    }
-    if (bytes > 1024) {
-      suffix = " MB";
-      bytes /= 1024;
-    }
-    if (bytes > 1024) {
-      suffix = " GB";
-      bytes /= 1024;
-    }
-
-    return bytes.toFixed(2) + suffix;
-  }
 
   function streamType(stream: StreamDetails): string {
     let result: string = stream.type;

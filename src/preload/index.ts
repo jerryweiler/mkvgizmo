@@ -4,7 +4,7 @@ import { electronAPI } from "@electron-toolkit/preload";
 export type ScanDirectoryResult = {
   errorMessage?: string;
   directories: string[];
-  files: { handle: number, name: string }[];
+  files: { handle: number, name: string, size: number }[];
 };
 
 export type GizmoConfig = {

@@ -1,5 +1,6 @@
 import { dialog } from "electron";
 import { readdir } from "fs/promises";
+import { statSync } from "fs";
 import path from "path";
 import type { ScanDirectoryResult } from "../preload";
 import { getFileHandle } from "./fileCache";
@@ -26,7 +27,13 @@ export async function scanDirectory(
       files: files
         .filter((f) => !f.isDirectory())
         .filter((f) => path.extname(f.name) === ".mkv")
-        .map((f) => { return { handle: getFileHandle(directory, f.name), name: f.name }}),
+        .map((f) => {
+          return {
+            handle: getFileHandle(directory, f.name),
+            name: f.name,
+            size: statSync(path.join(directory, f.name)).size,
+          };
+        }),
     };
 
     if (!atRoot) {
