@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { StreamDetails } from "./state/navigation-items.svelte";
 
-  export let stream: StreamDetails;
+  let { stream }: { stream: StreamDetails } = $props();
 
   function formatSize(bytes: number): string {
     let suffix: string = "";

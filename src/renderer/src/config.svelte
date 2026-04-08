@@ -6,9 +6,9 @@
   import { FolderSearch, Settings } from "@lucide/svelte";
   import { config } from "./state/config.svelte";
 
-  let ffmpegPath: string;
-  let startingPath: string;
-  let open: boolean = false;
+  let ffmpegPath: string = $state("");
+  let startingPath: string = $state("");
+  let open: boolean = $state(false);
 
   function openDialog(): void {
     ffmpegPath = config.ffmpegPath;

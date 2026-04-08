@@ -2,7 +2,7 @@
   import { ScrollArea } from "$lib/components/ui/scroll-area";
   import type { Logger } from "./state/logger.svelte";
 
-  export let logger: Logger;
+  let { logger }: { logger: Logger } = $props();
 </script>
 
 <div class=" flex w-full h-full font-mono">

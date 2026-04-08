@@ -4,9 +4,13 @@
 
   let img: HTMLImageElement;
 
-  export let handle: number;
-  export let streamid: number;
-  export let pts_time: number;
+  interface Props {
+    handle: number;
+    streamid: number;
+    pts_time: number;
+  }
+
+  let { handle, streamid, pts_time }: Props = $props();
 
   onMount(() => {
     img.addEventListener("visibility", (e: CustomEvent) => {

@@ -31,10 +31,19 @@
   let observer = new IntersectionObserver(observerCallback);
   setContext("visibility-observer", observer);
 
-  export let currentFileStreams: StreamDetails[];
-  export let displayVideo: boolean = true;
-  export let displayAudio: boolean = true;
-  export let displaySubtitles: boolean = true;
+  interface Props {
+    currentFileStreams: StreamDetails[];
+    displayVideo?: boolean;
+    displayAudio?: boolean;
+    displaySubtitles?: boolean;
+  }
+
+  let {
+    currentFileStreams,
+    displayVideo = true,
+    displayAudio = true,
+    displaySubtitles = true,
+  }: Props = $props();
 
   function multipleVideoStreams(): boolean {
     return currentFileStreams.filter((s) => s.type === "video").length > 1;
