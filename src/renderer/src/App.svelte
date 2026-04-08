@@ -2,7 +2,6 @@
   import NavigationList from "./navigation-list.svelte";
   import * as Resizable from "$lib/components/ui/resizable";
   import Details from "./details.svelte";
-  import { navItems } from "./state/navigation-items.svelte";
   import ButtonStrip from "./button-strip.svelte";
   import { getFileStreams } from "./state/current-file.svelte";
   import MessagePane from "./message-pane.svelte";
@@ -19,7 +18,7 @@
           class="h-full w-full items-stretch"
         >
           <Resizable.Pane defaultSize={1} minSize={20} class="h-full">
-            <NavigationList {navItems} />
+            <NavigationList />
           </Resizable.Pane>
           <Resizable.Handle withHandle />
           <Resizable.Pane defaultSize={2} minSize={30}>

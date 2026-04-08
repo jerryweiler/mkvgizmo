@@ -2,12 +2,9 @@
   import { Button } from "$lib/components/ui/button";
   import CurrentDirectory from "./current-directory.svelte";
   import { workingDir } from "./state/current-directory.svelte";
-  import type { NavItem } from "./state/navigation-items.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import { getCurrentFile, setCurrentFile } from "./state/current-file.svelte";
   import { cn } from "$lib/utils";
-
-  export let navItems: { items: NavItem[] };
 </script>
 
 <div class="flex h-full flex-col">
@@ -17,7 +14,7 @@
   <ScrollArea class="p-2 grow overflow-hidden">
     <div class="flex flex-col gap-4">
       <div class="grid gap-1">
-        {#each navItems.items as item}
+        {#each workingDir.children as item (item.name)}
           <Button
             href="#"
             variant="outline"
@@ -36,7 +33,7 @@
             title={item.name}
           >
             <div class="flex w-full">
-              {#key navItems.items}
+              {#key item.name}
                 <item.icon class="mr-2 size-4 shrink-0" aria-hidden="true" />
               {/key}
               <!-- note: since there's an element between the span and the nearest flex-box

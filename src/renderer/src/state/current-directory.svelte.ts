@@ -1,11 +1,19 @@
 import { FileVideoCamera, Folder } from "@lucide/svelte";
-import { navItems, type NavItem } from "./navigation-items.svelte";
 import { clearCurrentFile } from "./current-file.svelte";
 import { config } from "./config.svelte";
 import { logger } from "./logger.svelte";
+import { type Icon as IconType } from "@lucide/svelte";
+
+export type ChildItem = {
+  name: string;
+  handle?: number;
+  isDirectory: boolean;
+  icon: typeof IconType;
+};
 
 export class WorkingDir {
   #current: string = $state("");
+  #children: ChildItem[] = $state([]);
 
   get(): string {
     return this.#current;
@@ -24,25 +32,22 @@ export class WorkingDir {
 
     const scanResults = await window.api.scanDirectory(cwd);
 
-    this.#current = cwd;
     clearCurrentFile();
-    const newNavItems: NavItem[] = [
+
+    this.#current = cwd;
+    this.#children = [
       ...scanResults.directories.map((dir) => ({
         name: dir,
         isDirectory: true,
-        icon: Folder,
-        details: [],
+        icon: Folder
       })),
       ...scanResults.files.map((file) => ({
         name: file.name,
         handle: file.handle,
         isDirectory: false,
-        icon: FileVideoCamera,
-        details: [],
+        icon: FileVideoCamera
       })),
     ];
-
-    navItems.items = newNavItems;
   }
 
   async navigate(
@@ -53,6 +58,10 @@ export class WorkingDir {
       relativeDirectory,
     );
     await this.set(newPath);
+  }
+
+  get children(): ChildItem[] {
+    return this.#children;
   }
 }
 
