@@ -105,13 +105,11 @@
     <ScrollArea class="m-2 overflow-hidden">
       <Tabs.Content value="details">
         <div class="flex flex-col gap-2 pt-0">
-          {#key displayAudio && displaySubtitles && displayVideo}
-            {#each currentFileStreams as stream (stream.key)}
-              {#if shouldDisplayStream(stream)}
-                <StreamDetail {stream} />
-              {/if}
-            {/each}
-          {/key}
+          {#each currentFileStreams as stream (stream.key)}
+            {#if shouldDisplayStream(stream)}
+              <StreamDetail {stream} />
+            {/if}
+          {/each}
         </div>
       </Tabs.Content>
       <Tabs.Content value="raw">
