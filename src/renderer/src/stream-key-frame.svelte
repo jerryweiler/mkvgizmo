@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Popover from "$lib/components/ui/popover";
   import { Film } from "@lucide/svelte";
   import { getContext, onMount } from "svelte";
 
@@ -11,6 +12,7 @@
   }
 
   let { handle, streamid, pts_time }: Props = $props();
+  let src: string = $state("");
 
   onMount(() => {
     img.addEventListener("visibility", (e: CustomEvent) => {
@@ -19,9 +21,7 @@
 
       if (entry.isIntersecting) {
         observer.unobserve(img);
-        img.width = 160;
-        img.height = 120;
-        img.src = img.dataset.src;
+        src = `frame://${handle}/${streamid}/${pts_time}`;
       }
     });
 
@@ -42,11 +42,20 @@
         {`${pts_time} seconds`}
       </div>
       <div class="ml-auto">
-        <img
-          bind:this={img}
-          data-src={`frame://${handle}/${streamid}/${pts_time}`}
-          alt="keyframe"
-        />
+        <Popover.Root>
+          <Popover.Trigger>
+            <img
+              bind:this={img}
+              {src}
+              width="160"
+              height="120"
+              alt="keyframe"
+            />
+          </Popover.Trigger>
+          <Popover.Content class="w-auto h-auto">
+            <img {src} width="640" height="480" alt="keyframe" />
+          </Popover.Content>
+        </Popover.Root>
       </div>
     </div>
   </div>
