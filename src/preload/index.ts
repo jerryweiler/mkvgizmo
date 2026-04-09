@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
+import { type Icon as IconType } from "@lucide/svelte";
 
 export type ScanDirectoryResult = {
   errorMessage?: string;
@@ -17,9 +18,25 @@ export type SaveConfigResult = {
   errorMessage?: string;
 };
 
+export type StreamDetails = {
+  id: number;
+  key: string;
+  type: string;
+  codec: string;
+  size: number;
+  language: string | null;
+  forced?: boolean;
+  dimensions?: string;
+  channels?: number;
+  rawKeyFrames?: string;
+  keyFrames?: number[];
+  icon?: typeof IconType;
+};
+
 export type GetStreamListResult = {
   errorMessage?: string;
   rawDetails: string;
+  streams: StreamDetails[];
 };
 
 export type GetKeyFrameListResult = {

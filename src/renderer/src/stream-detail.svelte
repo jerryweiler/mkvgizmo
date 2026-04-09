@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { StreamDetails } from "./state/navigation-items.svelte";
   import { formatSize } from "./state/utils.mjs";
 
   let { stream }: { stream: StreamDetails } = $props();

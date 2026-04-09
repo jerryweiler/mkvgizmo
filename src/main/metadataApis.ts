@@ -1,6 +1,6 @@
 import path from "path";
 import { config } from "./configApis";
-import { GetStreamListResult, GetKeyFrameListResult } from "../preload";
+import { GetStreamListResult, GetKeyFrameListResult, StreamDetails } from "../preload";
 import { getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
 
@@ -13,30 +13,93 @@ type ffprobeFrameResult = {
   packets: packet[];
 };
 
-export async function getStreamList(handle: number): Promise<GetStreamListResult> {
-  if (!config.ffmpegPath) {
-    return { rawDetails: "", errorMessage: "No path configured for ffprobe" };
+function extractStreamDetails(handle: number, raw): StreamDetails {
+  let language = "";
+  switch (raw.codec_type) {
+    case "audio":
+      language = raw?.tags?.language;
+      break;
+    case "subtitle":
+      language = raw?.tags?.language;
+      break;
   }
 
-  // Generate the pathnames for the executable and target file.
-  // Escape special characters.
-  const filepath = getFileDetails(handle).path;
-  const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
+  // The name of the property holding the stream size varies.
+  // Sometimes it's 'NUMBER_OF_BYTES-eng', sometimes it's 'NUMBER_OF_BYTES',
+  // and it could possibly have other language suffixes or even be absent.
+  let size = 0;
+  for (const prop in raw?.tags) {
+    if (prop.startsWith("NUMBER_OF_BYTES")) {
+      size = raw.tags[prop];
+      break;
+    }
+  }
 
-  const result = await runProcess(ffprobepath, [
-    "-loglevel",
-    "warning",
-    "-analyzeduration",
-    "10000000",
-    "-probesize",
-    "10000000",
-    "-show_streams",
-    "-output_format",
-    "json",
-    filepath,
-  ]);
+  let dimensions = "";
+  if (raw?.codec_type === "video" && raw?.width && raw?.height) {
+    dimensions = `${raw.width}x${raw.height}`;
+  }
 
-  return { rawDetails: result.output.toString(), errorMessage: result.errorMessage };
+  let channels = 0;
+  if (raw?.channels) {
+    channels = raw.channels;
+  }
+
+  return {
+    id: raw?.index,
+    key: `${handle}-${raw?.index}`,
+    type: raw?.codec_type,
+    codec: raw?.codec_name,
+    language,
+    size,
+    dimensions,
+    channels,
+    forced: raw.disposition.forced !== 0,
+  };
+}
+
+export async function getStreamList(handle: number): Promise<GetStreamListResult> {
+  if (!config.ffmpegPath) {
+    return { rawDetails: "", errorMessage: "No path configured for ffprobe", streams: [] };
+  }
+
+  const details = getFileDetails(handle);
+  let errorMessage: string | undefined = undefined;
+
+  if (!details.streams) {
+    // Generate the pathnames for the executable and target file.
+    // Escape special characters.
+    const filepath = getFileDetails(handle).path;
+    const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
+
+    const result = await runProcess(ffprobepath, [
+      "-loglevel",
+      "warning",
+      "-analyzeduration",
+      "10000000",
+      "-probesize",
+      "10000000",
+      "-show_streams",
+      "-output_format",
+      "json",
+      filepath,
+    ]);
+
+    details.rawDetails = result.output.toString();
+
+    if (details.rawDetails) {
+      const streams = JSON.parse(details.rawDetails);
+      details.streams = streams.streams.map(extractStreamDetails.bind(null, handle));
+
+      // getStreamList returns JSON in a minimized, hard to read format.
+      // re-generate a more readable version for the RAW display
+      details.rawDetails = JSON.stringify(details.streams, null, 2);
+    }
+
+    errorMessage = result.errorMessage;
+  }
+
+  return { rawDetails: details.rawDetails, errorMessage, streams: details.streams ?? [] };
 }
 
 export async function getKeyFrameList(

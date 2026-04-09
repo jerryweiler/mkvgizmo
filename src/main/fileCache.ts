@@ -9,15 +9,18 @@
 //    to calculate, so we want to calculate it once and cache it.
 
 import path from "path";
+import { StreamDetails } from "../preload";
 
 export type FileDetails = {
   handle: number;
   path: string;
+  rawDetails: string;
+  streams?: StreamDetails[];
 };
 
 // A handle for a file is an index into this array
 // We want newly-assigned handles to start at 1, so we add a dummy entry at 0
-let fileCache: FileDetails[] = [{handle: 0, path: ""}];
+let fileCache: FileDetails[] = [{handle: 0, path: "", rawDetails: ""}];
 
 let handleMap: Map<string, number> = new Map<string, number>();
 
@@ -25,7 +28,7 @@ export function getPathHandle(path: string): number {
   let handle = handleMap.get(path);
   if (!handle) {
     handle = fileCache.length;
-    fileCache.push({handle, path});
+    fileCache.push({handle, path, rawDetails: ""});
   }
 
   return handle;

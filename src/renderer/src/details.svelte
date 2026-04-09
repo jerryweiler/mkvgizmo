@@ -1,7 +1,6 @@
 <script lang="ts">
   import { ScrollArea } from "$lib/components/ui/scroll-area";
   import CurrentFile from "./current-file.svelte";
-  import type { StreamDetails } from "./state/navigation-items.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
   import { selectedFile } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
@@ -69,7 +68,7 @@
       <Tabs.List class="m-2 grid auto-cols-fr grid-flow-col w-full grow">
         <Tabs.Trigger value="details">Details</Tabs.Trigger>
         <Tabs.Trigger value="raw">Raw</Tabs.Trigger>
-        {#each currentFileStreams as stream}
+        {#each currentFileStreams as stream (stream.key)}
           {#if displayVideo && stream.type === "video"}
             <Tabs.Trigger value={stream.id.toString()}>
               {`KeyFrames ${multipleVideoStreams() ? stream.id.toString() : ""}`}
@@ -107,7 +106,7 @@
       <Tabs.Content value="details">
         <div class="flex flex-col gap-2 pt-0">
           {#key displayAudio && displaySubtitles && displayVideo}
-            {#each currentFileStreams as stream}
+            {#each currentFileStreams as stream (stream.key)}
               {#if shouldDisplayStream(stream)}
                 <StreamDetail {stream} />
               {/if}
@@ -122,11 +121,11 @@
           {/key}
         </div>
       </Tabs.Content>
-      {#each currentFileStreams as stream}
+      {#each currentFileStreams as stream (stream.key)}
         {#if displayVideo && stream.type === "video"}
           <Tabs.Content value={stream.id.toString()}>
             <div class="flex flex-col gap-2 pt-0">
-              {#each stream.keyFrames as pts_time}
+              {#each stream.keyFrames as pts_time (pts_time)}
                 <StreamKeyFrame
                   handle={selectedFile.handle}
                   streamid={stream.id}

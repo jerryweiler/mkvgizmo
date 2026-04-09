@@ -1,4 +1,5 @@
 import { ElectronAPI } from "@electron-toolkit/preload";
+import { type Icon as IconType } from "@lucide/svelte";
 
 declare global {
   type ScanDirectoryResult = {
@@ -17,9 +18,25 @@ declare global {
     errorMessage?: string;
   };
 
+  type StreamDetails = {
+    id: number;
+    key: string;
+    type: string;
+    codec: string;
+    size: number;
+    language: string | null;
+    forced?: boolean;
+    dimensions?: string;
+    channels?: number;
+    rawKeyFrames?: string;
+    keyFrames?: number[];
+    icon?: typeof IconType;
+  };
+
   type GetStreamListResult = {
     errorMessage?: string;
     rawDetails: string;
+    streams: StreamDetails[];
   };
 
   type GetKeyFrameListResult = {
