@@ -112,35 +112,50 @@ export async function getKeyFrameList(
 
   // Generate the pathnames for the executable and target file.
   // Escape special characters.
-  const filepath = getFileDetails(handle).path;
-  const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
+  const fileDetails = getFileDetails(handle);
+  const streamDetails = fileDetails.streams?.find(stream => stream.id === streamId);
 
-  const result = await runProcess(ffprobepath, [
-    "-loglevel",
-    "warning",
-    "-analyzeduration",
-    "10000000",
-    "-probesize",
-    "10000000",
-    "-select_streams",
-    `v:${streamId}`,
-    "-show_entries",
-    "packet=pts_time,flags",
-    "-fflags",
-    "+genpts",
-    "-output_format",
-    "json",
-    filepath,
-  ]);
-
-  let timestamps: number[] = [];
-  if (result.output) {
-    const details = JSON.parse(result.output.toString()) as ffprobeFrameResult;
-    timestamps = details.packets
-      .filter(p => p.flags.includes("K"))
-      .map(p => Number(p.pts_time))
-      .sort((a, b) => a - b);
+  if (!streamDetails) {
+    return { rawDetails: "", timestamps: [], errorMessage: `stream id ${streamId} not found` };
   }
 
-  return { rawDetails: result.output.toString(), timestamps, errorMessage: result.errorMessage };
+  let errorMessage: string | undefined = undefined;
+
+  if (!streamDetails.keyFrames)
+  {
+    const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
+
+    const result = await runProcess(ffprobepath, [
+      "-loglevel",
+      "warning",
+      "-analyzeduration",
+      "10000000",
+      "-probesize",
+      "10000000",
+      "-select_streams",
+      `v:${streamId}`,
+      "-show_entries",
+      "packet=pts_time,flags",
+      "-fflags",
+      "+genpts",
+      "-output_format",
+      "json",
+      fileDetails.path,
+    ]);
+
+    let timestamps: number[] = [];
+    if (result.output) {
+      const details = JSON.parse(result.output.toString()) as ffprobeFrameResult;
+      timestamps = details.packets
+        .filter(p => p.flags.includes("K"))
+        .map(p => Number(p.pts_time))
+        .sort((a, b) => a - b);
+    }
+
+    streamDetails.rawKeyFrames = result.output.toString();
+    streamDetails.keyFrames = timestamps;
+    errorMessage = result.errorMessage;
+  }
+
+  return { rawDetails: streamDetails.rawKeyFrames ?? "", timestamps: streamDetails.keyFrames, errorMessage };
 }
