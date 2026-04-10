@@ -4,7 +4,7 @@
   import * as Tabs from "$lib/components/ui/tabs";
   import { selectedFile } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
-  import { FileHeadphone, FileText, FilePlay } from "@lucide/svelte";
+  import { FileHeadphone, FileText, FileVideoCamera } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
   import StreamKeyFrame from "./stream-key-frame.svelte";
   import { setContext } from "svelte";
@@ -82,7 +82,7 @@
         class="mx-1 my-2 grow-0"
         bind:pressed={displayVideo}
       >
-        <FilePlay class="size-4" aria-hidden="true" />
+        <FileVideoCamera class="size-4" aria-hidden="true" />
       </Toggle>
       <Toggle
         variant="outline"
