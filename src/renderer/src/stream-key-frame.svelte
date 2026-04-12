@@ -15,20 +15,31 @@
   let src: string = $state("");
 
   onMount(() => {
-    img.addEventListener("visibility", (e: CustomEvent) => {
-      let observer: IntersectionObserver = e.detail.observer;
-      let entry: IntersectionObserverEntry = e.detail.entry;
+    // we want to add the img element to the observer list so we can load the
+    // keyframe into it on-demand when it becomes visible. we have multiple
+    // places where we remove it from the observer list, but we only want
+    // the first one to do so or we get unhandle exceptions. to prevent multiple
+    // unobserve calls, capture a copy and clear if the first time we remove it.
+    let observer = getContext("visibility-observer") as IntersectionObserver;
+    let observedImg = img;
+    function unobserve(): void {
+      if (observedImg) {
+        observer.unobserve(observedImg);
+      }
+      observedImg = null;
+    }
 
+    img.addEventListener("visibility", (e: CustomEvent) => {
+      let entry: IntersectionObserverEntry = e.detail.entry;
       if (entry.isIntersecting) {
-        observer.unobserve(img);
+        unobserve();
         src = `frame://${handle}/${streamid}/${pts_time}`;
       }
     });
 
-    let observer = getContext("visibility-observer") as IntersectionObserver;
-    observer.observe(img);
+    observer.observe(observedImg);
 
-    return (): void => observer.unobserve(img);
+    return (): void => unobserve();
   });
 </script>
 
