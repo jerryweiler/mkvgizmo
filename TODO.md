@@ -2,15 +2,17 @@
 
 Race conditions? Things work fine when loading small files and waiting for
 things to populate before selecting another, but there are problems:
-* BUG: Clicking multiple files in rapid succession can cause the UI to hang
-or the Keyframe tab to stop populating. This shows as unhandled exceptions in
-the browser console. Likely issue is that a previous metadata load method is
-still processing continuations in the background after the selection changes,
-causing data to (potentially) get added to the wrong object.
-* BUG: loading a small (<1 minute) file loads fine, but loading a large file
-(full anime episode, much less a 4K movie) never loads the keyframe list.
-* BUG: Larger files can take a long time to load the keyframe list. See if
-there's a way to load the data in smaller chunks.
+* BUG: add a sequence number to file selection. currently async metadata calls
+are protected by checking that the file handle hasn't changed after
+an async call is complete, but this doesn't detect the A/B/A case, where the
+user navigates away and back before an async call completes.
+* BUG: serialize loading of keyframes from the server. If the user uses the
+scrollbar to scroll down the keyframe list fast, the client can try to load
+lots of keyframes at once (hundreds+), effectively overloading the server.
+Implement a queuing mechanism to serialize keyframe loading from the same
+file. Implementing it on the client might be better since it would probably
+be easier to implement a spinner if the client is aware of the queuing.
+* BUG: keyframe list scrollbar overlaps the keyframe list.
 
 * TESTS: WRITE SOME!
 some ideas for validation of things I've had to fix over various versions:

@@ -8,6 +8,7 @@
   import { Toggle } from "$lib/components/ui/toggle";
   import StreamKeyFrame from "./stream-key-frame.svelte";
   import { setContext } from "svelte";
+  import Spinner from "$lib/components/ui/spinner/spinner.svelte";
 
   function observerCallback(
     entries: IntersectionObserverEntry[],
@@ -71,6 +72,9 @@
         {#each currentFileStreams as stream (stream.key)}
           {#if displayVideo && stream.type === "video"}
             <Tabs.Trigger value={stream.id.toString()}>
+              {#if !stream.keyFramesComplete}
+                <Spinner />
+              {/if}
               {`KeyFrames ${multipleVideoStreams() ? stream.id.toString() : ""}`}
             </Tabs.Trigger>
           {/if}

@@ -28,8 +28,9 @@ export type StreamDetails = {
   forced?: boolean;
   dimensions?: string;
   channels?: number;
-  rawKeyFrames?: string;
   keyFrames?: number[];
+  keyFrameSecondsLoaded?: number,
+  keyFramesComplete: boolean;
   icon?: typeof IconType;
 };
 
@@ -41,8 +42,8 @@ export type GetStreamListResult = {
 
 export type GetKeyFrameListResult = {
   errorMessage?: string;
-  rawDetails: string;
   timestamps: number[];
+  isComplete: boolean;
 };
 
 export interface API {

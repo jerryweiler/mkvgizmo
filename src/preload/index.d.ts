@@ -28,8 +28,9 @@ declare global {
     forced?: boolean;
     dimensions?: string;
     channels?: number;
-    rawKeyFrames?: string;
     keyFrames?: number[];
+    keyFrameSecondsLoaded?: number,
+    keyFramesComplete: boolean;
     icon?: typeof IconType;
   };
 
@@ -41,8 +42,8 @@ declare global {
 
   type GetKeyFrameListResult = {
     errorMessage?: string;
-    rawDetails: string;
     timestamps: number[];
+    isComplete: boolean;
   };
 }
 

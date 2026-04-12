@@ -55,6 +55,7 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
     dimensions,
     channels,
     forced: raw.disposition.forced !== 0,
+    keyFramesComplete: false,
   };
 }
 
@@ -107,7 +108,7 @@ export async function getKeyFrameList(
   streamId: number,
 ): Promise<GetKeyFrameListResult> {
   if (!config.ffmpegPath) {
-    return { rawDetails: "", timestamps: [], errorMessage: "No path configured for ffprobe" };
+    return { timestamps: [], errorMessage: "No path configured for ffprobe", isComplete: true };
   }
 
   // Generate the pathnames for the executable and target file.
@@ -116,15 +117,21 @@ export async function getKeyFrameList(
   const streamDetails = fileDetails.streams?.find(stream => stream.id === streamId);
 
   if (!streamDetails) {
-    return { rawDetails: "", timestamps: [], errorMessage: `stream id ${streamId} not found` };
+    return { timestamps: [], errorMessage: `stream id ${streamId} not found`, isComplete: true };
   }
 
   let errorMessage: string | undefined = undefined;
 
-  if (!streamDetails.keyFrames)
-  {
+  if (!streamDetails.keyFramesComplete) {
     const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
+    // read frame packets from a region of the file using read_interval.
+    // streamDetails has information about what's already been processed.
+    // read_interval's start point seeking isn't completely accurate,
+    // so set up the start time to repeat a small overlap of what's already
+    // been read. we'll remove duplicates afterward.
+    const secondsLoaded: number = streamDetails.keyFrameSecondsLoaded ?? 0;
+    const secondsToLoad: number = 60;
     const result = await runProcess(ffprobepath, [
       "-loglevel",
       "warning",
@@ -132,6 +139,8 @@ export async function getKeyFrameList(
       "10000000",
       "-probesize",
       "10000000",
+      "-read_intervals",
+      `${Math.max(0, secondsLoaded - 1)}%${secondsLoaded + secondsToLoad}`,
       "-select_streams",
       `v:${streamId}`,
       "-show_entries",
@@ -143,19 +152,33 @@ export async function getKeyFrameList(
       fileDetails.path,
     ]);
 
-    let timestamps: number[] = [];
+    let timestamps: number[] = streamDetails.keyFrames ?? [];
+    const staringKeyframeCount: number = timestamps.length;
+
+    // filter duplicates, then sort them.
     if (result.output) {
-      const details = JSON.parse(result.output.toString()) as ffprobeFrameResult;
-      timestamps = details.packets
-        .filter(p => p.flags.includes("K"))
-        .map(p => Number(p.pts_time))
-        .sort((a, b) => a - b);
+      const output = result.output.toString();
+      const packetDetails = JSON.parse(output) as ffprobeFrameResult;
+      // filter keyframes out of the frames processed and
+      // add them to the existing list
+      timestamps = [
+        ...timestamps,
+        ...packetDetails.packets
+          .filter((p) => p.flags.includes("K"))
+          .map((p) => Number(p.pts_time)),
+      ];
+
+      // now filter duplicates, since we duplicated a small buffer between
+      // scans, then sort the result
+      timestamps = [...new Set(timestamps)].sort((a, b) => a - b);
+      streamDetails.keyFramesComplete =
+        timestamps.length === staringKeyframeCount;
     }
 
-    streamDetails.rawKeyFrames = result.output.toString();
     streamDetails.keyFrames = timestamps;
+    streamDetails.keyFrameSecondsLoaded = secondsLoaded + secondsToLoad;
     errorMessage = result.errorMessage;
   }
 
-  return { rawDetails: streamDetails.rawKeyFrames ?? "", timestamps: streamDetails.keyFrames, errorMessage };
+  return { timestamps: streamDetails.keyFrames ?? [], errorMessage, isComplete: streamDetails.keyFramesComplete };
 }

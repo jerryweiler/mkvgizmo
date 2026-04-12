@@ -51,6 +51,11 @@ export class FileDetails {
 
     const details = await window.api.getStreamList(handle);
 
+    // if the user navigated away while the async call was processing, we're done
+    if (this.#handle !== handle) {
+      return;
+    }
+
     if (details.errorMessage) {
       logger.add(`Error loading details for file ${filename}:`);
       for (const line of details.errorMessage.split("\r\n")) {
@@ -71,22 +76,29 @@ export class FileDetails {
     for (const stream of this.streams) {
       if (stream.type !== "video") continue;
 
-      const keyFrameDetails = await window.api.getKeyFrameList(
-        handle,
-        stream.id
-      );
+      while (!stream.keyFramesComplete) {
+        const keyFrameDetails = await window.api.getKeyFrameList(
+          handle,
+          stream.id
+        );
 
-      if (keyFrameDetails.errorMessage) {
-        logger.add(`Error loading keyframe details for file ${filename} stream ${stream.id}:`);
-        for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
-          if (line) {
-            logger.add(line);
+        // if the user navigated away while the async call was processing, we're done
+        if (this.#handle !== handle) {
+          return;
+        }
+
+        if (keyFrameDetails.errorMessage) {
+          logger.add(`Error loading keyframe details for file ${filename} stream ${stream.id}:`);
+          for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
+            if (line) {
+              logger.add(line);
+            }
           }
         }
-      }
 
-      stream.rawKeyFrames = keyFrameDetails.rawDetails;
-      stream.keyFrames = keyFrameDetails.timestamps;
+        stream.keyFrames = keyFrameDetails.timestamps;
+        stream.keyFramesComplete = keyFrameDetails.isComplete;
+      }
     }
   }
 }
