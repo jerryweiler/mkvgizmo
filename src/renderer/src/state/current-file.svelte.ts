@@ -1,6 +1,14 @@
 import { FileHeadphone, FileQuestionMark, FileText, FileVideoCamera } from "@lucide/svelte";
 import { logger } from "./logger.svelte";
 
+// When a file is selected, we start loading metadata asynchronously. For a
+// large file, like a 4k movie which can be 10s of GB, some of this metadata
+// can take minutes to completely load. Each time we change the selected file,
+// we increment the sequence number. When an async call to load metadata
+// returns, we check the sequence number and abort if the value indicates that
+// the user has navigated awayt.
+let updateSequenceNumber: number = 0;
+
 function updateIcon(stream: StreamDetails) {
   stream.icon = FileQuestionMark;
   switch (stream.type) {
@@ -21,6 +29,7 @@ export class FileDetails {
   #name: string = $state("");
   #details: string = $state("");
   #streams: StreamDetails[] = $state([]);
+  #updateSequenceNumber: number = 0;
 
   get handle(): number {
     return this.#handle;
@@ -39,6 +48,7 @@ export class FileDetails {
   }
 
   clear(): void {
+    this.#updateSequenceNumber = ++updateSequenceNumber;
     this.#handle = 0;
     this.#name = "";
     this.#details = "";
@@ -46,13 +56,16 @@ export class FileDetails {
   }
 
   async set(filename: string, handle: number): Promise<void> {
+    this.#updateSequenceNumber = ++updateSequenceNumber;
     this.#name = filename;
     this.#handle = handle;
+
+    const currentSequenceNumber = this.#updateSequenceNumber;
 
     const details = await window.api.getStreamList(handle);
 
     // if the user navigated away while the async call was processing, we're done
-    if (this.#handle !== handle) {
+    if (this.#updateSequenceNumber !== currentSequenceNumber) {
       return;
     }
 
@@ -83,7 +96,7 @@ export class FileDetails {
         );
 
         // if the user navigated away while the async call was processing, we're done
-        if (this.#handle !== handle) {
+        if (this.#updateSequenceNumber !== currentSequenceNumber) {
           return;
         }
 

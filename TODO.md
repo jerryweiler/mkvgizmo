@@ -2,10 +2,6 @@
 
 Race conditions? Things work fine when loading small files and waiting for
 things to populate before selecting another, but there are problems:
-* BUG: add a sequence number to file selection. currently async metadata calls
-are protected by checking that the file handle hasn't changed after
-an async call is complete, but this doesn't detect the A/B/A case, where the
-user navigates away and back before an async call completes.
 * BUG: serialize loading of keyframes from the server. If the user uses the
 scrollbar to scroll down the keyframe list fast, the client can try to load
 lots of keyframes at once (hundreds+), effectively overloading the server.
