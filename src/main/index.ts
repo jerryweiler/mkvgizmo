@@ -79,8 +79,7 @@ app.whenReady().then(() => {
   );
   ipcMain.handle(
     "getStreamList",
-    (_, handle: number): Promise<GetStreamListResult> =>
-      getStreamList(handle),
+    (_, handle: number): Promise<GetStreamListResult> => getStreamList(handle),
   );
   ipcMain.handle(
     "getKeyFrameList",

@@ -5,7 +5,7 @@ declare global {
   type ScanDirectoryResult = {
     errorMessage?: string;
     directories: string[];
-    files: { handle: number, name: string, size: number }[];
+    files: { handle: number; name: string; size: number }[];
   };
 
   type GizmoConfig = {
@@ -29,7 +29,7 @@ declare global {
     dimensions?: string;
     channels?: number;
     keyFrames?: number[];
-    keyFrameSecondsLoaded?: number,
+    keyFrameSecondsLoaded?: number;
     keyFramesComplete: boolean;
     icon?: typeof IconType;
   };
@@ -54,7 +54,10 @@ interface API {
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
   getStreamList(handle: number): Promise<GetStreamListResult>;
-  getKeyFrameList(handle: number, streamId: number): Promise<GetKeyFrameListResult>;
+  getKeyFrameList(
+    handle: number,
+    streamId: number,
+  ): Promise<GetKeyFrameListResult>;
 }
 
 declare global {

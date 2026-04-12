@@ -1,12 +1,14 @@
-// Most of the interaction with the renderer deals with files that can be scattered across
-// the filesystem. To make this interaction easier, we create a cache of file information
-// and each file is assigned an id (handle) on first request.
+// Most of the interaction with the renderer deals with files that can be
+// scattered across the filesystem. To make this interaction easier, we create
+// a cache of file information and each file is assigned an id (handle) on
+// first request.
 // This eases 2 issues:
-// 1. requests that are made with urls via protocol handlers only need to parse an id,
-//    instead of parsing a file path out of a multi-component url.
-// 2. some of the interaction, such as segmentation of the videos for HSL streaming
-//    require state to be maintained across requests (keyframe data) that's expensive
-//    to calculate, so we want to calculate it once and cache it.
+// 1. requests that are made with urls via protocol handlers only need to parse
+//    an id, instead of parsing a file path out of a multi-component url.
+// 2. some of the interaction, such as segmentation of the videos for HSL
+//    streaming require state to be maintained across requests (keyframe data)
+//    that's expensive to calculate, so we want to calculate it once and cache
+//    it.
 
 import path from "path";
 import { StreamDetails } from "../preload";

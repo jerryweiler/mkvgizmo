@@ -5,7 +5,7 @@ import { type Icon as IconType } from "@lucide/svelte";
 export type ScanDirectoryResult = {
   errorMessage?: string;
   directories: string[];
-  files: { handle: number, name: string, size: number }[];
+  files: { handle: number; name: string; size: number }[];
 };
 
 export type GizmoConfig = {
@@ -29,7 +29,7 @@ export type StreamDetails = {
   dimensions?: string;
   channels?: number;
   keyFrames?: number[];
-  keyFrameSecondsLoaded?: number,
+  keyFrameSecondsLoaded?: number;
   keyFramesComplete: boolean;
   icon?: typeof IconType;
 };
@@ -53,7 +53,10 @@ export interface API {
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
   getStreamList(handle: number): Promise<GetStreamListResult>;
-  getKeyFrameList(handle: number, streamId: number): Promise<GetKeyFrameListResult>;
+  getKeyFrameList(
+    handle: number,
+    streamId: number,
+  ): Promise<GetKeyFrameListResult>;
 }
 
 // Custom APIs for renderer

@@ -11,7 +11,8 @@ export async function captureFrame(request: Request): Promise<Response> {
   }
 
   // this expects a request url of the form frame://handle/streamid/timestamp
-  // where timestamp is a number representing the seconds from the beginning of the stream
+  // where timestamp is a number representing the seconds from the beginning of
+  // the stream
   const protocol = "frame://";
   if (!request.url.startsWith(protocol)) {
     return new Response("bad request", {

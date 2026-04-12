@@ -15,13 +15,16 @@ function getUserDataFileName(): string {
 }
 
 /**
- * Update stored config with new values.
- * This will verify that the ffmpeg directory exists and contains the required binaries.
- * NOTE: this will currently NOT preserve values that might be saved on disk that are
- * not present in the update parameter. This can cause loss of values if an old version
- * updates over a newer version, or a client sends a config with only some values filled in.
- * @param {GizmoConfig} update - config object containing the directory with ffmpeg binaries, starting directory, etc.
- * @returns {Promise<SaveConfigResult>} - true if save was successful, false if there was a failure
+ * Update stored config with new values. This will verify that the ffmpeg
+ * directory exists and contains the required binaries.
+ * NOTE: this will currently NOT preserve values that might be saved on disk
+ * that are not present in the update parameter. This can cause loss of values
+ * if an old version updates over a newer version, or a client sends a config
+ * with only some values filled in.
+ * @param {GizmoConfig} update - config object containing the directory with
+ * ffmpeg binaries, starting directory, etc.
+ * @returns {Promise<SaveConfigResult>} - true if save was successful, false if
+ * there was a failure
  */
 export async function saveConfig(
   update: GizmoConfig,

@@ -1,6 +1,10 @@
 import path from "path";
 import { config } from "./configApis";
-import { GetStreamListResult, GetKeyFrameListResult, StreamDetails } from "../preload";
+import {
+  GetStreamListResult,
+  GetKeyFrameListResult,
+  StreamDetails,
+} from "../preload";
 import { getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
 
@@ -59,9 +63,15 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
   };
 }
 
-export async function getStreamList(handle: number): Promise<GetStreamListResult> {
+export async function getStreamList(
+  handle: number,
+): Promise<GetStreamListResult> {
   if (!config.ffmpegPath) {
-    return { rawDetails: "", errorMessage: "No path configured for ffprobe", streams: [] };
+    return {
+      rawDetails: "",
+      errorMessage: "No path configured for ffprobe",
+      streams: [],
+    };
   }
 
   const details = getFileDetails(handle);
@@ -90,7 +100,9 @@ export async function getStreamList(handle: number): Promise<GetStreamListResult
 
     if (details.rawDetails) {
       const streams = JSON.parse(details.rawDetails);
-      details.streams = streams.streams.map(extractStreamDetails.bind(null, handle));
+      details.streams = streams.streams.map(
+        extractStreamDetails.bind(null, handle),
+      );
 
       // getStreamList returns JSON in a minimized, hard to read format.
       // re-generate a more readable version for the RAW display
@@ -100,7 +112,11 @@ export async function getStreamList(handle: number): Promise<GetStreamListResult
     errorMessage = result.errorMessage;
   }
 
-  return { rawDetails: details.rawDetails, errorMessage, streams: details.streams ?? [] };
+  return {
+    rawDetails: details.rawDetails,
+    errorMessage,
+    streams: details.streams ?? [],
+  };
 }
 
 export async function getKeyFrameList(
@@ -108,16 +124,26 @@ export async function getKeyFrameList(
   streamId: number,
 ): Promise<GetKeyFrameListResult> {
   if (!config.ffmpegPath) {
-    return { timestamps: [], errorMessage: "No path configured for ffprobe", isComplete: true };
+    return {
+      timestamps: [],
+      errorMessage: "No path configured for ffprobe",
+      isComplete: true,
+    };
   }
 
   // Generate the pathnames for the executable and target file.
   // Escape special characters.
   const fileDetails = getFileDetails(handle);
-  const streamDetails = fileDetails.streams?.find(stream => stream.id === streamId);
+  const streamDetails = fileDetails.streams?.find(
+    (stream) => stream.id === streamId,
+  );
 
   if (!streamDetails) {
-    return { timestamps: [], errorMessage: `stream id ${streamId} not found`, isComplete: true };
+    return {
+      timestamps: [],
+      errorMessage: `stream id ${streamId} not found`,
+      isComplete: true,
+    };
   }
 
   let errorMessage: string | undefined = undefined;
@@ -180,5 +206,9 @@ export async function getKeyFrameList(
     errorMessage = result.errorMessage;
   }
 
-  return { timestamps: streamDetails.keyFrames ?? [], errorMessage, isComplete: streamDetails.keyFramesComplete };
+  return {
+    timestamps: streamDetails.keyFrames ?? [],
+    errorMessage,
+    isComplete: streamDetails.keyFramesComplete,
+  };
 }
