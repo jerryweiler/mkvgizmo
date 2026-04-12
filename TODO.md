@@ -8,7 +8,6 @@ lots of keyframes at once (hundreds+), effectively overloading the server.
 Implement a queuing mechanism to serialize keyframe loading from the same
 file. Implementing it on the client might be better since it would probably
 be easier to implement a spinner if the client is aware of the queuing.
-* BUG: keyframe list scrollbar overlaps the keyframe list.
 
 * TESTS: WRITE SOME!
 some ideas for validation of things I've had to fix over various versions:
