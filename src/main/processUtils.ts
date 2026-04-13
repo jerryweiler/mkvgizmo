@@ -1,15 +1,18 @@
 import { spawn } from "child_process";
+import { TaskQueue } from "./taskQueue";
 
 export type ProcessResult = {
   output: Buffer;
   errorMessage?: string;
 };
 
+let processQueue = new TaskQueue<ProcessResult>(4);
+
 export function runProcess(
   command: string,
   args: string[],
 ): Promise<ProcessResult> {
-  return new Promise((resolve) => {
+  return processQueue.enqueue(() => new Promise((resolve) => {
     const process = spawn(command, args);
 
     let output: Buffer = Buffer.alloc(0);
@@ -25,5 +28,5 @@ export function runProcess(
       resolve({ output, errorMessage });
     });
     process.on("close", () => resolve({ output, errorMessage }));
-  });
+  }));
 }

@@ -1,14 +1,5 @@
 * BUG: Metadata propeties derived from tags should be optional
 
-Race conditions? Things work fine when loading small files and waiting for
-things to populate before selecting another, but there are problems:
-* BUG: serialize loading of keyframes from the server. If the user uses the
-scrollbar to scroll down the keyframe list fast, the client can try to load
-lots of keyframes at once (hundreds+), effectively overloading the server.
-Implement a queuing mechanism to serialize keyframe loading from the same
-file. Implementing it on the client might be better since it would probably
-be easier to implement a spinner if the client is aware of the queuing.
-
 * TESTS: WRITE SOME!
 some ideas for validation of things I've had to fix over various versions:
 * TEST LAYOUT: Test overflow and scrollbars for each component type. Make sure
