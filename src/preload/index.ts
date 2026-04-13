@@ -57,6 +57,7 @@ export interface API {
     handle: number,
     streamId: number,
   ): Promise<GetKeyFrameListResult>;
+  openPreview(): void;
 }
 
 // Custom APIs for renderer
@@ -70,6 +71,7 @@ const api: API = {
   getStreamList: (handle) => ipcRenderer.invoke("getStreamList", handle),
   getKeyFrameList: (handle, streamId) =>
     ipcRenderer.invoke("getKeyFrameList", handle, streamId),
+  openPreview: () => ipcRenderer.invoke("openPreview"),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

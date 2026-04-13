@@ -12,5 +12,13 @@ export default defineConfig({
       },
     },
     plugins: [svelte()],
+    build: {
+      rollupOptions: {
+        input: {
+          app: "src/renderer/index.html",
+          preview: "src/renderer/preview.html",
+        },
+      },
+    },
   },
 });

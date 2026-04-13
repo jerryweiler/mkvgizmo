@@ -14,6 +14,7 @@ import {
 import { loadConfig, saveConfig } from "./configApis";
 import { getStreamList, getKeyFrameList } from "./metadataApis";
 import { captureFrame } from "./frame";
+import { openPreview } from "./preview";
 
 function createWindow(): void {
   // Create the browser window.
@@ -91,6 +92,7 @@ app.whenReady().then(() => {
     "config:save",
     (_, update: GizmoConfig): Promise<SaveConfigResult> => saveConfig(update),
   );
+  ipcMain.handle("openPreview", openPreview);
 
   createWindow();
 

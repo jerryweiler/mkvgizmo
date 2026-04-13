@@ -4,11 +4,17 @@
   import * as Tabs from "$lib/components/ui/tabs";
   import { selectedFile } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
-  import { FileHeadphone, FileText, FileVideoCamera } from "@lucide/svelte";
+  import {
+    FileHeadphone,
+    FilePlay,
+    FileText,
+    FileVideoCamera,
+  } from "@lucide/svelte";
   import { Toggle } from "$lib/components/ui/toggle";
   import StreamKeyFrame from "./stream-key-frame.svelte";
   import { setContext } from "svelte";
   import Spinner from "$lib/components/ui/spinner/spinner.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
 
   function observerCallback(
     entries: IntersectionObserverEntry[],
@@ -104,6 +110,14 @@
       >
         <FileText class="size-4" aria-hidden="true" />
       </Toggle>
+      <Button
+        variant="outline"
+        onclick={(): void => window.api.openPreview()}
+        class="mx-1 my-2 grow-0"
+        title="Preview"
+      >
+        <FilePlay class="size-4" aria-hidden="true" />
+      </Button>
       <div class="mr-2"></div>
     </div>
     <ScrollArea class="pr-3 m-2 overflow-hidden">
