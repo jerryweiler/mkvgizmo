@@ -39,7 +39,3 @@ languages of all displayed streams
 file's stream data group header in multi-select.
 * FEATURE: Implement dark mode
 * FEATURE: Add a spinner to the keyframe tab while loading the keyframe list.
-
-* CLEANUP: Implement a snippet/component for buttons. they each repeat about 10
-lines (plus more for wrapped lines). needs parameters for text, icon, and
-onclick handler. nav-item button needs customization for variant.
