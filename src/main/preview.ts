@@ -30,8 +30,8 @@ export function openPreview() {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env["ELECTRON_PREVIEW_URL"]) {
-    previewWindow.loadURL(process.env["ELECTRON_PREVIEW_URL"]);
+  if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+    previewWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/preview.html`);
   } else {
     previewWindow.loadFile(join(__dirname, "../renderer/preview.html"));
   }
