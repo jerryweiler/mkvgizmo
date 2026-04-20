@@ -30,6 +30,13 @@ function generateSegmentBoundaries(stream: StreamDetails): void {
     // the segment needs at least one keyframe
     let segmentEnd: number = stream.keyFrames[nextKeyframeIdx++];
 
+    // if the remainder of the stream is less than the target duration,
+    // set the next segment to be the remainder of the stream
+    if (stream.duration - segmentStart <= targetSegmentDuration) {
+      nextKeyframeIdx = stream.keyFrames.length;
+      segmentEnd = stream.duration;
+    }
+
     // keep adding keyframes while we don't exceeed the target duration
     while (
       nextKeyframeIdx < stream.keyFrames.length &&
@@ -44,8 +51,11 @@ function generateSegmentBoundaries(stream: StreamDetails): void {
     segmentStart = segmentEnd;
   }
 
-  // TODO: we should add one last segment from the last keyframe to the end of
-  // the video. need the total duration for that.
+  // we should add one last segment from the last keyframe to the end of
+  // the video.
+  if (stream.keyFramesComplete && segmentStart < stream.duration) {
+    segmentList.push(stream.duration);
+  }
 
   stream.segmentBoundaries = segmentList;
   stream.segmentBoundariesComplete = stream.keyFramesComplete;

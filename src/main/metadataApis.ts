@@ -17,6 +17,15 @@ type ffprobeFrameResult = {
   packets: packet[];
 };
 
+function parseDuration(value: string): number {
+  let parts = value.split(":");
+  let result = 0;
+  for (let part of parts) {
+    result = result * 60 + parseFloat(part);
+  }
+  return result;
+}
+
 function extractStreamDetails(handle: number, raw): StreamDetails {
   let language = "";
   switch (raw.codec_type) {
@@ -31,11 +40,15 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
   // The name of the property holding the stream size varies.
   // Sometimes it's 'NUMBER_OF_BYTES-eng', sometimes it's 'NUMBER_OF_BYTES',
   // and it could possibly have other language suffixes or even be absent.
-  let size = 0;
+  // duration is similar with DURATION-*
+  let size: number = 0;
+  let duration: number = 0;
   for (const prop in raw?.tags) {
     if (prop.startsWith("NUMBER_OF_BYTES")) {
       size = raw.tags[prop];
-      break;
+    }
+    if (prop.startsWith("DURATION")) {
+      duration = parseDuration(raw.tags[prop]);
     }
   }
 
@@ -58,6 +71,7 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
     size,
     dimensions,
     channels,
+    duration,
     forced: raw.disposition.forced !== 0,
     keyFramesComplete: false,
     segmentBoundariesComplete: false,

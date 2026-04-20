@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatSize } from "./state/utils.mjs";
+  import { formatDuration, formatSize } from "./state/utils.mjs";
 
   let { stream }: { stream: StreamDetails } = $props();
 
@@ -44,12 +44,25 @@
         <div class="text-xs font-medium">
           channels: {stream.channels}
         </div>
+        <div class="text-xs font-medium ml-auto">
+          duration: {formatDuration(stream.duration)}
+        </div>
       </div>
     {/if}
     {#if stream.dimensions}
       <div class="flex items-center">
         <div class="text-xs font-medium">
           dimensions: {stream.dimensions}
+        </div>
+        <div class="text-xs font-medium ml-auto">
+          duration: {formatDuration(stream.duration)}
+        </div>
+      </div>
+    {/if}
+    {#if stream.duration && !stream.channels && !stream.dimensions}
+      <div class="flex items-center">
+        <div class="text-xs font-medium ml-auto">
+          duration: {formatDuration(stream.duration)}
         </div>
       </div>
     {/if}

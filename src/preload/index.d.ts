@@ -24,6 +24,7 @@ declare global {
     type: string;
     codec: string;
     size: number;
+    duration: number;
     language: string | null;
     forced?: boolean;
     dimensions?: string;
