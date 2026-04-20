@@ -60,6 +60,7 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
     channels,
     forced: raw.disposition.forced !== 0,
     keyFramesComplete: false,
+    segmentBoundariesComplete: false,
   };
 }
 
@@ -106,7 +107,7 @@ export async function getStreamList(
 
       // getStreamList returns JSON in a minimized, hard to read format.
       // re-generate a more readable version for the RAW display
-      details.rawDetails = JSON.stringify(details.streams, null, 2);
+      details.rawDetails = JSON.stringify(streams, null, 2);
     }
 
     errorMessage = result.errorMessage;

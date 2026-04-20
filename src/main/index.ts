@@ -15,6 +15,14 @@ import { loadConfig, saveConfig } from "./configApis";
 import { getStreamList, getKeyFrameList } from "./metadataApis";
 import { captureFrame } from "./frame";
 import { openPreview } from "./preview";
+import { loadPlaylist } from "./stream";
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "playlist",
+    privileges: { supportFetchAPI: true },
+  },
+]);
 
 function createWindow(): void {
   // Create the browser window.
@@ -55,6 +63,7 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   protocol.handle("frame", captureFrame);
+  protocol.handle("playlist", loadPlaylist);
 
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");

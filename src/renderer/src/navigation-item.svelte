@@ -20,7 +20,7 @@
     if (item.isDirectory) {
       await workingDir.navigate(item.name);
     } else {
-      selectedFile.set(item.name, item.handle);
+      await selectedFile.set(item.name, item.handle);
     }
   }}
   title={item.name}

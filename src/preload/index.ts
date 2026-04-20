@@ -31,6 +31,8 @@ export type StreamDetails = {
   keyFrames?: number[];
   keyFrameSecondsLoaded?: number;
   keyFramesComplete: boolean;
+  segmentBoundaries?: number[];
+  segmentBoundariesComplete: boolean;
   icon?: typeof IconType;
 };
 
