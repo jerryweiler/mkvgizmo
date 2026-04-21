@@ -27,6 +27,7 @@
     "@tailwindcss/postcss": "^4.2.2",
     "autoprefixer": "^10.4.27",
     "electron-reloader": "^1.2.3",
+    "hls.js": "^1.6.16",
     "postcss": "^8.5.8"
   },
   "devDependencies": {
