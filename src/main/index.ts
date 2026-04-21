@@ -1,7 +1,5 @@
-import { app, shell, BrowserWindow, ipcMain, protocol } from "electron";
-import { join } from "path";
+import { app, BrowserWindow, ipcMain, protocol } from "electron";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-import icon from "../../resources/icon.png?asset";
 import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
 import {
@@ -14,8 +12,9 @@ import {
 import { loadConfig, saveConfig } from "./configApis";
 import { getStreamList, getKeyFrameList } from "./metadataApis";
 import { captureFrame } from "./frame";
-import { openPreview } from "./preview";
 import { loadPlaylist, loadSegment } from "./stream";
+import { createMainWindow } from "./windowMain";
+import { openPreview } from "./windowPreview";
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -27,40 +26,6 @@ protocol.registerSchemesAsPrivileged([
     privileges: { supportFetchAPI: true },
   },
 ]);
-
-function createWindow(): void {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === "linux" ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, "../preload/index.js"),
-      sandbox: false,
-    },
-  });
-
-  mainWindow.setMinimumSize(800, 400);
-
-  mainWindow.on("ready-to-show", () => {
-    mainWindow.show();
-  });
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url);
-    return { action: "deny" };
-  });
-
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-    mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
-  } else {
-    mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
-  }
-}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -108,12 +73,12 @@ app.whenReady().then(() => {
   );
   ipcMain.handle("openPreview", openPreview);
 
-  createWindow();
+  createMainWindow();
 
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
   });
 });
 

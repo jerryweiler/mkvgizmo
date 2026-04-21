@@ -3,11 +3,13 @@ import icon from "../../resources/icon.png?asset";
 import { join } from "path";
 import { is } from "@electron-toolkit/utils";
 
-export function openPreview() {
+export let mainWindow: BrowserWindow | undefined;
+
+export function createMainWindow(): void {
   // Create the browser window.
-  const previewWindow = new BrowserWindow({
-    width: 640,
-    height: 480,
+  mainWindow = new BrowserWindow({
+    width: 900,
+    height: 670,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === "linux" ? { icon } : {}),
@@ -17,13 +19,13 @@ export function openPreview() {
     },
   });
 
-  previewWindow.setMinimumSize(320, 200);
+  mainWindow.setMinimumSize(800, 400);
 
-  previewWindow.on("ready-to-show", () => {
-    previewWindow.show();
+  mainWindow.on("ready-to-show", () => {
+    mainWindow!.show();
   });
 
-  previewWindow.webContents.setWindowOpenHandler((details) => {
+  mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: "deny" };
   });
@@ -31,8 +33,8 @@ export function openPreview() {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-    previewWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/preview.html`);
+    mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    previewWindow.loadFile(join(__dirname, "../renderer/preview.html"));
+    mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
