@@ -112,7 +112,7 @@
       </Toggle>
       <Button
         variant="outline"
-        onclick={(): void => window.api.openPreview()}
+        onclick={(): void => window.api.openPreview(selectedFile.handle)}
         class="mx-1 my-2 grow-0"
         title="Preview"
       >

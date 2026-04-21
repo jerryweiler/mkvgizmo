@@ -14,7 +14,7 @@ import { getStreamList, getKeyFrameList } from "./metadataApis";
 import { captureFrame } from "./frame";
 import { loadPlaylist, loadSegment } from "./stream";
 import { createMainWindow } from "./windowMain";
-import { openPreview } from "./windowPreview";
+import { getPreviewHandle, openPreview } from "./windowPreview";
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -71,7 +71,11 @@ app.whenReady().then(() => {
     "config:save",
     (_, update: GizmoConfig): Promise<SaveConfigResult> => saveConfig(update),
   );
-  ipcMain.handle("openPreview", openPreview);
+  ipcMain.handle("openPreview", (_, handle: number): void =>
+    openPreview(handle),
+  );
+
+  ipcMain.handle("preview:getHandle", (_) => getPreviewHandle());
 
   createMainWindow();
 

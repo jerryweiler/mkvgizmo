@@ -2,13 +2,14 @@
   import Hls from "hls.js";
   import { onMount } from "svelte";
 
-  onMount(() => {
+  async function startPreview(): Promise<void> {
+    const handle = await window.api.getPreviewHandle();
     var video = document.getElementById("video") as HTMLVideoElement;
     if (!video) return;
 
     video.onloadeddata = () => video.play();
 
-    var videoSrc = "playlist://1/0/1";
+    var videoSrc = `playlist://${handle}/0/1`;
     if (Hls.isSupported()) {
       var hls = new Hls();
       hls.loadSource(videoSrc);
@@ -26,6 +27,10 @@
     }
 
     video.controls = true;
+  }
+
+  onMount(() => {
+    startPreview();
   });
 </script>
 
