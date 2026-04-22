@@ -1,15 +1,29 @@
 <script lang="ts">
   import Hls from "hls.js";
   import { onMount } from "svelte";
+  import { selectedFile } from "./state/current-file.svelte";
+
+  let videoStream: number = $state(0);
+  let audioStream: number | undefined = $state(undefined);
 
   async function startPreview(): Promise<void> {
-    const handle = await window.api.getPreviewHandle();
+    const handle = window.api.getPreviewHandle();
+
+    // We're in a separate process from the main window, so the selected
+    // file in the navigation list isn't visible to us and we need to set
+    // it again. Set the instance in this process so we get stream details.
+    await selectedFile.set("", handle, false);
+
+    videoStream = selectedFile.streams.find((s) => s.type === "video").id;
+    audioStream = selectedFile.streams.find((s) => s.type === "audio")?.id;
+    if (audioStream === undefined) return;
+
     var video = document.getElementById("video") as HTMLVideoElement;
     if (!video) return;
 
     video.onloadeddata = () => video.play();
 
-    var videoSrc = `playlist://${handle}/0/1`;
+    var videoSrc = `playlist://${handle}/${videoStream}/${audioStream}`;
     if (Hls.isSupported()) {
       var hls = new Hls();
       hls.loadSource(videoSrc);
@@ -34,6 +48,16 @@
   });
 </script>
 
-<div class="w-screen h-screen">
-  <video id="video"></video>
+<!-- grid fills the full window with 2 rows. bottom row (selectors) is fixed
+ size, the top is the player and fills the remainder.
+ overflow-auto keeps the player from overflowing into the selectors,
+ while max-w/h-full causes the player to grow/shrink based on both directions
+ to maintain aspect ratio -->
+<div class="w-screen h-screen grid grid-rows-[1fr_2rem]">
+  <div class="overflow-auto w-full h-full">
+    <video class="max-w-full max-h-full" id="video"></video>
+  </div>
+  <div>
+    <h2>Bottom Row (Fixed Height)</h2>
+  </div>
 </div>

@@ -1,4 +1,9 @@
-import { FileHeadphone, FileQuestionMark, FileText, FileVideoCamera } from "@lucide/svelte";
+import {
+  FileHeadphone,
+  FileQuestionMark,
+  FileText,
+  FileVideoCamera,
+} from "@lucide/svelte";
 import { logger } from "./logger.svelte";
 
 // When a file is selected, we start loading metadata asynchronously. For a
@@ -55,7 +60,11 @@ export class FileDetails {
     this.#streams = [];
   }
 
-  async set(filename: string, handle: number): Promise<void> {
+  async set(
+    filename: string,
+    handle: number,
+    loadKeyFrames: boolean = true,
+  ): Promise<void> {
     this.#updateSequenceNumber = ++updateSequenceNumber;
     this.#name = filename;
     this.#handle = handle;
@@ -85,32 +94,36 @@ export class FileDetails {
       updateIcon(stream);
     }
 
-    // retrieving the keyframe list can take a while for a large file. do it last
-    for (const stream of this.streams) {
-      if (stream.type !== "video") continue;
+    if (loadKeyFrames) {
+      // retrieving the keyframe list can take a while for a large file. do it last
+      for (const stream of this.streams) {
+        if (stream.type !== "video") continue;
 
-      while (!stream.keyFramesComplete) {
-        const keyFrameDetails = await window.api.getKeyFrameList(
-          handle,
-          stream.id
-        );
+        while (!stream.keyFramesComplete) {
+          const keyFrameDetails = await window.api.getKeyFrameList(
+            handle,
+            stream.id,
+          );
 
-        // if the user navigated away while the async call was processing, we're done
-        if (this.#updateSequenceNumber !== currentSequenceNumber) {
-          return;
-        }
+          // if the user navigated away while the async call was processing, we're done
+          if (this.#updateSequenceNumber !== currentSequenceNumber) {
+            return;
+          }
 
-        if (keyFrameDetails.errorMessage) {
-          logger.add(`Error loading keyframe details for file ${filename} stream ${stream.id}:`);
-          for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
-            if (line) {
-              logger.add(line);
+          if (keyFrameDetails.errorMessage) {
+            logger.add(
+              `Error loading keyframe details for file ${filename} stream ${stream.id}:`,
+            );
+            for (const line of keyFrameDetails.errorMessage.split("\r\n")) {
+              if (line) {
+                logger.add(line);
+              }
             }
           }
-        }
 
-        stream.keyFrames = keyFrameDetails.timestamps;
-        stream.keyFramesComplete = keyFrameDetails.isComplete;
+          stream.keyFrames = keyFrameDetails.timestamps;
+          stream.keyFramesComplete = keyFrameDetails.isComplete;
+        }
       }
     }
   }
