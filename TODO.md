@@ -53,5 +53,3 @@ line, so we can keep appending segments as we load keyframes.
 * CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
 and mixes the layout and data model. Change it to generate an array of
 attributes, then use that array in the layout generation.
-
-* BUG: Prevent preview from being invoked if no media file is selected.
