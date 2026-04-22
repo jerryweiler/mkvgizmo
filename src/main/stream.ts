@@ -8,6 +8,51 @@ import { runProcess } from "./processUtils";
 // target diration
 const targetSegmentDuration: number = 8;
 
+type Selector = {
+  handle?: number;
+  video?: number;
+  audio?: number;
+  subtitle?: number;
+  segment?: number;
+};
+
+function parseSelector(selector: string): Selector {
+  const result: Selector = {};
+  const parts = selector.split("/");
+  for (const part of parts) {
+    const value = parseInt(part.slice(1));
+    switch (part.at(0)) {
+      case "h":
+        result.handle = value;
+        break;
+      case "v":
+        result.video = value;
+        break;
+      case "a":
+        result.audio = value;
+        break;
+      case "s":
+        result.subtitle = value;
+        break;
+      case "i":
+        result.segment = value;
+        break;
+      default:
+        return {};
+    }
+  }
+
+  return result;
+}
+
+function generateSegment(s: Selector, i: number) {
+  let result: string = `segment://h${s.handle}/v${s.video}`;
+  if (s.audio !== undefined) result += `/a${s.audio}`;
+  if (s.subtitle !== undefined) result += `/s${s.subtitle}`;
+  result += `/i${i}`;
+  return result;
+}
+
 function generateSegmentBoundaries(stream: StreamDetails): void {
   if (stream.segmentBoundariesComplete) {
     // we've already generated segment boundaries for this stream
@@ -75,21 +120,19 @@ export async function loadPlaylist(request: Request): Promise<Response> {
   }
 
   const url = request.url.slice(protocol.length);
-  const parts = url.split("/");
+  const selector = parseSelector(url);
 
-  if (parts.length !== 3) {
-    return new Response("bad request", {
+  if (!selector.handle) {
+    return new Response("unknown handle", {
       status: 400,
     });
   }
 
-  let [handle, videoStreamid, audioStreamid] = parts.map((p) => parseInt(p));
-
-  const fileDetails: FileDetails = getFileDetails(handle);
+  const fileDetails: FileDetails = getFileDetails(selector.handle);
 
   // the segment list is based on the video stream
   const stream: StreamDetails | undefined = fileDetails.streams?.find(
-    (s) => s.id == videoStreamid,
+    (s) => s.id === selector.video,
   );
 
   if (!stream) {
@@ -119,7 +162,7 @@ export async function loadPlaylist(request: Request): Promise<Response> {
     lines.push(
       `#EXTINF:${(stream.segmentBoundaries[i] - segmentStart).toFixed(4)}`,
     );
-    lines.push(`segment://${handle}/${videoStreamid}/${audioStreamid}/${i}`);
+    lines.push(generateSegment(selector, i));
 
     segmentStart = stream.segmentBoundaries[i];
   }
@@ -151,23 +194,19 @@ export async function loadSegment(request: Request): Promise<Response> {
   }
 
   const url = request.url.slice(protocol.length);
-  const parts = url.split("/");
+  const selector = parseSelector(url);
 
-  if (parts.length !== 4) {
-    return new Response("bad request", {
+  if (!selector.handle || selector.segment === undefined) {
+    return new Response("unknown handle", {
       status: 400,
     });
   }
 
-  let [handle, videoStreamid, audioStreamid, segmentId] = parts.map((p) =>
-    parseInt(p),
-  );
-
-  const fileDetails: FileDetails = getFileDetails(handle);
+  const fileDetails: FileDetails = getFileDetails(selector.handle);
 
   // the segment list is based on the video stream
   const stream: StreamDetails | undefined = fileDetails.streams?.find(
-    (s) => s.id == videoStreamid,
+    (s) => s.id === selector.video,
   );
 
   if (!stream) {
@@ -178,8 +217,8 @@ export async function loadSegment(request: Request): Promise<Response> {
 
   if (
     !stream.segmentBoundaries ||
-    segmentId >= stream.segmentBoundaries.length ||
-    segmentId < 0
+    selector.segment >= stream.segmentBoundaries.length ||
+    selector.segment < 0
   ) {
     return new Response("segment not found", {
       status: 400,
@@ -187,10 +226,10 @@ export async function loadSegment(request: Request): Promise<Response> {
   }
 
   const segmentStart: number =
-    segmentId === 0 ? 0 : stream.segmentBoundaries[segmentId - 1];
-  const segmentEnd: number = stream.segmentBoundaries[segmentId];
+    selector.segment === 0 ? 0 : stream.segmentBoundaries[selector.segment - 1];
+  const segmentEnd: number = stream.segmentBoundaries[selector.segment];
 
-  const filepath = getFileDetails(handle).path;
+  const filepath = getFileDetails(selector.handle).path;
   const ffmpegpath = path.join(config.ffmpegPath, "ffmpeg.exe");
 
   const result = await runProcess(ffmpegpath, [
@@ -211,9 +250,9 @@ export async function loadSegment(request: Request): Promise<Response> {
     "-ac",
     "2",
     "-map",
-    `0:${videoStreamid}`,
+    `0:${selector.video}`,
     "-map",
-    `0:${audioStreamid}`,
+    `0:${selector.audio}`,
     "-fflags",
     "+genpts",
     "-start_at_zero",
@@ -222,7 +261,7 @@ export async function loadSegment(request: Request): Promise<Response> {
     "0",
     "-f",
     "mpegts",
-    "pipe:1"
+    "pipe:1",
   ]);
 
   return new Response(new Uint8Array(result.output), {

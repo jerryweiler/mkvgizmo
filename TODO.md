@@ -36,12 +36,6 @@ languages of all displayed streams
 
 * FEATURE: Preview should display a list of streams and allow the user to
 change which video/audio/subtitle stream is active
-* FEATURE: Currently 'playlist:' and 'segment:' protocol handlers take 2 streams
-as part of the url (video/audio). we want to add subtitle, but make is optional.
-we probably also want audio to be optional. add 'v/a/s' prefixes to the stream
-ids and make them all optional. example: instead of 'playlist://1/0/1', it
-would be 'playlist://1/v0/a1', with an additional subtitle stream making it
-'playlist://1/v0/a1/s2'
 * FEATURE: Handle subtitle stream in playback. Since HLS only handles VTT
 text-based format and most subtitles we have are image-based (SRT, VOBSUB, etc),
 use subtitle burn-in when generating segments.

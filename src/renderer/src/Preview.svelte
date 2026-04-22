@@ -23,7 +23,7 @@
 
     video.onloadeddata = () => video.play();
 
-    var videoSrc = `playlist://${handle}/${videoStream}/${audioStream}`;
+    var videoSrc = `playlist://h${handle}/v${videoStream}/a${audioStream}`;
     if (Hls.isSupported()) {
       var hls = new Hls();
       hls.loadSource(videoSrc);
