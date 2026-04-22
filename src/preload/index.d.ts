@@ -62,7 +62,7 @@ interface API {
     streamId: number,
   ): Promise<GetKeyFrameListResult>;
   openPreview(handle: number): void;
-  getPreviewHandle(): number;
+  getPreviewHandle(): Promise<number>;
 }
 
 declare global {

@@ -7,7 +7,7 @@
   let audioStream: number | undefined = $state(undefined);
 
   async function startPreview(): Promise<void> {
-    const handle = window.api.getPreviewHandle();
+    const handle = await window.api.getPreviewHandle();
 
     // We're in a separate process from the main window, so the selected
     // file in the navigation list isn't visible to us and we need to set
