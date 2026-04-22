@@ -22,12 +22,9 @@ directory doesn't contain ffmpeg or doesn't exist
 * TEST IPC: Verify that errors from getStreamList are returned properly. eg:
 file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
 
-* FEATURE: throttle loading of key frame screenshots
 * FEATURE: Add multi-select for files. If multiple files can be selected,
 should the stream details include the stream detail cards? or should there be a
 group header with each group?
-* FEATURE: Add preview for subtitles (textarea, like the raw details).
-* FEATURE: Add playback where the user can select which streams to use
 * FEATURE: Cache file data on first load. This will improve multi-select. Once
 metadata modification is implemented, the ui might need a refresh button (same
 row as the details/raw tabs, like the proposed filter buttons?)
@@ -35,7 +32,24 @@ row as the details/raw tabs, like the proposed filter buttons?)
 * FEATURE: Remember last window position?
 * FEATURE: Add filter for languages. Should be dynamically generated based on
 languages of all displayed streams
-* FEATURE (suggestion): Add a 'preview' button. This can be embedded in each
-file's stream data group header in multi-select.
 * FEATURE: Implement dark mode
-* FEATURE: Add a spinner to the keyframe tab while loading the keyframe list.
+
+* FEATURE: Preview should display a list of streams and allow the user to
+change which video/audio/subtitle stream is active
+* FEATURE: Currently 'playlist:' and 'segment:' protocol handlers take 2 streams
+as part of the url (video/audio). we want to add subtitle, but make is optional.
+we probably also want audio to be optional. add 'v/a/s' prefixes to the stream
+ids and make them all optional. example: instead of 'playlist://1/0/1', it
+would be 'playlist://1/v0/a1', with an additional subtitle stream making it
+'playlist://1/v0/a1/s2'
+* FEATURE: Handle subtitle stream in playback. Since HLS only handles VTT
+text-based format and most subtitles we have are image-based (SRT, VOBSUB, etc),
+use subtitle burn-in when generating segments.
+* FEATURE: When keyframe list is incomplete when preview is invoked, mark
+the playlist as an EVENT style playlist and continue loading keyframes.
+The HLS player will continue querying the playlist until it has a LISTEND
+line, so we can keep appending segments as we load keyframes.
+
+* CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
+and mixes the layout and data model. Change it to generate an array of
+attributes, then use that array in the layout generation.
