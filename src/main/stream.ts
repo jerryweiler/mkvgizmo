@@ -45,7 +45,7 @@ function parseSelector(selector: string): Selector {
   return result;
 }
 
-function generateSegment(s: Selector, i: number) {
+function formatSegmentUrl(s: Selector, i: number) {
   let result: string = `segment://h${s.handle}/v${s.video}`;
   if (s.audio !== undefined) result += `/a${s.audio}`;
   if (s.subtitle !== undefined) result += `/s${s.subtitle}`;
@@ -56,13 +56,6 @@ function generateSegment(s: Selector, i: number) {
 function generateSegmentBoundaries(stream: StreamDetails): void {
   if (stream.segmentBoundariesComplete) {
     // we've already generated segment boundaries for this stream
-    return;
-  }
-
-  if (stream.segmentBoundaries && !stream.keyFramesComplete) {
-    // we've generated a partial segment list from an incomplete keyframe list.
-    // there's no reason to re-generate the segment list until we have a complete
-    // keyframe list
     return;
   }
 
@@ -97,6 +90,13 @@ function generateSegmentBoundaries(stream: StreamDetails): void {
 
     // set up for the next iteration
     segmentStart = segmentEnd;
+  }
+
+  // If the keyframes are not complete, remove the last segment, since it's
+  // likely to change when we have more keyframes to coalesce. HLS requires
+  // that segments not change once published.
+  if (!stream.keyFramesComplete) {
+    segmentList.pop();
   }
 
   // we should add one last segment from the last keyframe to the end of
@@ -152,9 +152,20 @@ export async function loadPlaylist(request: Request): Promise<Response> {
   const lines: string[] = [
     "#EXTM3U",
     "#EXT-X-VERSION:3",
-    "#EXT-X-TARGETDURATION:8",
+    `#EXT-X-TARGETDURATION:${targetSegmentDuration}`,
     "#EXT-X-MEDIA-SEQUENCE:0",
   ];
+
+  // If we haven't finished figuring out the segment list,
+  // mark the playlist as an EVENT type, which is intended to mean that
+  // the playlist represents a live event that new segments will be appended
+  // to. The HLS player will then re-query the playlist periodically.
+  if (!stream.segmentBoundariesComplete) {
+    lines.push("#EXT-X-PLAYLIST-TYPE:EVENT");
+    lines.push("#EXT-X-START:TIME-OFFSET=0");
+  } else {
+    lines.push("#EXT-X-PLAYLIST-TYPE:VOD");
+  }
 
   // For each segment, add a duration and url
   let segmentStart: number = 0;
@@ -162,12 +173,14 @@ export async function loadPlaylist(request: Request): Promise<Response> {
     lines.push(
       `#EXTINF:${(stream.segmentBoundaries[i] - segmentStart).toFixed(4)}`,
     );
-    lines.push(generateSegment(selector, i));
+    lines.push(formatSegmentUrl(selector, i));
 
     segmentStart = stream.segmentBoundaries[i];
   }
 
-  lines.push("#EXT-X-ENDLIST");
+  if (stream.segmentBoundariesComplete) {
+    lines.push("#EXT-X-ENDLIST");
+  }
 
   return new Response(lines.join("\n"), {
     headers: {

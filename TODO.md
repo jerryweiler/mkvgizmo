@@ -34,12 +34,10 @@ row as the details/raw tabs, like the proposed filter buttons?)
 languages of all displayed streams
 * FEATURE: Implement dark mode
 
-* FEATURE: When keyframe list is incomplete when preview is invoked, mark
-the playlist as an EVENT style playlist and continue loading keyframes.
-The HLS player will continue querying the playlist until it has a LISTEND
-line, so we can keep appending segments as we load keyframes.
 * FEATURE: Have the stream selectors fill the width of the playback window
 and dynamically resize with it. right now, they're fixed at 200px wide
+* FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
+(such as raw 4K movies), can stutter.
 
 * CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
 and mixes the layout and data model. Change it to generate an array of
