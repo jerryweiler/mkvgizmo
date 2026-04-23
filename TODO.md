@@ -41,10 +41,8 @@ use subtitle burn-in when generating segments.
 the playlist as an EVENT style playlist and continue loading keyframes.
 The HLS player will continue querying the playlist until it has a LISTEND
 line, so we can keep appending segments as we load keyframes.
-* FEATURE: Hhave the stream selectors fill the width of the playback window
+* FEATURE: Have the stream selectors fill the width of the playback window
 and dynamically resize with it. right now, they're fixed at 200px wide
-* FEATURE: When changing streams, remember the current player timestamp and
-restore it.
 
 * CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
 and mixes the layout and data model. Change it to generate an array of

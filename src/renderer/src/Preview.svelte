@@ -16,6 +16,11 @@
 
     video.onloadeddata = () => video.play();
 
+    // if we're changing the streams during playback, save the
+    // current playback time so we can restore it after changing
+    // sources
+    const currentTime = video.currentTime;
+
     let videoSrc: string = `playlist://h${handle}/v${videoStream}`;
     if (audioStream !== undefined) videoSrc += `/a${audioStream}`;
     if (subtitleStream !== undefined) videoSrc += `/s${subtitleStream}`;
@@ -35,6 +40,8 @@
     else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoSrc;
     }
+
+    video.currentTime = currentTime;
 
     video.controls = true;
   });
