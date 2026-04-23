@@ -34,9 +34,6 @@ row as the details/raw tabs, like the proposed filter buttons?)
 languages of all displayed streams
 * FEATURE: Implement dark mode
 
-* FEATURE: Handle subtitle stream in playback. Since HLS only handles VTT
-text-based format and most subtitles we have are image-based (SRT, VOBSUB, etc),
-use subtitle burn-in when generating segments.
 * FEATURE: When keyframe list is incomplete when preview is invoked, mark
 the playlist as an EVENT style playlist and continue loading keyframes.
 The HLS player will continue querying the playlist until it has a LISTEND

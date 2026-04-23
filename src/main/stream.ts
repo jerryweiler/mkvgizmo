@@ -232,7 +232,11 @@ export async function loadSegment(request: Request): Promise<Response> {
   const filepath = getFileDetails(selector.handle).path;
   const ffmpegpath = path.join(config.ffmpegPath, "ffmpeg.exe");
 
-  const result = await runProcess(ffmpegpath, [
+  // ffmpeg parameters need to be passed in order based on classification
+  // (input, output, filters, etc). start with input parameters, then build
+  // the stream selectors (which vary based on user selection), then add output
+  // parameters
+  let options: string[] = [
     "-nostats",
     "-hide_banner",
     "-loglevel",
@@ -249,10 +253,30 @@ export async function loadSegment(request: Request): Promise<Response> {
     "aac",
     "-ac",
     "2",
-    "-map",
-    `0:${selector.video}`,
-    "-map",
-    `0:${selector.audio}`,
+  ];
+
+  // If we have subtitles, add them as an overlay over the video.
+  // otherwise, just take the selected video
+  if (selector.subtitle !== undefined) {
+    // this assumes we have image-based subtitles (DVD, VOBSUB).
+    // this needs more logic if we ever want to support srt or ass formats.
+    options = [
+      ...options,
+      "-filter_complex",
+      `[0:${selector.video}][0:${selector.subtitle}]overlay[o]`,
+      "-map",
+      "[o]",
+    ];
+  } else {
+    options = [...options, "-map", `0:${selector.video}`];
+  }
+
+  if (selector.audio !== undefined) {
+    options = [...options, "-map", `0:${selector.audio}`];
+  }
+
+  options = [
+    ...options,
     "-fflags",
     "+genpts",
     "-start_at_zero",
@@ -262,7 +286,9 @@ export async function loadSegment(request: Request): Promise<Response> {
     "-f",
     "mpegts",
     "pipe:1",
-  ]);
+  ];
+
+  const result = await runProcess(ffmpegpath, options);
 
   return new Response(new Uint8Array(result.output), {
     headers: {
