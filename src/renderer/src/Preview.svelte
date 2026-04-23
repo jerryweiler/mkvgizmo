@@ -2,28 +2,24 @@
   import Hls from "hls.js";
   import { onMount } from "svelte";
   import { selectedFile } from "./state/current-file.svelte";
+  import StreamSelector from "./stream-selector.svelte";
 
+  let handle: number = $state(0);
   let videoStream: number = $state(0);
   let audioStream: number | undefined = $state(undefined);
+  let subtitleStream: number | undefined = $state(undefined);
 
-  async function startPreview(): Promise<void> {
-    const handle = await window.api.getPreviewHandle();
-
-    // We're in a separate process from the main window, so the selected
-    // file in the navigation list isn't visible to us and we need to set
-    // it again. Set the instance in this process so we get stream details.
-    await selectedFile.set("", handle, false);
-
-    videoStream = selectedFile.streams.find((s) => s.type === "video").id;
-    audioStream = selectedFile.streams.find((s) => s.type === "audio")?.id;
-    if (audioStream === undefined) return;
-
+  // Whenever one of the stream selections change, switch to the new playlist
+  $effect(() => {
     var video = document.getElementById("video") as HTMLVideoElement;
     if (!video) return;
 
     video.onloadeddata = () => video.play();
 
-    var videoSrc = `playlist://h${handle}/v${videoStream}/a${audioStream}`;
+    let videoSrc: string = `playlist://h${handle}/v${videoStream}`;
+    if (audioStream !== undefined) videoSrc += `/a${audioStream}`;
+    if (subtitleStream !== undefined) videoSrc += `/s${subtitleStream}`;
+
     if (Hls.isSupported()) {
       var hls = new Hls();
       hls.loadSource(videoSrc);
@@ -41,6 +37,18 @@
     }
 
     video.controls = true;
+  });
+
+  async function startPreview(): Promise<void> {
+    handle = await window.api.getPreviewHandle();
+
+    // We're in a separate process from the main window, so the selected
+    // file in the navigation list isn't visible to us and we need to set
+    // it again. Set the instance in this process so we get stream details.
+    await selectedFile.set("", handle, false);
+
+    videoStream = selectedFile.streams.find((s) => s.type === "video").id;
+    audioStream = selectedFile.streams.find((s) => s.type === "audio")?.id;
   }
 
   onMount(() => {
@@ -58,6 +66,17 @@
     <video class="max-w-full max-h-full" id="video"></video>
   </div>
   <div>
-    <h2>Bottom Row (Fixed Height)</h2>
+    <StreamSelector
+      bind:value={videoStream}
+      options={selectedFile.streams.filter((s) => s.type === "video")}
+    />
+    <StreamSelector
+      bind:value={audioStream}
+      options={selectedFile.streams.filter((s) => s.type === "audio")}
+    />
+    <StreamSelector
+      bind:value={subtitleStream}
+      options={selectedFile.streams.filter((s) => s.type === "subtitle")}
+    />
   </div>
 </div>

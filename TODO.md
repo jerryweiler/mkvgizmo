@@ -34,8 +34,6 @@ row as the details/raw tabs, like the proposed filter buttons?)
 languages of all displayed streams
 * FEATURE: Implement dark mode
 
-* FEATURE: Preview should display a list of streams and allow the user to
-change which video/audio/subtitle stream is active
 * FEATURE: Handle subtitle stream in playback. Since HLS only handles VTT
 text-based format and most subtitles we have are image-based (SRT, VOBSUB, etc),
 use subtitle burn-in when generating segments.
@@ -43,6 +41,10 @@ use subtitle burn-in when generating segments.
 the playlist as an EVENT style playlist and continue loading keyframes.
 The HLS player will continue querying the playlist until it has a LISTEND
 line, so we can keep appending segments as we load keyframes.
+* FEATURE: Hhave the stream selectors fill the width of the playback window
+and dynamically resize with it. right now, they're fixed at 200px wide
+* FEATURE: When changing streams, remember the current player timestamp and
+restore it.
 
 * CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
 and mixes the layout and data model. Change it to generate an array of
