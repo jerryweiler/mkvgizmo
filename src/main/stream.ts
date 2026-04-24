@@ -45,6 +45,17 @@ function parseSelector(selector: string): Selector {
   return result;
 }
 
+// some ffmpeg functionality (ass/srt filters) require passing the stream
+// id relative to the stream type, not the total number of streams.
+function findSubtitleIndex(fileDetails: FileDetails, id: number): number {
+  let result: number = 0;
+  for (const stream of fileDetails.streams!) {
+    if (stream.id === id) return result;
+    if (stream.type === "subtitle") result++;
+  }
+  return -1;
+}
+
 function formatSegmentUrl(s: Selector, i: number) {
   let result: string = `segment://h${s.handle}/v${s.video}`;
   if (s.audio !== undefined) result += `/a${s.audio}`;
@@ -271,15 +282,54 @@ export async function loadSegment(request: Request): Promise<Response> {
   // If we have subtitles, add them as an overlay over the video.
   // otherwise, just take the selected video
   if (selector.subtitle !== undefined) {
-    // this assumes we have image-based subtitles (DVD, VOBSUB).
-    // this needs more logic if we ever want to support srt or ass formats.
-    options = [
-      ...options,
-      "-filter_complex",
-      `[0:${selector.video}][0:${selector.subtitle}]overlay[o]`,
-      "-map",
-      "[o]",
-    ];
+    // We want to overlay the subtitles on the video. How this is done depends
+    // on the subtitle codec in use. To figure that out, we need the stream
+    // metadata
+    const subtitles: StreamDetails = fileDetails.streams?.find(
+      (s) => s.id === selector.subtitle,
+    )!;
+
+    const escapedpath = filepath
+      .replaceAll("\\", "\\\\")
+      .replaceAll(":", "\\:");
+
+    switch (subtitles.codec) {
+      case "hdmv_pgs_subtitle":
+      case "dvd_subtitle":
+        // these are image-based subtitles
+        options = [
+          ...options,
+          "-filter_complex",
+          `[0:${selector.video}][0:${selector.subtitle}]overlay[o]`,
+          "-map",
+          "[o]",
+        ];
+        break;
+      case "subrip":
+        // text-based srt format
+        options = [
+          ...options,
+          "-map",
+          `0:${selector.video}`,
+          "-ss",
+          segmentStart.toFixed(4),
+          "-vf",
+          `subtitles='${escapedpath}':si=${findSubtitleIndex(fileDetails, selector.subtitle)}`,
+        ];
+        break;
+      case "ass":
+        // text-based Advanced Substation Alpha format
+        options = [
+          ...options,
+          "-map",
+          `0:${selector.video}`,
+          "-ss",
+          segmentStart.toFixed(4),
+          "-vf",
+          `ass='${escapedpath}':si=${findSubtitleIndex(fileDetails, selector.subtitle)}`,
+        ];
+        break;
+    }
   } else {
     options = [...options, "-map", `0:${selector.video}`];
   }

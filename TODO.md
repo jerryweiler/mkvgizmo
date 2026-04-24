@@ -38,6 +38,7 @@ languages of all displayed streams
 and dynamically resize with it. right now, they're fixed at 200px wide
 * FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
 (such as raw 4K movies), can stutter.
+* FEATURE: Allow subtitles and audio to be de-selected
 
 * CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
 and mixes the layout and data model. Change it to generate an array of
