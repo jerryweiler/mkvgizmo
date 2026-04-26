@@ -1,3 +1,10 @@
+import {
+  FileHeadphone,
+  FileQuestionMark,
+  FileText,
+  FileVideoCamera,
+} from "@lucide/svelte";
+
 export function formatSize(bytes: number): string {
   let suffix: string = "";
   if (bytes > 1024) {
@@ -37,4 +44,17 @@ export function formatDuration(duration: number): string {
   if (minutes > 0) result = `${minutes}m ${result}`;
   if (hours > 0) result = `${hours}h ${result}`;
   return result;
+}
+
+export function getIcon(streamType: string) {
+  switch (streamType) {
+    case "audio":
+      return FileHeadphone;
+    case "video":
+      return FileVideoCamera;
+    case "subtitle":
+      return FileText;
+    default:
+      return FileQuestionMark;
+  }
 }

@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import { selectedFile } from "./state/current-file.svelte";
   import StreamSelector from "./stream-selector.svelte";
+  import { getIcon } from "./state/utils.mjs";
 
   let handle: number = $state(0);
   let videoStream: number = $state(0);
@@ -58,6 +59,25 @@
     audioStream = selectedFile.streams.find((s) => s.type === "audio")?.id;
   }
 
+  function getOptions(type: string, allowUnselected: boolean): StreamDetails[] {
+    let result = selectedFile.streams.filter((s) => s.type === type);
+    if (allowUnselected) {
+      result.unshift({
+        id: undefined,
+        codec: "",
+        key: "",
+        duration: 0,
+        keyFramesComplete: true,
+        language: "none",
+        segmentBoundariesComplete: true,
+        size: 0,
+        type,
+        icon: getIcon(type)
+      });
+    }
+    return result;
+  }
+
   onMount(() => {
     startPreview();
   });
@@ -75,15 +95,15 @@
   <div>
     <StreamSelector
       bind:value={videoStream}
-      options={selectedFile.streams.filter((s) => s.type === "video")}
+      options={getOptions("video", false)}
     />
     <StreamSelector
       bind:value={audioStream}
-      options={selectedFile.streams.filter((s) => s.type === "audio")}
+      options={getOptions("audio", true)}
     />
     <StreamSelector
       bind:value={subtitleStream}
-      options={selectedFile.streams.filter((s) => s.type === "subtitle")}
+      options={getOptions("subtitle", true)}
     />
   </div>
 </div>

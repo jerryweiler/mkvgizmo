@@ -1,10 +1,5 @@
-import {
-  FileHeadphone,
-  FileQuestionMark,
-  FileText,
-  FileVideoCamera,
-} from "@lucide/svelte";
 import { logger } from "./logger.svelte";
+import { getIcon } from "./utils.mjs";
 
 // When a file is selected, we start loading metadata asynchronously. For a
 // large file, like a 4k movie which can be 10s of GB, some of this metadata
@@ -13,21 +8,6 @@ import { logger } from "./logger.svelte";
 // returns, we check the sequence number and abort if the value indicates that
 // the user has navigated awayt.
 let updateSequenceNumber: number = 0;
-
-function updateIcon(stream: StreamDetails) {
-  stream.icon = FileQuestionMark;
-  switch (stream.type) {
-    case "audio":
-      stream.icon = FileHeadphone;
-      break;
-    case "video":
-      stream.icon = FileVideoCamera;
-      break;
-    case "subtitle":
-      stream.icon = FileText;
-      break;
-  }
-}
 
 export class FileDetails {
   #handle: number = $state(0);
@@ -91,7 +71,7 @@ export class FileDetails {
     this.#streams = details.streams;
 
     for (const stream of this.streams) {
-      updateIcon(stream);
+      stream.icon = getIcon(stream.type);
     }
 
     if (loadKeyFrames) {
