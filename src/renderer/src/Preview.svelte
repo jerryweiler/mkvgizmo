@@ -72,7 +72,7 @@
         segmentBoundariesComplete: true,
         size: 0,
         type,
-        icon: getIcon(type)
+        icon: getIcon(type),
       });
     }
     return result;
