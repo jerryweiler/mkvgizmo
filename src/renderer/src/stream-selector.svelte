@@ -34,14 +34,13 @@
       <Button
         {...props}
         variant="outline"
-        class="w-50 justify-between"
+        class="w-full justify-between m-0.5"
         role="combobox"
         aria-expanded={open}
       >
         {#if selectedValue}
-          <selectedValue.icon class="mr-2 size-4 shrink-0" aria-hidden="true" />
+          <selectedValue.icon class="mr-1 size-4 shrink-0" aria-hidden="true" />
           {selectedValue.id}
-          {selectedValue.type}
           {selectedValue.language}
         {/if}
         <ChevronsUpDownIcon class="opacity-50" />
@@ -65,7 +64,6 @@
                 <CheckIcon />
               {/if}
               {option.id}
-              {option.type}
               {option.language}
             </Command.Item>
           {/each}

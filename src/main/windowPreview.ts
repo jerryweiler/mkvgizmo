@@ -39,7 +39,7 @@ export function openPreview(handle: number): void {
     modal: true,
   });
 
-  previewWindow.setMinimumSize(320, 200);
+  previewWindow.setMinimumSize(400, 200);
 
   previewWindow.on("ready-to-show", () => {
     previewWindow.show();

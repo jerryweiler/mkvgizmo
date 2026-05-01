@@ -88,11 +88,16 @@
  overflow-auto keeps the player from overflowing into the selectors,
  while max-w/h-full causes the player to grow/shrink based on both directions
  to maintain aspect ratio -->
-<div class="w-screen h-screen grid grid-rows-[1fr_2rem]">
+<div class="w-screen h-screen grid grid-rows-[1fr_1.5rem_2.5rem]">
   <div class="overflow-auto w-full h-full">
     <video class="max-w-full max-h-full" id="video"></video>
   </div>
-  <div>
+  <div class="grid grid-cols-3 gap-x-3 items-stretch m-1">
+    <span>Video</span>
+    <span>Audio</span>
+    <span>Subtitles</span>
+  </div>
+  <div class="grid grid-cols-3 gap-x-3 items-stretch">
     <StreamSelector
       bind:value={videoStream}
       options={getOptions("video", false)}
