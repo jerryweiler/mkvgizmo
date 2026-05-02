@@ -2,6 +2,7 @@ import path from "path";
 import { config } from "./configApis";
 import { getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
+import { Priority } from "./taskQueue";
 
 export async function captureFrame(request: Request): Promise<Response> {
   if (!config.ffmpegPath) {
@@ -48,7 +49,7 @@ export async function captureFrame(request: Request): Promise<Response> {
     "-f",
     "image2pipe",
     "-"
-  ]);
+  ], Priority.Low);
 
   return new Response(new Uint8Array(result.output), {
     headers: {

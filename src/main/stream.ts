@@ -3,6 +3,7 @@ import { StreamDetails } from "../preload";
 import { config } from "./configApis";
 import { FileDetails, getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
+import { Priority } from "./taskQueue";
 
 // chop the file up on keyframes into segments that are no longer than the
 // target diration
@@ -351,7 +352,7 @@ export async function loadSegment(request: Request): Promise<Response> {
     "pipe:1",
   ];
 
-  const result = await runProcess(ffmpegpath, options);
+  const result = await runProcess(ffmpegpath, options, Priority.High);
 
   return new Response(new Uint8Array(result.output), {
     headers: {

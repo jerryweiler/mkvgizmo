@@ -68,7 +68,5 @@ up/down arrow icon in front of the size attribute. This will make it faster to
 identify which stream should be the forced subtitle stream.
 * CLEANUP: Make sure everything has a tooltip. Most components do already,
 but some recent changes do not, like the playback stream selectors.
-* FEATURE: Change task queue into a priority queue and use the following
-priorities: streaming (high), keyframe probe (medium), keyframe snapshots (low)
 * CLEANUP: Fix visual state for 'show stream type' toggles above the stream
 list. It's hard to tell what state they're in.

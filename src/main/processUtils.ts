@@ -1,16 +1,17 @@
 import { spawn } from "child_process";
-import { TaskQueue } from "./taskQueue";
+import { Priority, TaskQueue } from "./taskQueue";
 
 export type ProcessResult = {
   output: Buffer;
   errorMessage?: string;
 };
 
-let processQueue = new TaskQueue<ProcessResult>(4);
+let processQueue = new TaskQueue<ProcessResult>(2);
 
 export function runProcess(
   command: string,
   args: string[],
+  priority: Priority,
 ): Promise<ProcessResult> {
   return processQueue.enqueue(() => new Promise((resolve) => {
     const process = spawn(command, args);
@@ -28,5 +29,6 @@ export function runProcess(
       resolve({ output, errorMessage });
     });
     process.on("close", () => resolve({ output, errorMessage }));
-  }));
+  }),
+  priority);
 }

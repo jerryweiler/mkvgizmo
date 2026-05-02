@@ -7,6 +7,7 @@ import {
 } from "../preload";
 import { getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
+import { Priority } from "./taskQueue";
 
 type packet = {
   pts_time: string;
@@ -109,7 +110,7 @@ export async function getStreamList(
       "-output_format",
       "json",
       filepath,
-    ]);
+    ], Priority.High);
 
     details.rawDetails = result.output.toString();
 
@@ -191,7 +192,7 @@ export async function getKeyFrameList(
       "-output_format",
       "json",
       fileDetails.path,
-    ]);
+    ], Priority.Medium);
 
     let timestamps: number[] = streamDetails.keyFrames ?? [];
     const staringKeyframeCount: number = timestamps.length;
