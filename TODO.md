@@ -34,11 +34,41 @@ row as the details/raw tabs, like the proposed filter buttons?)
 languages of all displayed streams
 * FEATURE: Implement dark mode
 
-* FEATURE: Have the stream selectors fill the width of the playback window
-and dynamically resize with it. right now, they're fixed at 200px wide
 * FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
-(such as raw 4K movies), can stutter.
+can stutter, such as raw 4K movies.
 
 * CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
 and mixes the layout and data model. Change it to generate an array of
 attributes, then use that array in the layout generation.
+
+* FEATURE: Add skip buttons to playback:
+  * next/previous chapter for the video stream
+  * next/previous subtitle for the subtitle stream
+* FEATURE: Add updatable 'forced' checkbox to subtitle stream details panel.
+Changing it should write a metadata update to the file. Open Q: Should updates
+be gated behind a 'commit' or 'save' button to prevent updates from an
+accidental press of the spacebar? If so, make sure multiple changes can be
+queued, at least at the directory level (change all the files then commit them)
+* FEATURE: Add updatable 'default' checkbox to audio stream details panel.
+* FEATURE: Make sure only one stream per file has each of 'default' or 'forced'
+attributes selected.
+* FEATURE: Make the UI navigable by keyboard:
+  * left/right arrow to switch between file list and stream list
+  * up/down arrow to navigate the selected list
+  * need keyboard shortcut for changing checkboxes (forced/default). Space will
+  work if each stream only has a single updatable field, but what if there
+  are more? For an audio stream, there's a desire to allow changing the
+  'default' option and the language for files with incorrect metadata.
+  * when changing the active file, maintain a 'compatible' selection on the
+  stream list. this will allow quick modification to a series of files
+  (updating the forced subtitle stream) as long as all of the files have
+  similar streams
+* FEATURE: Add visual indicator of smallest/largest subtitle stream. Perhaps an
+up/down arrow icon in front of the size attribute. This will make it faster to
+identify which stream should be the forced subtitle stream.
+* CLEANUP: Make sure everything has a tooltip. Most components do already,
+but some recent changes do not, like the playback stream selectors.
+* FEATURE: Change task queue into a priority queue and use the following
+priorities: streaming (high), keyframe probe (medium), keyframe snapshots (low)
+* CLEANUP: Fix visual state for 'show stream type' toggles above the stream
+list. It's hard to tell what state they're in.
