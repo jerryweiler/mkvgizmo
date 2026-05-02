@@ -11,13 +11,14 @@
 //    it.
 
 import path from "path";
-import { StreamDetails } from "../preload";
+import { ChapterDetails, StreamDetails } from "../preload";
 
 export type FileDetails = {
   handle: number;
   path: string;
   rawDetails: string;
   streams?: StreamDetails[];
+  chapters?: ChapterDetails[];
 };
 
 // A handle for a file is an index into this array

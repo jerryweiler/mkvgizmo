@@ -14,6 +14,7 @@ export class FileDetails {
   #name: string = $state("");
   #details: string = $state("");
   #streams: StreamDetails[] = $state([]);
+  #chapters: ChapterDetails[] = $state([]);
   #updateSequenceNumber: number = 0;
 
   get handle(): number {
@@ -32,12 +33,17 @@ export class FileDetails {
     return this.#streams;
   }
 
+  get chapters(): ChapterDetails[] {
+    return this.#chapters;
+  }
+
   clear(): void {
     this.#updateSequenceNumber = ++updateSequenceNumber;
     this.#handle = 0;
     this.#name = "";
     this.#details = "";
     this.#streams = [];
+    this.#chapters = [];
   }
 
   async set(
@@ -51,7 +57,7 @@ export class FileDetails {
 
     const currentSequenceNumber = this.#updateSequenceNumber;
 
-    const details = await window.api.getStreamList(handle);
+    const details = await window.api.getFileMetadata(handle);
 
     // if the user navigated away while the async call was processing, we're done
     if (this.#updateSequenceNumber !== currentSequenceNumber) {
@@ -69,6 +75,7 @@ export class FileDetails {
 
     this.#details = details.rawDetails;
     this.#streams = details.streams;
+    this.#chapters = details.chapters;
 
     for (const stream of this.streams) {
       stream.icon = getIcon(stream.type);

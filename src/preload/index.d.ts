@@ -37,10 +37,17 @@ declare global {
     icon?: typeof IconType;
   };
 
-  type GetStreamListResult = {
+  type ChapterDetails = {
+    startTime: number;
+    endTime: number;
+    title: string;
+  };
+
+  type GetFileMetadataResult = {
     errorMessage?: string;
     rawDetails: string;
     streams: StreamDetails[];
+    chapters: ChapterDetails[];
   };
 
   type GetKeyFrameListResult = {
@@ -56,7 +63,7 @@ interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
-  getStreamList(handle: number): Promise<GetStreamListResult>;
+  getFileMetadata(handle: number): Promise<GetFileMetadataResult>;
   getKeyFrameList(
     handle: number,
     streamId: number,

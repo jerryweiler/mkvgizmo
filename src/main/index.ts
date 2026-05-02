@@ -3,14 +3,14 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import electronReloader from "electron-reloader";
 import { chooseDirectory, joinPaths, scanDirectory } from "./fileApis";
 import {
-  GetStreamListResult,
+  GetFileMetadataResult,
   GetKeyFrameListResult,
   GizmoConfig,
   SaveConfigResult,
   ScanDirectoryResult,
 } from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
-import { getStreamList, getKeyFrameList } from "./metadataApis";
+import { getFileMetadata, getKeyFrameList } from "./metadataApis";
 import { captureFrame } from "./frame";
 import { loadPlaylist, loadSegment } from "./stream";
 import { createMainWindow } from "./windowMain";
@@ -58,8 +58,9 @@ app.whenReady().then(() => {
       joinPaths(basePath, relativePath),
   );
   ipcMain.handle(
-    "getStreamList",
-    (_, handle: number): Promise<GetStreamListResult> => getStreamList(handle),
+    "getFileMetadata",
+    (_, handle: number): Promise<GetFileMetadataResult> =>
+      getFileMetadata(handle),
   );
   ipcMain.handle(
     "getKeyFrameList",

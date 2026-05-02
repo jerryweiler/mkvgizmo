@@ -1,9 +1,10 @@
 import path from "path";
 import { config } from "./configApis";
 import {
-  GetStreamListResult,
+  GetFileMetadataResult,
   GetKeyFrameListResult,
   StreamDetails,
+  ChapterDetails,
 } from "../preload";
 import { getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
@@ -79,14 +80,23 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
   };
 }
 
-export async function getStreamList(
+function extractChapterDetails(raw): ChapterDetails {
+  return {
+    startTime: raw.start_time,
+    endTime: raw.end_time,
+    title: raw.tags.title,
+  };
+}
+
+export async function getFileMetadata(
   handle: number,
-): Promise<GetStreamListResult> {
+): Promise<GetFileMetadataResult> {
   if (!config.ffmpegPath) {
     return {
       rawDetails: "",
       errorMessage: "No path configured for ffprobe",
       streams: [],
+      chapters: [],
     };
   }
 
@@ -107,6 +117,7 @@ export async function getStreamList(
       "-probesize",
       "10000000",
       "-show_streams",
+      "-show_chapters",
       "-output_format",
       "json",
       filepath,
@@ -115,14 +126,16 @@ export async function getStreamList(
     details.rawDetails = result.output.toString();
 
     if (details.rawDetails) {
-      const streams = JSON.parse(details.rawDetails);
-      details.streams = streams.streams.map(
+      const probeResult = JSON.parse(details.rawDetails);
+      details.streams = probeResult.streams.map(
         extractStreamDetails.bind(null, handle),
       );
 
+      details.chapters = probeResult.chapters.map(extractChapterDetails);
+
       // getStreamList returns JSON in a minimized, hard to read format.
       // re-generate a more readable version for the RAW display
-      details.rawDetails = JSON.stringify(streams, null, 2);
+      details.rawDetails = JSON.stringify(probeResult, null, 2);
     }
 
     errorMessage = result.errorMessage;
@@ -132,6 +145,7 @@ export async function getStreamList(
     rawDetails: details.rawDetails,
     errorMessage,
     streams: details.streams ?? [],
+    chapters: details.chapters ?? [],
   };
 }
 

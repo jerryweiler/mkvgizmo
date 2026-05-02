@@ -37,10 +37,17 @@ export type StreamDetails = {
   icon?: typeof IconType;
 };
 
-export type GetStreamListResult = {
+export type ChapterDetails = {
+  startTime: number;
+  endTime: number;
+  title: string;
+}
+
+export type GetFileMetadataResult = {
   errorMessage?: string;
   rawDetails: string;
   streams: StreamDetails[];
+  chapters: ChapterDetails[];
 };
 
 export type GetKeyFrameListResult = {
@@ -55,7 +62,7 @@ export interface API {
   joinPaths(basePath: string, relativePath: string): Promise<string>;
   loadConfig(): Promise<GizmoConfig>;
   saveConfig(update: GizmoConfig): Promise<SaveConfigResult>;
-  getStreamList(handle: number): Promise<GetStreamListResult>;
+  getFileMetadata(handle: number): Promise<GetFileMetadataResult>;
   getKeyFrameList(
     handle: number,
     streamId: number,
@@ -72,7 +79,7 @@ const api: API = {
     ipcRenderer.invoke("joinPaths", basePath, relativePath),
   loadConfig: () => ipcRenderer.invoke("config:load"),
   saveConfig: (update) => ipcRenderer.invoke("config:save", update),
-  getStreamList: (handle) => ipcRenderer.invoke("getStreamList", handle),
+  getFileMetadata: (handle) => ipcRenderer.invoke("getFileMetadata", handle),
   getKeyFrameList: (handle, streamId) =>
     ipcRenderer.invoke("getKeyFrameList", handle, streamId),
   openPreview: (handle) => ipcRenderer.invoke("openPreview", handle),
