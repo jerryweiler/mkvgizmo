@@ -1,10 +1,14 @@
 <script lang="ts">
+  import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
   import { formatDuration, formatSize } from "./state/utils.mjs";
   import { type Icon as IconType } from "@lucide/svelte";
+  import Label from "$lib/components/ui/label/label.svelte";
 
   type Attribute = {
     icon?: typeof IconType;
-    name: string;
+    id: string;
+    value: string;
+    checked?: boolean;
   };
 
   let { stream }: { stream: StreamDetails } = $props();
@@ -12,34 +16,36 @@
   let col1: Attribute[] = $state([]);
   let col2: Attribute[] = $state([]);
 
-  function streamType(stream: StreamDetails): string {
-    let result: string = stream.type;
-    if (stream.language) {
-      result += ` (${stream.language})`;
-    }
-
-    if (stream.forced) {
-      result += " FORCED";
-    }
-
-    return result;
-  }
-
   function populateDetails(): void {
-    col1.push({ icon: stream.icon, name: streamType(stream) });
-    col2.push({ name: `id ${stream.id}` });
-
-    col1.push({ name: `codec: ${stream.codec}` });
-    col2.push({ name: `size: ${formatSize(stream.size)}` });
-
-    if (stream.channels) {
-      col1.push({ name: `channels: ${stream.channels}` });
+    if (stream.language) {
+      col1.push({
+        icon: stream.icon,
+        id: "type",
+        value: `${stream.type} (${stream.language})`,
+      });
+    } else {
+      col1.push({ icon: stream.icon, id: "type", value: stream.type });
     }
-    if (stream.dimensions) {
-      col1.push({ name: `dimensions: ${stream.dimensions}` });
+    col2.push({ id: "id", value: stream.id.toString() });
+
+    col1.push({ id: "codec", value: stream.codec });
+    col2.push({ id: "size", value: formatSize(stream.size) });
+
+    switch (stream.type) {
+      case "audio":
+        col1.push({ id: "channels", value: stream.channels.toString() });
+        col1.push({ id: "default", value: "default", checked: stream.default });
+        break;
+      case "video":
+        col1.push({ id: "dimensions", value: stream.dimensions });
+        break;
+      case "subtitle":
+        col1.push({ id: "forced", value: "forced", checked: stream.forced });
+        break;
     }
+
     if (stream.duration) {
-      col2.push({ name: `duration: ${formatDuration(stream.duration)}` });
+      col2.push({ id: "duration", value: formatDuration(stream.duration) });
     }
   }
 
@@ -52,19 +58,24 @@
 >
   <div class="grid grid-cols-2 gap-4 w-full">
     <div>
-      {#each col1 as attr (attr.name)}
+      {#each col1 as attr (attr.id)}
         <div class="flex">
-          {#if attr.icon}
-            <attr.icon class="mr-2 size-4" aria-hidden="true" />
+          {#if attr.checked !== undefined}
+            <Checkbox id={`${stream.id}-${attr.id}`} checked={attr.checked} />
+            <Label for={`${stream.id}-${attr.id}`}>&nbsp;{attr.value}</Label>
+          {:else}
+            {#if attr.icon}
+              <attr.icon class="mr-2 size-4" aria-hidden="true" />
+            {/if}
+            {`${attr.id}: ${attr.value}`}
           {/if}
-          {attr.name}
         </div>
       {/each}
     </div>
     <div>
-      {#each col2 as attr (attr.name)}
+      {#each col2 as attr (attr.id)}
         <div class="flex flex-row-reverse">
-          {attr.name}
+          {`${attr.id}: ${attr.value}`}
           {#if attr.icon}
             <attr.icon class="mr-2 size-4" aria-hidden="true" />
           {/if}

@@ -73,6 +73,7 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
     size,
     dimensions,
     channels,
+    default: raw.disposition.default !== 0,
     duration,
     forced: raw.disposition.forced !== 0,
     keyFramesComplete: false,

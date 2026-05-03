@@ -29,6 +29,7 @@ declare global {
     forced?: boolean;
     dimensions?: string;
     channels?: number;
+    default?: boolean;
     keyFrames?: number[];
     keyFrameSecondsLoaded?: number;
     keyFramesComplete: boolean;
