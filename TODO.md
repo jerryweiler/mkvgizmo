@@ -37,12 +37,7 @@ languages of all displayed streams
 * FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
 can stutter, such as raw 4K movies.
 
-* CLEANUP: Improve layout of stream-detail attributes. Currently it's ad-hoc
-and mixes the layout and data model. Change it to generate an array of
-attributes, then use that array in the layout generation.
-
 * FEATURE: Add skip buttons to playback:
-  * next/previous chapter for the video stream
   * next/previous subtitle for the subtitle stream
 * FEATURE: Add updatable 'forced' checkbox to subtitle stream details panel.
 Changing it should write a metadata update to the file. Open Q: Should updates
