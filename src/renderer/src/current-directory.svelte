@@ -8,6 +8,7 @@
 
 <div class="w-full flex">
   <Button
+    id="currentDir"
     href="#"
     variant="secondary"
     size="sm"

@@ -4,7 +4,7 @@ import { type Icon as IconType } from "@lucide/svelte";
 
 export type ScanDirectoryResult = {
   errorMessage?: string;
-  directories: string[];
+  directories: { handle: number; name: string }[];
   files: { handle: number; name: string; size: number }[];
 };
 
@@ -42,7 +42,7 @@ export type ChapterDetails = {
   startTime: number;
   endTime: number;
   title: string;
-}
+};
 
 export type GetFileMetadataResult = {
   errorMessage?: string;

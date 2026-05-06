@@ -38,7 +38,8 @@ export class WorkingDir {
     this.#current = cwd;
     this.#children = [
       ...scanResults.directories.map((dir) => ({
-        name: dir,
+        name: dir.name,
+        handle: dir.handle,
         isDirectory: true,
         icon: Folder
       })),

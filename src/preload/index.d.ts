@@ -4,7 +4,7 @@ import { type Icon as IconType } from "@lucide/svelte";
 declare global {
   type ScanDirectoryResult = {
     errorMessage?: string;
-    directories: string[];
+    directories: { handle: number; name: string }[];
     files: { handle: number; name: string; size: number }[];
   };
 

@@ -73,11 +73,15 @@
     </div>
     <div class="flex w-full">
       <Tabs.List class="m-2 grid auto-cols-fr grid-flow-col w-full grow">
-        <Tabs.Trigger value="details">Details</Tabs.Trigger>
-        <Tabs.Trigger value="raw">Raw</Tabs.Trigger>
+        <Tabs.Trigger id="streamDetailTab" value="details">Details</Tabs.Trigger
+        >
+        <Tabs.Trigger id="streamRawTab" value="raw">Raw</Tabs.Trigger>
         {#each currentFileStreams as stream (stream.key)}
           {#if displayVideo && stream.type === "video"}
-            <Tabs.Trigger value={stream.id.toString()}>
+            <Tabs.Trigger
+              id={`keyframeTab${stream.id}`}
+              value={stream.id.toString()}
+            >
               {#if !stream.keyFramesComplete}
                 <Spinner />
               {/if}
@@ -87,6 +91,7 @@
         {/each}
       </Tabs.List>
       <Toggle
+        id="toggleVideo"
         variant="outline"
         title="Display Video Streams"
         class="mx-1 my-2 grow-0"
@@ -95,6 +100,7 @@
         <FileVideoCamera class="size-4" aria-hidden="true" />
       </Toggle>
       <Toggle
+        id="toggleAudio"
         variant="outline"
         title="Display Audio Streams"
         class="mx-1 my-2 grow-0"
@@ -103,6 +109,7 @@
         <FileHeadphone class="size-4" aria-hidden="true" />
       </Toggle>
       <Toggle
+        id="toggleSubs"
         variant="outline"
         title="Display Subtitle Streams"
         class="mx-1 my-2 grow-0"
@@ -111,6 +118,7 @@
         <FileText class="size-4" aria-hidden="true" />
       </Toggle>
       <Button
+        id="play"
         variant="outline"
         onclick={(): void => {
           if (selectedFile.handle) window.api.openPreview(selectedFile.handle);

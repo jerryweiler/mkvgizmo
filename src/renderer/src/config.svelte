@@ -24,8 +24,12 @@
 </script>
 
 <Dialog.Root bind:open>
-  <Dialog.Trigger>
-    <Button onclick={(): void => openDialog()} title="Edit Config">
+  <Dialog.Trigger tabindex={-1}>
+    <Button
+      id="editConfig"
+      onclick={(): void => openDialog()}
+      title="Edit Config"
+    >
       <Settings class="size-4" aria-hidden="true" />
     </Button>
   </Dialog.Trigger>

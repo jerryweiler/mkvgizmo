@@ -23,7 +23,14 @@ export async function scanDirectory(
     const atRoot = path.join(directory, "..") === directory;
     const files = await readdir(directory, { withFileTypes: true });
     const result: ScanDirectoryResult = {
-      directories: files.filter((f) => f.isDirectory()).map((f) => f.name),
+      directories: files
+        .filter((f) => f.isDirectory())
+        .map((f) => {
+          return {
+            handle: getFileHandle(directory, f.name),
+            name: f.name,
+          };
+        }),
       files: files
         .filter((f) => !f.isDirectory())
         .filter((f) => path.extname(f.name) === ".mkv")
@@ -37,7 +44,7 @@ export async function scanDirectory(
     };
 
     if (!atRoot) {
-      result.directories.unshift("..");
+      result.directories.unshift({ handle: 0, name: ".." });
     }
 
     return result;
