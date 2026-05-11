@@ -3,6 +3,8 @@
   import { FolderSearch } from "@lucide/svelte";
   import { workingDir } from "./state/current-directory.svelte";
   import Config from "./config.svelte";
+  import { tick } from "svelte";
+  import { setInitialFocus } from "./state/focus.svelte";
 </script>
 
 <div class="flex-none">
@@ -10,7 +12,9 @@
     <Button
       id="chooseDir"
       onclick={async (): Promise<void> => {
-        workingDir.set(await window.api.chooseDirectory());
+        await workingDir.set(await window.api.chooseDirectory());
+        tick();
+        setInitialFocus();
       }}
       title="Choose Directory"
     >

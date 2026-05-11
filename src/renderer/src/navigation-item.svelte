@@ -4,13 +4,14 @@
   import { selectedFile } from "./state/current-file.svelte";
   import { cn } from "$lib/utils";
   import { formatSize } from "./state/utils.mjs";
+  import { tick } from "svelte";
+  import { setInitialFocus } from "./state/focus.svelte";
 
   let { item }: { item: ChildItem } = $props();
 </script>
 
 <Button
   id={`navItem-${item.handle}`}
-  href="#"
   variant="outline"
   size="sm"
   class={cn(
@@ -20,13 +21,15 @@
   onclick={async (): Promise<void> => {
     if (item.isDirectory) {
       await workingDir.navigate(item.name);
+      await tick();
+      setInitialFocus();
     } else {
       await selectedFile.set(item.name, item.handle);
     }
   }}
   title={item.name}
 >
-  <div class="flex w-full">
+  <div class="flex w-full text-left">
     {#key item.name}
       <item.icon class="mr-2 size-4 shrink-0" aria-hidden="true" />
     {/key}

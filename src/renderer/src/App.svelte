@@ -6,7 +6,13 @@
   import { selectedFile } from "./state/current-file.svelte";
   import MessagePane from "./message-pane.svelte";
   import { logger } from "./state/logger.svelte";
-  import { handleKeyboardNavigation } from "./state/focus.svelte";
+  import {
+    handleKeyboardNavigation,
+    setInitialFocus,
+  } from "./state/focus.svelte";
+  import { onMount } from "svelte";
+
+  onMount(setInitialFocus);
 </script>
 
 <div class="w-screen h-screen">

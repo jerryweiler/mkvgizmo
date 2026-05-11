@@ -1,6 +1,7 @@
 // this file manages which component has the current focus and handles
 // navigation (particularly via keyboard) for the current page.
 
+import { workingDir } from "./current-directory.svelte";
 import { selectedFile } from "./current-file.svelte";
 
 // A List of all of the element types that can have focus
@@ -386,4 +387,26 @@ export function handleKeyboardNavigation(e: KeyboardEvent): void {
       }
       break;
   }
+}
+
+export function setInitialFocus() {
+  // the window should be populated now. set focus to something reasonable.
+  // try the first file in the working directory. if there is no directory,
+  // set focus to the 'choose directory' button
+  const firstFile = workingDir.children.find((child) => !child.isDirectory);
+  if (firstFile) {
+    focusItem(`navItem-${firstFile.handle}`);
+    return;
+  }
+
+  // there is no file, set focus to the first entry (directory) that's not '..'
+  const firstDir = workingDir.children.find((child) => child.handle);
+  if (firstDir) {
+    focusItem(`navItem-${firstDir.handle}`);
+    return;
+  }
+
+  // either there's no working directory or it's emmpty.
+  // set focus to the 'choose directory' button
+  focusItem("chooseDir");
 }
