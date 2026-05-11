@@ -15,7 +15,7 @@
   size="sm"
   class={cn(
     "justify-start min-w-0 mr-1",
-    item.name === selectedFile.name && "bg-muted",
+    item.name === selectedFile.name && "bg-muted ml-3",
   )}
   onclick={async (): Promise<void> => {
     if (item.isDirectory) {

@@ -59,8 +59,6 @@ identify which stream should be the forced subtitle stream.
 but some recent changes do not, like the playback stream selectors.
 * CLEANUP: Fix visual state for 'show stream type' toggles above the stream
 list. It's hard to tell what state they're in.
-* FEATURE: Add visual indicator of the selected file. perhaps an indent
-or increased left margin
 * CLEANUP: Keyboard navigation of the details tabs is incomplete. The
 keyboard handler of the bits-ui Tab.Root suppresses propagation of the
 left/right arrow keys, blocking navigation out of the tab list.
