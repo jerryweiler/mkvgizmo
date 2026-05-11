@@ -9,7 +9,7 @@
 </script>
 
 <Button
-  id={`navItem${item.handle}`}
+  id={`navItem-${item.handle}`}
   href="#"
   variant="outline"
   size="sm"

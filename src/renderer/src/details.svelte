@@ -79,7 +79,7 @@
         {#each currentFileStreams as stream (stream.key)}
           {#if displayVideo && stream.type === "video"}
             <Tabs.Trigger
-              id={`keyframeTab${stream.id}`}
+              id={`keyframeTab-${stream.id}`}
               value={stream.id.toString()}
             >
               {#if !stream.keyFramesComplete}
@@ -141,7 +141,7 @@
         </div>
       </Tabs.Content>
       <Tabs.Content value="raw">
-        <div class="w-full whitespace-pre-wrap font-mono">
+        <div class="w-full whitespace-pre-wrap font-mono select-text">
           {#key currentFileStreams}
             {selectedFile.details}
           {/key}

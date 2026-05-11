@@ -6,6 +6,7 @@
   import { selectedFile } from "./state/current-file.svelte";
   import MessagePane from "./message-pane.svelte";
   import { logger } from "./state/logger.svelte";
+  import { handleKeyboardNavigation } from "./state/focus.svelte";
 </script>
 
 <div class="w-screen h-screen">
@@ -33,3 +34,5 @@
     </Resizable.Pane>
   </Resizable.PaneGroup>
 </div>
+
+<svelte:window onkeydown={handleKeyboardNavigation} />

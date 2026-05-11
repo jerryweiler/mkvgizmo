@@ -53,7 +53,7 @@
 </script>
 
 <button
-  id={`stream${stream.id}`}
+  id={`stream-${stream.id}`}
   class="hover:bg-accent flex flex-col items-start gap-2 rounded-lg border p-2
   text-left text-sm transition-all"
 >

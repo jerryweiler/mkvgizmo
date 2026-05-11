@@ -48,16 +48,10 @@ queued, at least at the directory level (change all the files then commit them)
 * FEATURE: Make sure only one stream per file has each of 'default' or 'forced'
 attributes selected.
 * FEATURE: Make the UI navigable by keyboard:
-  * left/right arrow to switch between file list and stream list
-  * up/down arrow to navigate the selected list
   * need keyboard shortcut for changing checkboxes (forced/default). Space will
   work if each stream only has a single updatable field, but what if there
   are more? For an audio stream, there's a desire to allow changing the
   'default' option and the language for files with incorrect metadata.
-  * when changing the active file, maintain a 'compatible' selection on the
-  stream list. this will allow quick modification to a series of files
-  (updating the forced subtitle stream) as long as all of the files have
-  similar streams
 * FEATURE: Add visual indicator of smallest/largest subtitle stream. Perhaps an
 up/down arrow icon in front of the size attribute. This will make it faster to
 identify which stream should be the forced subtitle stream.
@@ -65,3 +59,12 @@ identify which stream should be the forced subtitle stream.
 but some recent changes do not, like the playback stream selectors.
 * CLEANUP: Fix visual state for 'show stream type' toggles above the stream
 list. It's hard to tell what state they're in.
+* FEATURE: Add visual indicator of the selected file. perhaps an indent
+or increased left margin
+* CLEANUP: Keyboard navigation of the details tabs is incomplete. The
+keyboard handler of the bits-ui Tab.Root suppresses propagation of the
+left/right arrow keys, blocking navigation out of the tab list.
+* FEATURE: Implement focus/navigation for the text areas: raw details
+and log message area.
+* BUG: Up/down navigation of the stream list is blocked when a checkbox
+is selected
