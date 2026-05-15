@@ -1,8 +1,9 @@
 <script lang="ts">
   import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
   import { formatDuration, formatSize } from "./state/utils.mjs";
-  import { type Icon as IconType } from "@lucide/svelte";
+  import { SquareChevronDownIcon, type Icon as IconType } from "@lucide/svelte";
   import Label from "$lib/components/ui/label/label.svelte";
+  import { selectedFile } from "./state/current-file.svelte";
 
   type Attribute = {
     icon?: typeof IconType;
@@ -17,6 +18,24 @@
   let col2: Attribute[] = $state([]);
 
   function populateDetails(): void {
+    let sizeIcon: typeof IconType = undefined;
+
+    if (stream.type === "subtitle") {
+      // find all of the subtitles with the same language as the one we're
+      // processing
+      let subs = selectedFile.streams.filter(
+        (s) => s.type === stream.type && s.language === stream.language,
+      );
+
+      // if more than one subtitle stream with this language exists,
+      // it's likely one is supposed to be a forced subtitle for
+      // untranslated on-screen text or purposely untranslated dialog.
+      // give a visual indicator of the smallest stream.
+      if (subs.length > 1 && subs.every((s) => s.size >= stream.size)) {
+        sizeIcon = SquareChevronDownIcon;
+      }
+    }
+
     if (stream.language) {
       col1.push({
         icon: stream.icon,
@@ -29,7 +48,7 @@
     col2.push({ id: "id", value: stream.id.toString() });
 
     col1.push({ id: "codec", value: stream.codec });
-    col2.push({ id: "size", value: formatSize(stream.size) });
+    col2.push({ icon: sizeIcon, id: "size", value: formatSize(stream.size) });
 
     switch (stream.type) {
       case "audio":

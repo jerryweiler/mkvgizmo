@@ -52,9 +52,6 @@ attributes selected.
   work if each stream only has a single updatable field, but what if there
   are more? For an audio stream, there's a desire to allow changing the
   'default' option and the language for files with incorrect metadata.
-* FEATURE: Add visual indicator of smallest/largest subtitle stream. Perhaps an
-up/down arrow icon in front of the size attribute. This will make it faster to
-identify which stream should be the forced subtitle stream.
 * CLEANUP: Make sure everything has a tooltip. Most components do already,
 but some recent changes do not, like the playback stream selectors.
 * CLEANUP: Fix visual state for 'show stream type' toggles above the stream
