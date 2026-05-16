@@ -11,6 +11,7 @@ export type ScanDirectoryResult = {
 export type GizmoConfig = {
   ffmpegPath?: string;
   startingPath?: string;
+  mkvtoolnixPath?: string;
 };
 
 export type SaveConfigResult = {

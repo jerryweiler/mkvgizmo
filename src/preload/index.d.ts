@@ -11,6 +11,7 @@ declare global {
   type GizmoConfig = {
     ffmpegPath?: string;
     startingPath?: string;
+    mkvtoolnixPath?: string;
   };
 
   type SaveConfigResult = {

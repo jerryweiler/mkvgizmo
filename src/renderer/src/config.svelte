@@ -8,16 +8,18 @@
 
   let ffmpegPath: string = $state("");
   let startingPath: string = $state("");
+  let mkvtoolnixPath: string = $state("");
   let open: boolean = $state(false);
 
   function openDialog(): void {
     ffmpegPath = config.ffmpegPath;
     startingPath = config.startingPath;
+    mkvtoolnixPath = config.mkvtoolnixPath;
     open = true;
   }
 
   async function save(): Promise<void> {
-    if (await config.update({ ffmpegPath, startingPath })) {
+    if (await config.update({ ffmpegPath, startingPath, mkvtoolnixPath })) {
       open = false;
     }
   }
@@ -41,11 +43,11 @@
       </Dialog.Description>
     </Dialog.Header>
     <div class="grid gap-4 py-4">
-      <div class="grid grid-cols-8 items-center gap-4">
-        <div class="col-span-8">
+      <div class="grid grid-cols-9 items-center gap-4">
+        <div class="col-span-9">
           Set the directory that contains ffmpeg.exe and ffprobe.exe
         </div>
-        <Label for="ffmpeg" class="col-span-2 text-right">FFmpeg Path</Label>
+        <Label for="ffmpeg" class="col-span-3 text-right">FFmpeg Path</Label>
         <Input id="ffmpeg" class="col-span-5" bind:value={ffmpegPath} />
         <Button
           variant="secondary"
@@ -55,8 +57,21 @@
         >
           <FolderSearch class="size-4" aria-hidden="true" />
         </Button>
-        <div class="col-span-8">Set the directory to be used on startup</div>
-        <Label for="startup" class="col-span-2 text-right">Startup Path</Label>
+        <div class="col-span-9">Set the directory that contains MKVToolNix</div>
+        <Label for="mkvtoolnix" class="col-span-3 text-right"
+          >MKVToolNix Path</Label
+        >
+        <Input id="mkvtoolnix" class="col-span-5" bind:value={mkvtoolnixPath} />
+        <Button
+          variant="secondary"
+          onclick={async (): Promise<void> => {
+            mkvtoolnixPath = await window.api.chooseDirectory();
+          }}
+        >
+          <FolderSearch class="size-4" aria-hidden="true" />
+        </Button>
+        <div class="col-span-9">Set the directory to be used on startup</div>
+        <Label for="startup" class="col-span-3 text-right">Startup Path</Label>
         <Input id="startup" class="col-span-5" bind:value={startingPath} />
         <Button
           variant="secondary"

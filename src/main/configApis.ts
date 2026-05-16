@@ -31,12 +31,12 @@ export async function saveConfig(
 ): Promise<SaveConfigResult> {
   // verify the proposed directory
   // check for ffmpeg.exe and ffprobe.exe
-  async function checkFile(filename: string): Promise<boolean> {
+  async function checkFile(
+    basePath: string,
+    filename: string,
+  ): Promise<boolean> {
     try {
-      if (!update?.ffmpegPath) {
-        return false;
-      }
-      const filestats = await stat(path.join(update.ffmpegPath, filename));
+      const filestats = await stat(path.join(basePath, filename));
       return filestats.isFile();
     } catch {
       return false;
@@ -50,22 +50,41 @@ export async function saveConfig(
     };
   }
 
+  if (!update.mkvtoolnixPath) {
+    return {
+      success: false,
+      errorMessage: "Path for MKVToolNix missing",
+    };
+  }
+
   // If the caller passed an ffmpeg path with the executable name included,
   // truncate it
   if (path.basename(update.ffmpegPath).toLowerCase() === "ffmpeg.exe") {
     update.ffmpegPath = path.dirname(update.ffmpegPath);
   }
 
-  if (!(await checkFile("ffmpeg.exe"))) {
+  if (!(await checkFile(update.ffmpegPath, "ffmpeg.exe"))) {
     return {
       success: false,
       errorMessage: "ffmpeg.exe was not found at the specified path",
     };
   }
-  if (!(await checkFile("ffprobe.exe"))) {
+  if (!(await checkFile(update.ffmpegPath, "ffprobe.exe"))) {
     return {
       success: false,
       errorMessage: "ffprobe.exe was not found at the specified path",
+    };
+  }
+
+  // if the caller pass a full MKVToolNix executable path, truncate it
+  if (path.basename(update.mkvtoolnixPath).toLowerCase().endsWith(".exe")) {
+    update.mkvtoolnixPath = path.dirname(update.mkvtoolnixPath);
+  }
+
+  if (!(await checkFile(update.mkvtoolnixPath, "mkvpropedit.exe"))) {
+    return {
+      success: false,
+      errorMessage: "mkvpropedit.exe was not found at the specified path",
     };
   }
 
