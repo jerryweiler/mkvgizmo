@@ -18,30 +18,24 @@
   let col1: Attribute[] = $state([]);
   let col2: Attribute[] = $state([]);
 
-  function defaultValue(): boolean {
+  function getEffectiveValue(stream: StreamDetails, attr: string): boolean {
     const update = streamUpdates.getUpdate(
       selectedFile.handle,
       stream.id,
-      "default",
+      attr,
     );
     if (update !== undefined) {
       return update;
     }
 
-    return stream.default;
-  }
-
-  function forcedValue(): boolean {
-    const update = streamUpdates.getUpdate(
-      selectedFile.handle,
-      stream.id,
-      "forced",
-    );
-    if (update !== undefined) {
-      return update;
+    switch (attr) {
+      case "default":
+        return stream.default;
+      case "forced":
+        return stream.forced;
     }
 
-    return stream.forced;
+    throw new Error("invalid attribute passed to getValue");
   }
 
   function populateDetails(): void {
@@ -80,13 +74,21 @@
     switch (stream.type) {
       case "audio":
         col1.push({ id: "channels", value: stream.channels.toString() });
-        col1.push({ id: "default", value: "default", checked: defaultValue() });
+        col1.push({
+          id: "default",
+          value: "default",
+          checked: getEffectiveValue(stream, "default"),
+        });
         break;
       case "video":
         col1.push({ id: "dimensions", value: stream.dimensions });
         break;
       case "subtitle":
-        col1.push({ id: "forced", value: "forced", checked: forcedValue() });
+        col1.push({
+          id: "forced",
+          value: "forced",
+          checked: getEffectiveValue(stream, "forced"),
+        });
         break;
     }
 
@@ -98,6 +100,28 @@
   populateDetails();
 
   function onCheckedChange(attr: string, value: boolean): void {
+    // this currently handles changes to the 'forced' and 'default'
+    // attributes. these attributes should only be present on one stream
+    // of each language in a file. if we're turning this attribute on,
+    // clear if from other streams of the same language.
+    if (value) {
+      for (const s of selectedFile.streams) {
+        if (
+          s.id !== stream.id &&
+          s.type === stream.type &&
+          s.language === stream.language &&
+          getEffectiveValue(s, attr)
+        ) {
+          streamUpdates.add({
+            handle: selectedFile.handle,
+            stream: s.id,
+            attr,
+            value: false,
+          });
+        }
+      }
+    }
+
     streamUpdates.add({
       handle: selectedFile.handle,
       stream: stream.id,
@@ -126,8 +150,10 @@
           {#if attr.checked !== undefined}
             <Checkbox
               id={`${stream.id}-${attr.id}`}
-              checked={attr.checked}
-              onCheckedChange={(checked) => onCheckedChange(attr.id, checked)}
+              bind:checked={
+                () => getEffectiveValue(stream, attr.id),
+                (checked) => onCheckedChange(attr.id, checked)
+              }
             />
             <Label for={`${stream.id}-${attr.id}`}>
               &nbsp;

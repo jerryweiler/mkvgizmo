@@ -35,8 +35,6 @@ can stutter, such as raw 4K movies.
 
 * FEATURE: Add skip buttons to playback:
   * next/previous subtitle for the subtitle stream
-* FEATURE: Make sure only one stream per file has each of 'default' or 'forced'
-attributes selected.
 * FEATURE: Implement saving of changes. Clear cache for files that are updated.
 * FEATURE: Add tooltips for pending updates
 * FEATURE: Make the UI navigable by keyboard:
