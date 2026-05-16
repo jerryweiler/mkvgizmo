@@ -6,6 +6,8 @@
   import { formatSize } from "./state/utils.mjs";
   import { tick } from "svelte";
   import { setInitialFocus } from "./state/focus.svelte";
+  import { streamUpdates, verifyAbandonChanges } from "./state/updates.svelte";
+  import { FilePen } from "@lucide/svelte";
 
   let { item }: { item: ChildItem } = $props();
 </script>
@@ -20,7 +22,12 @@
   )}
   onclick={async (): Promise<void> => {
     if (item.isDirectory) {
+      if (!verifyAbandonChanges()) {
+        return;
+      }
+
       await workingDir.navigate(item.name);
+      streamUpdates.clear();
       await tick();
       setInitialFocus();
     } else {
@@ -30,9 +37,17 @@
   title={item.name}
 >
   <div class="flex w-full text-left">
-    {#key item.name}
-      <item.icon class="mr-2 size-4 shrink-0" aria-hidden="true" />
-    {/key}
+    {#if streamUpdates.fileHasUpdates(item.handle)}
+      <FilePen
+        class="mr-2 size-4 shrink-0"
+        color="var(--color-red-500)"
+        aria-hidden="true"
+      />
+    {:else}
+      {#key item.name}
+        <item.icon class="mr-2 size-4 shrink-0" aria-hidden="true" />
+      {/key}
+    {/if}
     <!-- note: since there's an element between the span and the nearest flex-box
     child ancestor, we need the parent of the span (the button) to have a min-width
     attribute for width of the span to be calculated properly.

@@ -5,6 +5,7 @@
   import Config from "./config.svelte";
   import { tick } from "svelte";
   import { setInitialFocus } from "./state/focus.svelte";
+  import { streamUpdates, verifyAbandonChanges } from "./state/updates.svelte";
 </script>
 
 <div class="flex-none">
@@ -12,7 +13,12 @@
     <Button
       id="chooseDir"
       onclick={async (): Promise<void> => {
+        if (!verifyAbandonChanges()) {
+          return;
+        }
+
         await workingDir.set(await window.api.chooseDirectory());
+        streamUpdates.clear();
         tick();
         setInitialFocus();
       }}

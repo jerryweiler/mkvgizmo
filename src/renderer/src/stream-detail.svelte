@@ -4,6 +4,7 @@
   import { SquareChevronDownIcon, type Icon as IconType } from "@lucide/svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import { selectedFile } from "./state/current-file.svelte";
+  import { streamUpdates } from "./state/updates.svelte";
 
   type Attribute = {
     icon?: typeof IconType;
@@ -16,6 +17,32 @@
 
   let col1: Attribute[] = $state([]);
   let col2: Attribute[] = $state([]);
+
+  function defaultValue(): boolean {
+    const update = streamUpdates.getUpdate(
+      selectedFile.handle,
+      stream.id,
+      "default",
+    );
+    if (update !== undefined) {
+      return update;
+    }
+
+    return stream.default;
+  }
+
+  function forcedValue(): boolean {
+    const update = streamUpdates.getUpdate(
+      selectedFile.handle,
+      stream.id,
+      "forced",
+    );
+    if (update !== undefined) {
+      return update;
+    }
+
+    return stream.forced;
+  }
 
   function populateDetails(): void {
     let sizeIcon: typeof IconType = undefined;
@@ -53,13 +80,13 @@
     switch (stream.type) {
       case "audio":
         col1.push({ id: "channels", value: stream.channels.toString() });
-        col1.push({ id: "default", value: "default", checked: stream.default });
+        col1.push({ id: "default", value: "default", checked: defaultValue() });
         break;
       case "video":
         col1.push({ id: "dimensions", value: stream.dimensions });
         break;
       case "subtitle":
-        col1.push({ id: "forced", value: "forced", checked: stream.forced });
+        col1.push({ id: "forced", value: "forced", checked: forcedValue() });
         break;
     }
 
@@ -69,6 +96,22 @@
   }
 
   populateDetails();
+
+  function onCheckedChange(attr: string, value: boolean): void {
+    streamUpdates.add({
+      handle: selectedFile.handle,
+      stream: stream.id,
+      attr,
+      value,
+    });
+  }
+
+  function isUpdated(attribute: string): boolean {
+    return (
+      streamUpdates.getUpdate(selectedFile.handle, stream.id, attribute) !==
+      undefined
+    );
+  }
 </script>
 
 <button
@@ -81,8 +124,17 @@
       {#each col1 as attr (attr.id)}
         <div class="flex">
           {#if attr.checked !== undefined}
-            <Checkbox id={`${stream.id}-${attr.id}`} checked={attr.checked} />
-            <Label for={`${stream.id}-${attr.id}`}>&nbsp;{attr.value}</Label>
+            <Checkbox
+              id={`${stream.id}-${attr.id}`}
+              checked={attr.checked}
+              onCheckedChange={(checked) => onCheckedChange(attr.id, checked)}
+            />
+            <Label for={`${stream.id}-${attr.id}`}>
+              &nbsp;
+              <span class={isUpdated(attr.id) ? "text-red-500" : ""}>
+                {attr.value}
+              </span>
+            </Label>
           {:else}
             {#if attr.icon}
               <attr.icon class="mr-2 size-4" aria-hidden="true" />

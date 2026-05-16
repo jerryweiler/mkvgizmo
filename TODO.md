@@ -22,9 +22,6 @@ directory doesn't contain ffmpeg or doesn't exist
 * TEST IPC: Verify that errors from getStreamList are returned properly. eg:
 file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
 
-* FEATURE: Add multi-select for files. If multiple files can be selected,
-should the stream details include the stream detail cards? or should there be a
-group header with each group?
 * FEATURE: Cache file data on first load. This will improve multi-select. Once
 metadata modification is implemented, the ui might need a refresh button (same
 row as the details/raw tabs, like the proposed filter buttons?)
@@ -33,20 +30,15 @@ row as the details/raw tabs, like the proposed filter buttons?)
 * FEATURE: Add filter for languages. Should be dynamically generated based on
 languages of all displayed streams
 * FEATURE: Implement dark mode
-
 * FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
 can stutter, such as raw 4K movies.
 
 * FEATURE: Add skip buttons to playback:
   * next/previous subtitle for the subtitle stream
-* FEATURE: Add updatable 'forced' checkbox to subtitle stream details panel.
-Changing it should write a metadata update to the file. Open Q: Should updates
-be gated behind a 'commit' or 'save' button to prevent updates from an
-accidental press of the spacebar? If so, make sure multiple changes can be
-queued, at least at the directory level (change all the files then commit them)
-* FEATURE: Add updatable 'default' checkbox to audio stream details panel.
 * FEATURE: Make sure only one stream per file has each of 'default' or 'forced'
 attributes selected.
+* FEATURE: Implement saving of changes. Clear cache for files that are updated.
+* FEATURE: Add tooltips for pending updates
 * FEATURE: Make the UI navigable by keyboard:
   * need keyboard shortcut for changing checkboxes (forced/default). Space will
   work if each stream only has a single updatable field, but what if there
