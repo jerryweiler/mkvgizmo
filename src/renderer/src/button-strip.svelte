@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { FolderSearch } from "@lucide/svelte";
+  import { FolderSearch, Save } from "@lucide/svelte";
   import { workingDir } from "./state/current-directory.svelte";
   import Config from "./config.svelte";
   import { tick } from "svelte";
@@ -27,7 +27,16 @@
       <FolderSearch class="size-4" aria-hidden="true" />
     </Button>
   </div>
-  <div class="m-1">
+  <div class="m-1 py-1">
     <Config />
+  </div>
+  <div class="m-1 py-1">
+    <Button
+      id="save"
+      title="Save Changes"
+      disabled={streamUpdates.getAllUpdates().length === 0}
+    >
+      <Save />
+    </Button>
   </div>
 </div>
