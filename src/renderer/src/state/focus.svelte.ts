@@ -8,6 +8,7 @@ import { selectedFile } from "./current-file.svelte";
 const elementPrefixes: Set<string> = new Set([
   "chooseDir",
   "editConfig",
+  "save",
   "currentDir",
   "currentFile",
   "streamDetailTab",
@@ -103,6 +104,9 @@ function handleArrowUp(focusInfo: FocusInfo): void {
     case "editConfig":
       focusItem("chooseDir");
       break;
+    case "save":
+      focusItem("editConfig");
+      break;
     case "navItem":
       {
         const navItemList = getListElements("navItem-", focusInfo.id);
@@ -140,6 +144,9 @@ function handleArrowDown(focusInfo: FocusInfo): void {
   switch (focusInfo.type) {
     case "chooseDir":
       focusItem("editConfig");
+      break;
+    case "editConfig":
+      focusItem("save");
       break;
     case "currentDir":
       focusItem("navItem-0");
@@ -191,7 +198,7 @@ function handleArrowLeft(focusInfo: FocusInfo): void {
       focusItem("chooseDir");
       break;
     case "navItem":
-      focusItem("editConfig");
+      focusItem("save");
       break;
     case "currentFile":
       focusItem("currentDir");
@@ -226,6 +233,7 @@ function handleArrowRight(focusInfo: FocusInfo): void {
       focusItem("currentDir");
       break;
     case "editConfig":
+    case "save":
       {
         const navItemList = getListElements("navItem-", focusInfo.id);
         if (navItemList.ids.length > 0) {
