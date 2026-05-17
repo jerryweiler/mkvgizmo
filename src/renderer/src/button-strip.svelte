@@ -6,6 +6,7 @@
   import { tick } from "svelte";
   import { setInitialFocus } from "./state/focus.svelte";
   import { streamUpdates, verifyAbandonChanges } from "./state/updates.svelte";
+  import { selectedFile } from "./state/current-file.svelte";
 </script>
 
 <div class="flex-none">
@@ -35,6 +36,10 @@
       id="save"
       title="Save Changes"
       disabled={streamUpdates.getAllUpdates().length === 0}
+      onclick={async (): Promise<void> => {
+        await streamUpdates.save();
+        selectedFile.clear();
+      }}
     >
       <Save />
     </Button>

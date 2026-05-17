@@ -57,6 +57,17 @@ declare global {
     timestamps: number[];
     isComplete: boolean;
   };
+
+  type StreamUpdate = {
+    streamId: number;
+    attr: string;
+    value: boolean;
+  };
+
+  type UpdateMetadataResult = {
+    errorMessage?: string;
+    success: boolean;
+  };
 }
 
 interface API {
@@ -72,6 +83,10 @@ interface API {
   ): Promise<GetKeyFrameListResult>;
   openPreview(handle: number): void;
   getPreviewHandle(): Promise<number>;
+  updateMetadata(
+    handle: number,
+    updates: StreamUpdate[],
+  ): Promise<UpdateMetadataResult>;
 }
 
 declare global {

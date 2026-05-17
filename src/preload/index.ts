@@ -58,6 +58,17 @@ export type GetKeyFrameListResult = {
   isComplete: boolean;
 };
 
+export type StreamUpdate = {
+  streamId: number;
+  attr: string;
+  value: boolean;
+};
+
+export type UpdateMetadataResult = {
+  errorMessage?: string;
+  success: boolean;
+};
+
 export interface API {
   chooseDirectory(): Promise<string | undefined>;
   scanDirectory(directory: string): Promise<ScanDirectoryResult>;
@@ -71,6 +82,10 @@ export interface API {
   ): Promise<GetKeyFrameListResult>;
   openPreview(handle: number): void;
   getPreviewHandle(): Promise<number>;
+  updateMetadata(
+    handle: number,
+    updates: StreamUpdate[],
+  ): Promise<UpdateMetadataResult>;
 }
 
 // Custom APIs for renderer
@@ -86,6 +101,8 @@ const api: API = {
     ipcRenderer.invoke("getKeyFrameList", handle, streamId),
   openPreview: (handle) => ipcRenderer.invoke("openPreview", handle),
   getPreviewHandle: () => ipcRenderer.invoke("preview:getHandle"),
+  updateMetadata: (handle, updates) =>
+    ipcRenderer.invoke("updateMetadata", handle, updates),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

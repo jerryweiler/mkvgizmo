@@ -5,6 +5,8 @@ import {
   GetKeyFrameListResult,
   StreamDetails,
   ChapterDetails,
+  StreamUpdate,
+  UpdateMetadataResult,
 } from "../preload";
 import { getFileDetails } from "./fileCache";
 import { runProcess } from "./processUtils";
@@ -249,5 +251,69 @@ export async function getKeyFrameList(
     timestamps: streamDetails.keyFrames ?? [],
     errorMessage,
     isComplete: streamDetails.keyFramesComplete,
+  };
+}
+
+export async function updateMetadata(
+  handle: number,
+  updates: StreamUpdate[],
+): Promise<UpdateMetadataResult> {
+  if (!config.mkvtoolnixPath) {
+    return {
+      errorMessage: "No path configured for mkvpropedit",
+      success: false,
+    };
+  }
+
+  const fileDetails = getFileDetails(handle);
+  if (fileDetails.streams === undefined) {
+    return {
+      errorMessage: `stream information missing for file ${fileDetails.path}`,
+      success: false,
+    };
+  }
+
+  let options: string[] = [fileDetails.path];
+
+  for (const update of updates) {
+    if (update.attr !== "forced" && update.attr !== "default") {
+      return {
+        errorMessage: `unknown attribute ${update.attr}`,
+        success: false,
+      };
+    }
+
+    // mkvpropedit uses a track numbering scheme than fmpeg or other mkv tools.
+    // it uses a 1-based track ordinal, while update.streamid is the embedded
+    // id from the file, which is 0-based and sometimes sparse. calculate the
+    // it we should use.
+    let id: number = 0;
+    for (let stream of fileDetails.streams) {
+      id++;
+      if (stream.id === update.streamId) break;
+    }
+
+    options = [
+      ...options,
+      "--edit",
+      `track:${id}`,
+      "--set",
+      `flag-${update.attr}=${update.value ? "1" : "0"}`,
+    ];
+  }
+
+  const mkvpropeditpath = path.join(config.mkvtoolnixPath, "mkvpropedit.exe");
+  const result = await runProcess(mkvpropeditpath, options, Priority.Medium);
+
+  // regardless of what happens, clear the cached data for the file.
+  // leave the path to handle mapping in the cache, just clear the details.
+  // the client will need to re-query the file to get updated details.
+  fileDetails.rawDetails = "";
+  fileDetails.chapters = undefined;
+  fileDetails.streams = undefined;
+
+  return {
+    errorMessage: result.errorMessage,
+    success: result.exitCode !== 2 && result.exitCode !== null,
   };
 }

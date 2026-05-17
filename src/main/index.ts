@@ -8,9 +8,11 @@ import {
   GizmoConfig,
   SaveConfigResult,
   ScanDirectoryResult,
+  StreamUpdate,
+  UpdateMetadataResult,
 } from "../preload";
 import { loadConfig, saveConfig } from "./configApis";
-import { getFileMetadata, getKeyFrameList } from "./metadataApis";
+import { getFileMetadata, getKeyFrameList, updateMetadata } from "./metadataApis";
 import { captureFrame } from "./frame";
 import { loadPlaylist, loadSegment } from "./stream";
 import { createMainWindow } from "./windowMain";
@@ -77,6 +79,12 @@ app.whenReady().then(() => {
   );
 
   ipcMain.handle("preview:getHandle", (_) => getPreviewHandle());
+
+  ipcMain.handle(
+    "updateMetadata",
+    (_, handle: number, updates: StreamUpdate[]): Promise<UpdateMetadataResult> =>
+      updateMetadata(handle, updates),
+  );
 
   createMainWindow();
 

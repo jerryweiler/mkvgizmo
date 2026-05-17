@@ -1,6 +1,7 @@
 // Keep a list of updates for the current working directory, to be applied
 
 import { selectedFile } from "./current-file.svelte";
+import { logger } from "./logger.svelte";
 
 // when the user saves, or discarded when the user navigates to a new directory
 export class StreamUpdate {
@@ -70,13 +71,31 @@ export class StreamUpdates {
   clear() {
     this.#updates = [];
   }
+
+  async save(): Promise<void> {
+    let updates = Map.groupBy(this.#updates, (u) => u.handle);
+    for (const [handle, fileUpdates] of updates) {
+      let result = await window.api.updateMetadata(
+        handle,
+        fileUpdates.map((u) => {
+          return { streamId: u.stream, attr: u.attr, value: u.value };
+        }),
+      );
+      if (result.errorMessage) {
+        logger.add(result.errorMessage);
+      }
+      if (result.success) {
+        this.#updates = this.#updates.filter((u) => u.handle !== handle);
+      }
+    }
+  }
 }
 
 export const streamUpdates = new StreamUpdates();
 
 export function verifyAbandonChanges(): boolean {
   if (streamUpdates.getAllUpdates().length > 0) {
-     return confirm(
+    return confirm(
       "There are unsaved changes in the current directory.\n" +
         "Do you wish to abandon them?",
     );
