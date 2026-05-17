@@ -17,6 +17,7 @@ const elementPrefixes: Set<string> = new Set([
   "toggleVideo",
   "toggleAudio",
   "toggleSubs",
+  "languages",
   "play",
   "navItem",
   "stream",
@@ -123,6 +124,7 @@ function handleArrowUp(focusInfo: FocusInfo): void {
     case "toggleVideo":
     case "toggleAudio":
     case "toggleSubs":
+    case "languages":
     case "play":
       focusItem("currentFile");
       break;
@@ -159,6 +161,7 @@ function handleArrowDown(focusInfo: FocusInfo): void {
     case "toggleVideo":
     case "toggleAudio":
     case "toggleSubs":
+    case "languages":
     case "play":
       // We want to go to the top content element of whichever tab is active.
       // Note that if we start out on a tab, we could simplify this a little
@@ -212,8 +215,11 @@ function handleArrowLeft(focusInfo: FocusInfo): void {
     case "toggleSubs":
       focusItem("toggleAudio");
       break;
-    case "play":
+    case "languages":
       focusItem("toggleSubs");
+      break;
+    case "play":
+      focusItem("languages");
       break;
     case "stream":
     case "keyframe":
@@ -254,6 +260,9 @@ function handleArrowRight(focusInfo: FocusInfo): void {
       focusItem("toggleSubs");
       break;
     case "toggleSubs":
+      focusItem("languages");
+      break;
+    case "languages":
       focusItem("play");
       break;
   }

@@ -4,17 +4,13 @@
   import * as Tabs from "$lib/components/ui/tabs";
   import { selectedFile } from "./state/current-file.svelte";
   import StreamDetail from "./stream-detail.svelte";
-  import {
-    FileHeadphone,
-    FilePlay,
-    FileText,
-    FileVideoCamera,
-  } from "@lucide/svelte";
-  import { Toggle } from "$lib/components/ui/toggle";
+  import { FilePlay } from "@lucide/svelte";
   import StreamKeyFrame from "./stream-key-frame.svelte";
   import { setContext } from "svelte";
   import Spinner from "$lib/components/ui/spinner/spinner.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
+  import { filters } from "./state/filters.svelte";
+  import Filters from "./filters.svelte";
 
   function observerCallback(
     entries: IntersectionObserverEntry[],
@@ -34,35 +30,8 @@
   let observer = new IntersectionObserver(observerCallback);
   setContext("visibility-observer", observer);
 
-  interface Props {
-    currentFileStreams: StreamDetails[];
-    displayVideo?: boolean;
-    displayAudio?: boolean;
-    displaySubtitles?: boolean;
-  }
-
-  let {
-    currentFileStreams,
-    displayVideo = true,
-    displayAudio = true,
-    displaySubtitles = true,
-  }: Props = $props();
-
   function multipleVideoStreams(): boolean {
-    return currentFileStreams.filter((s) => s.type === "video").length > 1;
-  }
-
-  function shouldDisplayStream(stream: StreamDetails): boolean {
-    switch (stream.type) {
-      case "video":
-        return displayVideo;
-      case "audio":
-        return displayAudio;
-      case "subtitle":
-        return displaySubtitles;
-      default:
-        return false;
-    }
+    return selectedFile.streams.filter((s) => s.type === "video").length > 1;
   }
 </script>
 
@@ -76,8 +45,8 @@
         <Tabs.Trigger id="streamDetailTab" value="details">Details</Tabs.Trigger
         >
         <Tabs.Trigger id="streamRawTab" value="raw">Raw</Tabs.Trigger>
-        {#each currentFileStreams as stream (stream.key)}
-          {#if displayVideo && stream.type === "video"}
+        {#each selectedFile.streams as stream (stream.key)}
+          {#if filters.video && stream.type === "video"}
             <Tabs.Trigger
               id={`keyframeTab-${stream.id}`}
               value={stream.id.toString()}
@@ -90,33 +59,7 @@
           {/if}
         {/each}
       </Tabs.List>
-      <Toggle
-        id="toggleVideo"
-        variant="outline"
-        title="Display Video Streams"
-        class="mx-1 my-2 grow-0"
-        bind:pressed={displayVideo}
-      >
-        <FileVideoCamera class="size-4" aria-hidden="true" />
-      </Toggle>
-      <Toggle
-        id="toggleAudio"
-        variant="outline"
-        title="Display Audio Streams"
-        class="mx-1 my-2 grow-0"
-        bind:pressed={displayAudio}
-      >
-        <FileHeadphone class="size-4" aria-hidden="true" />
-      </Toggle>
-      <Toggle
-        id="toggleSubs"
-        variant="outline"
-        title="Display Subtitle Streams"
-        class="mx-1 my-2 grow-0"
-        bind:pressed={displaySubtitles}
-      >
-        <FileText class="size-4" aria-hidden="true" />
-      </Toggle>
+      <Filters />
       <Button
         id="play"
         variant="outline"
@@ -133,8 +76,8 @@
     <ScrollArea class="pr-3 m-2 overflow-hidden">
       <Tabs.Content value="details">
         <div class="flex flex-col gap-2 pt-0">
-          {#each currentFileStreams as stream (stream.key)}
-            {#if shouldDisplayStream(stream)}
+          {#each selectedFile.streams as stream (stream.key)}
+            {#if filters.shouldDisplayStream(stream)}
               <StreamDetail {stream} />
             {/if}
           {/each}
@@ -142,13 +85,13 @@
       </Tabs.Content>
       <Tabs.Content value="raw">
         <div class="w-full whitespace-pre-wrap font-mono select-text">
-          {#key currentFileStreams}
+          {#key selectedFile.streams}
             {selectedFile.details}
           {/key}
         </div>
       </Tabs.Content>
-      {#each currentFileStreams as stream (stream.key)}
-        {#if displayVideo && stream.type === "video"}
+      {#each selectedFile.streams as stream (stream.key)}
+        {#if filters.video && stream.type === "video"}
           <Tabs.Content value={stream.id.toString()}>
             <div class="flex flex-col gap-2 pt-0">
               {#each stream.keyFrames as pts_time (pts_time)}

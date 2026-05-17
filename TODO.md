@@ -22,20 +22,14 @@ directory doesn't contain ffmpeg or doesn't exist
 * TEST IPC: Verify that errors from getStreamList are returned properly. eg:
 file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
 
-* FEATURE: Cache file data on first load. This will improve multi-select. Once
-metadata modification is implemented, the ui might need a refresh button (same
-row as the details/raw tabs, like the proposed filter buttons?)
 * FEATURE: Add background, make the UI less generic
 * FEATURE: Remember last window position?
-* FEATURE: Add filter for languages. Should be dynamically generated based on
-languages of all displayed streams
 * FEATURE: Implement dark mode
 * FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
 can stutter, such as raw 4K movies.
 
 * FEATURE: Add skip buttons to playback:
   * next/previous subtitle for the subtitle stream
-* FEATURE: Implement saving of changes. Clear cache for files that are updated.
 * FEATURE: Add tooltips for pending updates
 * FEATURE: Make the UI navigable by keyboard:
   * need keyboard shortcut for changing checkboxes (forced/default). Space will
@@ -44,8 +38,6 @@ can stutter, such as raw 4K movies.
   'default' option and the language for files with incorrect metadata.
 * CLEANUP: Make sure everything has a tooltip. Most components do already,
 but some recent changes do not, like the playback stream selectors.
-* CLEANUP: Fix visual state for 'show stream type' toggles above the stream
-list. It's hard to tell what state they're in.
 * CLEANUP: Keyboard navigation of the details tabs is incomplete. The
 keyboard handler of the bits-ui Tab.Root suppresses propagation of the
 left/right arrow keys, blocking navigation out of the tab list.
