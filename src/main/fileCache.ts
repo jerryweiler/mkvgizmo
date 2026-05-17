@@ -23,7 +23,7 @@ export type FileDetails = {
 
 // A handle for a file is an index into this array
 // We want newly-assigned handles to start at 1, so we add a dummy entry at 0
-let fileCache: FileDetails[] = [{handle: 0, path: "", rawDetails: ""}];
+let fileCache: FileDetails[] = [{ handle: 0, path: "", rawDetails: "" }];
 
 let handleMap: Map<string, number> = new Map<string, number>();
 
@@ -31,7 +31,7 @@ export function getPathHandle(path: string): number {
   let handle = handleMap.get(path);
   if (!handle) {
     handle = fileCache.length;
-    fileCache.push({handle, path, rawDetails: ""});
+    fileCache.push({ handle, path, rawDetails: "" });
   }
 
   return handle;

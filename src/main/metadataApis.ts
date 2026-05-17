@@ -110,19 +110,23 @@ export async function getFileMetadata(
     const filepath = getFileDetails(handle).path;
     const ffprobepath = path.join(config.ffmpegPath, "ffprobe.exe");
 
-    const result = await runProcess(ffprobepath, [
-      "-loglevel",
-      "warning",
-      "-analyzeduration",
-      "10000000",
-      "-probesize",
-      "10000000",
-      "-show_streams",
-      "-show_chapters",
-      "-output_format",
-      "json",
-      filepath,
-    ], Priority.High);
+    const result = await runProcess(
+      ffprobepath,
+      [
+        "-loglevel",
+        "warning",
+        "-analyzeduration",
+        "10000000",
+        "-probesize",
+        "10000000",
+        "-show_streams",
+        "-show_chapters",
+        "-output_format",
+        "json",
+        filepath,
+      ],
+      Priority.High,
+    );
 
     details.rawDetails = result.output.toString();
 
@@ -189,25 +193,29 @@ export async function getKeyFrameList(
     // been read. we'll remove duplicates afterward.
     const secondsLoaded: number = streamDetails.keyFrameSecondsLoaded ?? 0;
     const secondsToLoad: number = 60;
-    const result = await runProcess(ffprobepath, [
-      "-loglevel",
-      "warning",
-      "-analyzeduration",
-      "10000000",
-      "-probesize",
-      "10000000",
-      "-read_intervals",
-      `${Math.max(0, secondsLoaded - 1)}%${secondsLoaded + secondsToLoad}`,
-      "-select_streams",
-      `v:${streamId}`,
-      "-show_entries",
-      "packet=pts_time,flags",
-      "-fflags",
-      "+genpts",
-      "-output_format",
-      "json",
-      fileDetails.path,
-    ], Priority.Medium);
+    const result = await runProcess(
+      ffprobepath,
+      [
+        "-loglevel",
+        "warning",
+        "-analyzeduration",
+        "10000000",
+        "-probesize",
+        "10000000",
+        "-read_intervals",
+        `${Math.max(0, secondsLoaded - 1)}%${secondsLoaded + secondsToLoad}`,
+        "-select_streams",
+        `v:${streamId}`,
+        "-show_entries",
+        "packet=pts_time,flags",
+        "-fflags",
+        "+genpts",
+        "-output_format",
+        "json",
+        fileDetails.path,
+      ],
+      Priority.Medium,
+    );
 
     let timestamps: number[] = streamDetails.keyFrames ?? [];
     const staringKeyframeCount: number = timestamps.length;

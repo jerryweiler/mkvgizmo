@@ -7,7 +7,7 @@ import { Priority } from "./taskQueue";
 export async function captureFrame(request: Request): Promise<Response> {
   if (!config.ffmpegPath) {
     return new Response("No path configured for ffmpeg", {
-      status: 400
+      status: 400,
     });
   }
 
@@ -17,7 +17,7 @@ export async function captureFrame(request: Request): Promise<Response> {
   const protocol = "frame://";
   if (!request.url.startsWith(protocol)) {
     return new Response("bad request", {
-      status: 400
+      status: 400,
     });
   }
 
@@ -26,34 +26,38 @@ export async function captureFrame(request: Request): Promise<Response> {
 
   if (parts.length !== 3) {
     return new Response("bad request", {
-      status: 400
+      status: 400,
     });
   }
 
-  let [handle, streamid, timestamp] = parts.map(p => parseFloat(p));
+  let [handle, streamid, timestamp] = parts.map((p) => parseFloat(p));
 
   const filepath = getFileDetails(handle).path;
   const ffmpegpath = path.join(config.ffmpegPath, "ffmpeg.exe");
 
-  const result = await runProcess(ffmpegpath, [
-    "-ss",
-    timestamp.toString(),
-    "-i",
-    filepath,
-    "-map",
-    `0:v:${streamid}`,
-    "-vframes",
-    "1",
-    "-vcodec",
-    "png",
-    "-f",
-    "image2pipe",
-    "-"
-  ], Priority.Low);
+  const result = await runProcess(
+    ffmpegpath,
+    [
+      "-ss",
+      timestamp.toString(),
+      "-i",
+      filepath,
+      "-map",
+      `0:v:${streamid}`,
+      "-vframes",
+      "1",
+      "-vcodec",
+      "png",
+      "-f",
+      "image2pipe",
+      "-",
+    ],
+    Priority.Low,
+  );
 
   return new Response(new Uint8Array(result.output), {
     headers: {
-      'content-type': 'image/png'
-    }
+      "content-type": "image/png",
+    },
   });
 }
