@@ -27,7 +27,6 @@ file isn't mkv, using ffprobe version that's too old for json (v4 doesn't work)
 * FEATURE: Implement dark mode
 * FEATURE: Add multiple streams for adaptive bitrates. high bitrate files
 can stutter, such as raw 4K movies.
-
 * FEATURE: Add skip buttons to playback:
   * next/previous subtitle for the subtitle stream
 * FEATURE: Add tooltips for pending updates
@@ -45,3 +44,8 @@ left/right arrow keys, blocking navigation out of the tab list.
 and log message area.
 * BUG: Up/down navigation of the stream list is blocked when a checkbox
 is selected
+* BUG: 'smallest subtitle' icon is sometimes on the wrong stream. perhaps
+because it doesn't update when switching files?
+* INVESTIGATE: Sometimes stream list doesn't populate when selecting a file.
+Consistent with specific files. Observed on friend's machine while testing.
+Need a repro to investigate why.
