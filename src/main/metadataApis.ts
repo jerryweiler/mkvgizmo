@@ -49,7 +49,7 @@ function extractStreamDetails(handle: number, raw): StreamDetails {
   let duration: number = 0;
   for (const prop in raw?.tags) {
     if (prop.startsWith("NUMBER_OF_BYTES")) {
-      size = raw.tags[prop];
+      size = parseInt(raw.tags[prop]);
     }
     if (prop.startsWith("DURATION")) {
       duration = parseDuration(raw.tags[prop]);

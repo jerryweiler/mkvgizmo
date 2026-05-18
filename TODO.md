@@ -44,8 +44,9 @@ left/right arrow keys, blocking navigation out of the tab list.
 and log message area.
 * BUG: Up/down navigation of the stream list is blocked when a checkbox
 is selected
-* BUG: 'smallest subtitle' icon is sometimes on the wrong stream. perhaps
-because it doesn't update when switching files?
 * INVESTIGATE: Sometimes stream list doesn't populate when selecting a file.
 Consistent with specific files. Observed on friend's machine while testing.
 Need a repro to investigate why.
+* INVESTIGATE: Add more typescript linting. stream size is typed as a number,
+but was being populated from an untyped string value without warning, leading
+to unexpected sorting behavior.
