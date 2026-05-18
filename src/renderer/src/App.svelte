@@ -6,12 +6,16 @@
   import MessagePane from "./message-pane.svelte";
   import { logger } from "./state/logger.svelte";
   import {
-    handleKeyboardNavigation,
+    handleKeyboardCapture,
+    handleKeyboardEvent,
     setInitialFocus,
   } from "./state/focus.svelte";
   import { onMount } from "svelte";
 
-  onMount(setInitialFocus);
+  onMount(() => {
+    document.addEventListener("keydown", handleKeyboardCapture, true);
+    setInitialFocus();
+  });
 </script>
 
 <div class="w-screen h-screen">
@@ -40,4 +44,4 @@
   </Resizable.PaneGroup>
 </div>
 
-<svelte:window onkeydown={handleKeyboardNavigation} />
+<svelte:window onkeydown={handleKeyboardEvent} />

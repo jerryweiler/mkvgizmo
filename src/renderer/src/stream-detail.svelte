@@ -149,7 +149,7 @@
         <div class="flex">
           {#if attr.checked !== undefined}
             <Checkbox
-              id={`${stream.id}-${attr.id}`}
+              id={`${attr.id}-${stream.id}`}
               bind:checked={
                 () => getEffectiveValue(stream, attr.id),
                 (checked) => onCheckedChange(attr.id, checked)

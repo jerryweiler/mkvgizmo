@@ -3,6 +3,7 @@
 
 import { workingDir } from "./current-directory.svelte";
 import { selectedFile } from "./current-file.svelte";
+import { logger } from "./logger.svelte";
 
 // A List of all of the element types that can have focus
 const elementPrefixes: Set<string> = new Set([
@@ -22,6 +23,8 @@ const elementPrefixes: Set<string> = new Set([
   "navItem",
   "stream",
   "keyframe",
+  "default",
+  "forced",
 ]);
 
 type FocusInfo = {
@@ -139,6 +142,22 @@ function handleArrowUp(focusInfo: FocusInfo): void {
         }
       }
       break;
+    case "default":
+    case "forced":
+      {
+        // the parent should be the corresponding 'stream-id' element.
+        // navigate up from that
+        const items = getListElements(
+          "stream-",
+          focusInfo.id.replace(focusInfo.type, "stream"),
+        );
+        if (items.activeIdx > 0) {
+          focusItem(items.ids[items.activeIdx - 1]);
+        } else {
+          focusItem(getActiveDetailTabId());
+        }
+      }
+      break;
   }
 }
 
@@ -192,6 +211,20 @@ function handleArrowDown(focusInfo: FocusInfo): void {
         }
       }
       break;
+    case "default":
+    case "forced":
+      {
+        // the parent should be the corresponding 'stream-id' element.
+        // navigate down from that
+        const items = getListElements(
+          "stream-",
+          focusInfo.id.replace(focusInfo.type, "stream"),
+        );
+        if (items.activeIdx < items.ids.length - 1) {
+          focusItem(items.ids[items.activeIdx + 1]);
+        }
+      }
+      break;
   }
 }
 
@@ -223,6 +256,8 @@ function handleArrowLeft(focusInfo: FocusInfo): void {
       break;
     case "stream":
     case "keyframe":
+    case "default":
+    case "forced":
       {
         const navItemList = getListElements("navItem-", focusInfo.id);
         if (navItemList.ids.length > 0) {
@@ -264,6 +299,10 @@ function handleArrowRight(focusInfo: FocusInfo): void {
       break;
     case "languages":
       focusItem("play");
+      break;
+    case "default":
+    case "forced":
+      focusItem(focusInfo.id.replace(focusInfo.type, "stream"));
       break;
   }
 }
@@ -363,17 +402,8 @@ function handleEnd(focusInfo: FocusInfo): void {
   }
 }
 
-export function handleKeyboardNavigation(e: KeyboardEvent): void {
-  // start by retrieving the id of the element with focus.
-  // in some cases, focus might be on one of the child elements of
-  // an item we care about navigating among. so check the active element
-  // first, then its parent.
-  let elt: Element = document.activeElement;
-  let focusInfo = getElementInfo(elt);
-  if (!focusInfo) focusInfo = getElementInfo(elt?.parentElement);
-  if (!focusInfo) return;
-
-  switch (e.key) {
+function handleKeyboardNavigation(focusInfo: FocusInfo, key: string): void {
+  switch (key) {
     case "ArrowUp":
       handleArrowUp(focusInfo);
       break;
@@ -403,6 +433,64 @@ export function handleKeyboardNavigation(e: KeyboardEvent): void {
         document.getElementById(focusInfo.id).click();
       }
       break;
+  }
+}
+
+export function handleKeyboardEvent(e: KeyboardEvent): void {
+  // start by retrieving the id of the element with focus.
+  // in some cases, focus might be on one of the child elements of
+  // an item we care about navigating among. so check the active element
+  // first, then its parent.
+  let elt: Element = document.activeElement;
+  let focusInfo = getElementInfo(elt);
+  if (!focusInfo) focusInfo = getElementInfo(elt?.parentElement);
+  if (!focusInfo) return;
+
+  handleKeyboardNavigation(focusInfo, e.key);
+}
+
+export function handleKeyboardCapture(e: KeyboardEvent): void {
+  // First chance capture of keydown events before it goes to the element.
+  // We intercept arrow key navigation in specific cases, like right arrow
+  // on the right-most detail tab, or arrows when on a checkbox.
+  // In both cases, we want to navigate to another control, instead of
+  // letting the control's handler swallow the event.
+  let elt: Element = document.activeElement;
+  let focusInfo = getElementInfo(elt);
+
+  // arrow key from a checkbox should navigate to the next control
+  if (
+    e.key.startsWith("Arrow") &&
+    (focusInfo.type === "default" || focusInfo.type === "forced")
+  ) {
+    handleKeyboardNavigation(focusInfo, e.key);
+    e.stopPropagation();
+  }
+
+  logger.add(`elt: ${focusInfo.id}, key: ${e.key}`);
+
+  // left arrow from the left-most tab or right arrow from the right-most tab
+  // should navigate out of the tab array. anything else, use the default
+  // handling. Note: don't handle these in handleKeyboardNavigation.
+  // The tab component handles arrow events to activate the next tab
+  // and also lets the event propagate out. We handle these specific
+  // events to navigate out, which the component doesn't implement,
+  // then stop the event from propagating so that it doesn't double-navigate.
+  if (e.key === "ArrowLeft" && focusInfo.id === "streamDetailTab") {
+    const navItemList = getListElements("navItem-", focusInfo.id);
+    if (navItemList.ids.length > 0) {
+      focusItem(`navItem-${selectedFile.handle}`);
+    }
+    e.stopPropagation();
+  }
+
+  let tabs = getDetailTabElements();
+  if (
+    e.key === "ArrowRight" &&
+    focusInfo.id === tabs.ids[tabs.ids.length - 1]
+  ) {
+    focusItem("toggleVideo");
+    e.stopPropagation();
   }
 }
 

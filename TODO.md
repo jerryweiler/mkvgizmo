@@ -30,20 +30,10 @@ can stutter, such as raw 4K movies.
 * FEATURE: Add skip buttons to playback:
   * next/previous subtitle for the subtitle stream
 * FEATURE: Add tooltips for pending updates
-* FEATURE: Make the UI navigable by keyboard:
-  * need keyboard shortcut for changing checkboxes (forced/default). Space will
-  work if each stream only has a single updatable field, but what if there
-  are more? For an audio stream, there's a desire to allow changing the
-  'default' option and the language for files with incorrect metadata.
 * CLEANUP: Make sure everything has a tooltip. Most components do already,
 but some recent changes do not, like the playback stream selectors.
-* CLEANUP: Keyboard navigation of the details tabs is incomplete. The
-keyboard handler of the bits-ui Tab.Root suppresses propagation of the
-left/right arrow keys, blocking navigation out of the tab list.
 * FEATURE: Implement focus/navigation for the text areas: raw details
 and log message area.
-* BUG: Up/down navigation of the stream list is blocked when a checkbox
-is selected
 * INVESTIGATE: Sometimes stream list doesn't populate when selecting a file.
 Consistent with specific files. Observed on friend's machine while testing.
 Need a repro to investigate why.
