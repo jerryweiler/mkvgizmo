@@ -9,7 +9,7 @@
   <div class="m-2 grow-0">
     <CurrentDirectory />
   </div>
-  <ScrollArea class="p-2 grow overflow-hidden">
+  <ScrollArea type="auto" class="p-2 grow overflow-hidden">
     <div class="flex flex-col gap-4">
       <div class="grid gap-1">
         {#each workingDir.children as item (item.name)}

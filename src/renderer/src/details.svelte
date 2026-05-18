@@ -73,7 +73,7 @@
       </Button>
       <div class="mr-2"></div>
     </div>
-    <ScrollArea class="pr-3 m-2 overflow-hidden">
+    <ScrollArea type="auto" class="pr-3 m-2 overflow-hidden">
       <Tabs.Content value="details">
         <div class="flex flex-col gap-2 pt-0">
           {#each selectedFile.streams as stream (stream.key)}

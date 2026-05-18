@@ -6,7 +6,7 @@
 </script>
 
 <div class="flex w-full h-full font-mono">
-  <ScrollArea class="p-2 w-full grow overflow-hidden select-text">
+  <ScrollArea type="auto" class="p-2 w-full grow overflow-hidden select-text">
     {#each logger.messages as message (message.id)}
       <span>{message.line}<br /></span>
     {/each}
