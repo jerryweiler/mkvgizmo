@@ -30,7 +30,8 @@ export async function scanDirectory(
             handle: getFileHandle(directory, f.name),
             name: f.name,
           };
-        }),
+        })
+        .sort((a, b) => a.name.localeCompare(b.name)),
       files: files
         .filter((f) => !f.isDirectory())
         .filter((f) => path.extname(f.name) === ".mkv")
@@ -40,7 +41,8 @@ export async function scanDirectory(
             name: f.name,
             size: statSync(path.join(directory, f.name)).size,
           };
-        }),
+        })
+        .sort((a, b) => a.name.localeCompare(b.name)),
     };
 
     if (!atRoot) {
